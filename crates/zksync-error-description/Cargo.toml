@@ -1,0 +1,36 @@
+[package]
+name = "zksync-error-description"
+description = "Exposes a public model of error hierarchy for the generated crate `zksync-error`, which depend on this crate."
+
+authors.workspace = true
+license.workspace = true
+edition.workspace = true
+version.workspace = true
+
+[features]
+# This crate exposes a public model of error hierarchy, available for the
+# generated crate `zksync-error`
+#
+# The crate `zksync_error-model` defines an internal model of error hierarchy,
+# used by `zksync-error-codegen`.
+#
+# Enable the feature `with_adapter` to provide a converter from the internal model used by `zksync_error` and  external-facing
+#Enable if this crate should expose the adapter from the internal model to the external model accessible to the generated code
+# `zksync-error-description` is a dependency
+with_adapter = [ "dep:zksync-error-model" ]
+
+
+[dependencies]
+
+#########################
+# External dependencies #
+#########################
+
+serde.workspace = true
+serde_json.workspace = true
+
+#########################
+# Local dependencies    #
+#########################
+
+zksync-error-model = { path = "../zksync-error-model", optional = true }

@@ -1,0 +1,31 @@
+[package]
+name = "zksync-error-codegen"
+description = "generate Rust, Typescript code to describe and handle errors and Markdown documentation for them."
+authors.workspace = true
+license.workspace = true
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+
+#########################
+# External dependencies #
+#########################
+
+cargo_metadata.workspace = true
+include_dir.workspace = true
+maplit.workspace = true
+reqwest.workspace = true
+serde = { workspace = true, features = [ "rc" ] }
+serde_json.workspace = true
+tera.workspace = true
+toml.workspace = true
+vector-map.workspace = true
+
+
+#########################
+# Local dependencies    #
+#########################
+
+zksync-error-model.workspace = true
+zksync-error-description.workspace = true

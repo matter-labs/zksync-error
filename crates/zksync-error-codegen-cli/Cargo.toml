@@ -1,0 +1,24 @@
+[package]
+name = "zksync-error-codegen-cli"
+description = "CLI for zksync-error-codegen"
+authors.workspace = true
+license.workspace = true
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+
+#########################
+# External dependencies #
+#########################
+
+serde.workspace = true
+serde_json.workspace = true
+structopt = { version = "=0.3.26", default-features = false }
+vector-map.workspace = true
+
+#########################
+# Local dependencies    #
+#########################
+
+zksync-error-codegen.workspace = true

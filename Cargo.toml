@@ -1,0 +1,48 @@
+[workspace]
+members = [
+   "crates/zksync-error-codegen-cli",
+   "crates/zksync-error-codegen",
+   "crates/zksync-error-model",
+   "crates/zksync-error-description",
+]
+resolver = "2"
+
+[workspace.package]
+authors = [
+    "Igor Zhirkov <iz@matterlabs.dev>"
+]
+categories = ["cryptography"]
+edition = "2021"
+homepage = "https://zksync.io/"
+keywords = ["blockchain", "zksync", "error"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/matter-labs/zksync-error"
+version = "0.1.0"
+
+
+
+[workspace.dependencies]
+
+#########################
+# External dependencies #
+#########################
+
+cargo_metadata = "0.18"
+clap = { version = "4.5.21", features = ["derive"] }
+include_dir = "0.7.4"
+maplit = "1.0.2"
+reqwest = { version = "0.12.9", features = [ "blocking" ] }
+serde = { version = "1.0.210", features = [ "derive" ] }
+serde_json = { version = "1.0.128" }
+structopt = { version = "0.3.26", default-features = false }
+tera = "1.20.0"
+toml = "0.8.19"
+vector-map = "1.0.1"
+
+#########################
+# Local dependencies    #
+#########################
+
+zksync-error-codegen = { path = "crates/zksync-error-codegen" }
+zksync-error-description = { path = "crates/zksync-error-description", features = ["with_adapter"] }
+zksync-error-model = { path = "crates/zksync-error-model" }

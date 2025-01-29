@@ -1,0 +1,12 @@
+[book]
+authors = [
+    "Matter Labs",
+]
+language = "en"
+multilingual = false
+src = "src"
+title = "ZKsync public errors documentation"
+
+[output.html]
+additional-js = ["js/version-box.js"]
+additional-css = ["css/version-box.css"]
