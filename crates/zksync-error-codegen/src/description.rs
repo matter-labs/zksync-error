@@ -127,6 +127,14 @@ pub struct VersionedOwner {
     pub version: String,
 }
 
+#[derive(Clone, Debug, Deserialize)]
+#[serde(untagged)]
+pub enum Collection {
+    Root(Root),
+    Domain(Domain),
+    Component(Component),
+}
+
 impl Root {
     pub fn get_component(&self, domain: &str, component: &str) -> Option<&Component> {
         let domain = self.domains.iter().find(|d| d.domain_name == domain)?;
@@ -136,5 +144,26 @@ impl Root {
             .find(|c| c.component_name == component)?;
 
         Some(component)
+    }
+}
+
+impl Domain {
+    pub fn get_component(&self, component: &str) -> Option<&Component> {
+        self.components
+            .iter()
+            .find(|c| c.component_name == component)
+    }
+}
+
+impl Collection {
+    pub fn get_component(&self, domain: &str, component_name: &str) -> Option<&Component> {
+        match self {
+            Collection::Root(root) => root.get_component(domain, component_name),
+            Collection::Domain(domain) => domain.get_component(component_name),
+            Collection::Component(component) if component.component_name == component_name => {
+                Some(&component)
+            }
+            _ => None,
+        }
     }
 }

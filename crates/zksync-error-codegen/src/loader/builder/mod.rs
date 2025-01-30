@@ -9,8 +9,8 @@ use error::TakeFromError;
 use maplit::btreemap;
 use zksync_error_model::validator::validate;
 
+use crate::description::Collection;
 use crate::loader::load;
-use crate::loader::ErrorBasePart;
 
 use zksync_error_model::inner::ComponentDescription;
 use zksync_error_model::inner::ComponentMetadata;
@@ -266,43 +266,20 @@ fn translate_error(
 }
 
 fn fetch_named_component<'a>(
-    address: &str,
-    name: &str,
+    link: &str,
+    component_name: &str,
     ctx: &'a ComponentTranslationContext<'a>,
 ) -> Result<ComponentDescription, TakeFromError> {
-    let error_base = load(&Link::parse(address)?)?;
-    let component: crate::description::Component = match error_base {
-        ErrorBasePart::Root(root) => {
-            root.get_component(&ctx.domain.name, name)
-                .cloned()
-                .ok_or(MissingComponent {
-                    domain_name: ctx.get_domain(),
-                    component_name: name.to_string(),
-                })?
-        }
-        ErrorBasePart::Domain(domain) => domain
-            .components
-            .iter()
-            .find(|c| c.component_name == name)
-            .cloned()
-            .ok_or(MissingComponent {
-                domain_name: ctx.get_domain(),
-                component_name: name.to_string(),
-            })?,
-        ErrorBasePart::Component(component) => {
-            if component.component_name == name {
-                component
-            } else {
-                return Err(MissingComponent {
-                    domain_name: ctx.get_domain(),
-                    component_name: name.to_string(),
-                }
-                .into());
-            }
-        }
-    };
-    translate_component(&component, ctx).map_err(Into::<TakeFromError>::into)
+    let error_base = load(&Link::parse(link)?)?;
+    let component = error_base
+        .get_component(&ctx.get_domain(), component_name)
+        .ok_or(MissingComponent {
+            domain_name: ctx.get_domain(),
+            component_name: component_name.to_owned(),
+        })?;
+    Ok(translate_component(component, ctx)?)
 }
+
 fn translate_component<'a>(
     component: &crate::description::Component,
     ctx: &'a ComponentTranslationContext<'a>,
@@ -392,13 +369,13 @@ fn translate_domain<'a>(
 
 fn load_root_model(root_link: &Link) -> Result<Model, LoadError> {
     match load(root_link)? {
-        ErrorBasePart::Domain(_) => Err(LoadError::FileFormatError(
+        Collection::Domain(_) => Err(LoadError::FileFormatError(
             FileFormatError::ExpectedFullGotDomain(root_link.to_string()),
         )),
-        ErrorBasePart::Component(_) => Err(LoadError::FileFormatError(
+        Collection::Component(_) => Err(LoadError::FileFormatError(
             FileFormatError::ExpectedFullGotComponent(root_link.to_string()),
         )),
-        ErrorBasePart::Root(root) => Ok(translate_model(
+        Collection::Root(root) => Ok(translate_model(
             &root,
             ModelTranslationContext {
                 origin: root_link.clone(),

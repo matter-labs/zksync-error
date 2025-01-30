@@ -152,3 +152,9 @@ impl Model {
         Ok(mapped_type)
     }
 }
+
+impl ComponentDescription {
+    pub fn mergeable_with(&self, other: &Self) -> bool {
+        self.meta.name == other.meta.name && self.meta.code == other.meta.code
+    }
+}

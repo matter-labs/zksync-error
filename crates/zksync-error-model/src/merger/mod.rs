@@ -98,7 +98,7 @@ impl Merge for DomainDescription {
 
 impl Merge for ComponentDescription {
     fn merge(&mut self, other: &ComponentDescription) -> Result<(), MergeError> {
-        if self.meta.name != other.meta.name || self.meta.code != other.meta.code {
+        if !self.mergeable_with(other) {
             return Err(MergeError::ConflictingComponentDefinitions(
                 self.meta.name.clone(),
             ));
