@@ -1,4 +1,3 @@
-use crate::codegen::html::error::GenerationError as HtmlGenerationError;
 use crate::codegen::mdbook::error::GenerationError as MarkdownGenerationError;
 use crate::codegen::rust::error::GenerationError as RustGenerationError;
 use crate::loader::builder::error::ModelBuildingError;
@@ -11,7 +10,6 @@ pub enum ProgramError {
     ModelBuildingError(ModelBuildingError),
     JsonDeserializationError(serde_json::Error),
     RustGenerationError(RustGenerationError),
-    HtmlGenerationError(HtmlGenerationError),
     MarkdownGenerationError(MarkdownGenerationError),
     IOError(std::io::Error),
     LoadError(LoadError),
@@ -33,12 +31,6 @@ impl From<MarkdownGenerationError> for ProgramError {
 impl From<LoadError> for ProgramError {
     fn from(v: LoadError) -> Self {
         Self::LoadError(v)
-    }
-}
-
-impl From<HtmlGenerationError> for ProgramError {
-    fn from(v: HtmlGenerationError) -> Self {
-        Self::HtmlGenerationError(v)
     }
 }
 

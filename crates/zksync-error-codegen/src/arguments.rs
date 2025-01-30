@@ -10,7 +10,6 @@ pub struct GenerationArguments {
 
 #[derive(Clone, Debug)]
 pub enum Backend {
-    DocHtml,
     Rust,
     Mdbook,
 }
@@ -18,7 +17,6 @@ pub enum Backend {
 impl std::fmt::Display for Backend {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(match self {
-            Backend::DocHtml => "doc-html",
             Backend::Rust => "rust",
             Backend::Mdbook => "doc-mdbook",
         })

@@ -161,7 +161,7 @@ impl Collection {
             Collection::Root(root) => root.get_component(domain, component_name),
             Collection::Domain(domain) => domain.get_component(component_name),
             Collection::Component(component) if component.component_name == component_name => {
-                Some(&component)
+                Some(component)
             }
             _ => None,
         }

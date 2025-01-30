@@ -16,8 +16,6 @@ use loader::link::Link;
 use vector_map::VecMap;
 
 use crate::codegen::file::File;
-use crate::codegen::html::config::HtmlBackendConfig;
-use crate::codegen::html::HtmlBackend;
 use crate::codegen::mdbook::config::MDBookBackendConfig;
 use crate::codegen::mdbook::MDBookBackend;
 use crate::codegen::rust::RustBackend;
@@ -54,10 +52,6 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
             eprintln!("Selected backend: {backend_type:?}. \nGenerating files...");
         }
         let result = match backend_type {
-            arguments::Backend::DocHtml => {
-                let mut backend = HtmlBackend::new(&model);
-                backend.generate(&HtmlBackendConfig {})?
-            }
             arguments::Backend::Rust => {
                 let mut backend = RustBackend::new(&model);
                 backend.generate(&RustBackendConfig {
