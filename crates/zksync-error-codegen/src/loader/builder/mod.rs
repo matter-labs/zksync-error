@@ -265,21 +265,53 @@ fn translate_error(
     })
 }
 
-fn fetch_named_component<'a>(
-    link: &str,
-    component_name: &str,
-    ctx: &'a ComponentTranslationContext<'a>,
-) -> Result<ComponentDescription, TakeFromError> {
-    let error_base = load(&Link::parse(link)?)?;
-    let component = error_base
-        .get_component(&ctx.get_domain(), component_name)
-        .ok_or(MissingComponent {
-            domain_name: ctx.get_domain(),
-            component_name: component_name.to_owned(),
-        })?;
-    Ok(translate_component(component, ctx)?)
+enum FetchComponentResult {
+    Errors(Vec<ErrorDescription>),
+    Component(ComponentDescription),
 }
 
+fn fetch_named_component<'a>(
+    link: &str,
+    present_component_metadata: &Rc<ComponentMetadata>,
+    ctx: &'a ComponentTranslationContext<'a>,
+) -> Result<FetchComponentResult, TakeFromError> {
+    let error_base = load(&Link::parse(link)?)?;
+    match error_base {
+        Collection::Root(_) | Collection::Domain(_) | Collection::Component(_) => {
+            let component = error_base
+                .get_component(&ctx.get_domain(), &present_component_metadata.name)
+                .ok_or(MissingComponent {
+                    domain_name: ctx.get_domain(),
+                    component_name: present_component_metadata.name.to_owned(),
+                })?;
+            Ok(FetchComponentResult::Component(translate_component(
+                component, ctx,
+            )?))
+        }
+        Collection::Errors(errors) => Ok(FetchComponentResult::Errors(translate_errors(
+            &errors,
+            ctx,
+            present_component_metadata,
+        )?)),
+    }
+}
+
+fn translate_errors<'a>(
+    errors: &Vec<crate::description::Error>,
+    ctx: &'a ComponentTranslationContext<'a>,
+    component_meta: &Rc<ComponentMetadata>,
+) -> Result<Vec<ErrorDescription>, ModelBuildingError> {
+    let mut transformed_errors = Vec::default();
+
+    for error in errors {
+        let ctx = ErrorTranslationContext {
+            parent: ctx,
+            component: component_meta.clone(),
+        };
+        transformed_errors.push(translate_error(error, &ctx)?);
+    }
+    Ok(transformed_errors)
+}
 fn translate_component<'a>(
     component: &crate::description::Component,
     ctx: &'a ComponentTranslationContext<'a>,
@@ -304,26 +336,23 @@ fn translate_component<'a>(
         identifier: identifier_encoding.clone().unwrap_or_default(),
         description: description.clone().unwrap_or_default(),
     });
-    let mut transformed_errors = Vec::default();
 
-    for error in errors {
-        let ctx = ErrorTranslationContext {
-            parent: ctx,
-            component: component_meta.clone(),
-        };
-        transformed_errors.push(translate_error(error, &ctx)?);
-    }
-
+    let transformed_errors = translate_errors(errors, ctx, &component_meta)?;
     let mut result = ComponentDescription {
-        meta: component_meta,
+        meta: component_meta.clone(),
         errors: transformed_errors,
     };
     for take_from_address in takeFrom {
-        let component = fetch_named_component(take_from_address, component_name, ctx)
-            .map_err(|e| e.from_address(take_from_address))?;
-        result
-            .merge(&component)
-            .map_err(|e| TakeFromError::MergeError(e).from_address(take_from_address))?;
+        match fetch_named_component(take_from_address, &component_meta, ctx)
+            .map_err(|e| e.from_address(take_from_address))?
+        {
+            FetchComponentResult::Errors(vec) => result.errors.extend(vec),
+            FetchComponentResult::Component(component_description) => {
+                result
+                    .merge(&component_description)
+                    .map_err(|e| TakeFromError::MergeError(e).from_address(take_from_address))?;
+            }
+        };
     }
 
     Ok(result)
@@ -368,18 +397,20 @@ fn translate_domain<'a>(
 }
 
 fn load_root_model(root_link: &Link) -> Result<Model, LoadError> {
+    let source = root_link.clone();
     match load(root_link)? {
         Collection::Domain(_) => Err(LoadError::FileFormatError(
-            FileFormatError::ExpectedFullGotDomain(root_link.to_string()),
+            FileFormatError::ExpectedFullGotDomain { source },
         )),
         Collection::Component(_) => Err(LoadError::FileFormatError(
-            FileFormatError::ExpectedFullGotComponent(root_link.to_string()),
+            FileFormatError::ExpectedFullGotComponent { source },
+        )),
+        Collection::Errors(_) => Err(LoadError::FileFormatError(
+            FileFormatError::ExpectedFullGotComponent { source },
         )),
         Collection::Root(root) => Ok(translate_model(
             &root,
-            ModelTranslationContext {
-                origin: root_link.clone(),
-            },
+            ModelTranslationContext { origin: source },
         )?),
     }
 }

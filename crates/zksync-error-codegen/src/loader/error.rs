@@ -44,19 +44,21 @@ impl std::fmt::Display for LinkError {
 
 #[derive(Debug)]
 pub enum FileFormatError {
-    ExpectedFullGotDomain(String),
-    ExpectedFullGotComponent(String),
+    ExpectedFullGotDomain { source: Link },
+    ExpectedFullGotComponent { source: Link },
+    ExpectedFullGotErrors { source: Link },
     ParseError(String, Box<dyn std::error::Error>),
 }
 
 impl std::fmt::Display for FileFormatError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            FileFormatError::ExpectedFullGotDomain(path) =>
-                f.write_fmt(format_args!("File `{path}` contains just an error domain description, but a master error database should describe at least one component.")),
-
-            FileFormatError::ExpectedFullGotComponent(path) =>
-                f.write_fmt(format_args!("File `{path}` contains just an error component description, but a master error database should describe at least one domain and one component.")),
+            FileFormatError::ExpectedFullGotErrors { source }  =>
+                f.write_fmt(format_args!("File `{source}` contains just an array of errors, but a master error database should describe at least one domain and one component.")),
+            FileFormatError::ExpectedFullGotDomain{ source }  =>
+                f.write_fmt(format_args!("File `{source}` contains just an error domain description, but a master error database should describe at least one domain and one component.")),
+            FileFormatError::ExpectedFullGotComponent{source} =>
+                f.write_fmt(format_args!("File `{source}` contains just an error component description, but a master error database should describe at least one domain and one component.")),
             FileFormatError::ParseError(path, error) => f.write_fmt(format_args!("Error parsing file `{path}`: {error}")),
         }
     }

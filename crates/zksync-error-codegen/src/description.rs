@@ -33,6 +33,7 @@ pub struct TypeMappings {
 pub struct ErrorType {
     pub name: String,
 }
+
 #[derive(Clone, Debug, Deserialize)]
 pub struct FullyQualifiedType {
     pub name: String,
@@ -133,6 +134,7 @@ pub enum Collection {
     Root(Root),
     Domain(Domain),
     Component(Component),
+    Errors(Vec<Error>),
 }
 
 impl Root {
@@ -165,5 +167,30 @@ impl Collection {
             }
             _ => None,
         }
+    }
+    pub fn get_component_errors(&self, domain: &str, component_name: &str) -> Option<&Vec<Error>> {
+        match self {
+            Collection::Root(root) => root
+                .get_component(domain, component_name)
+                .map(|c| &c.errors),
+            Collection::Domain(domain) => domain.get_component(component_name).map(|c| &c.errors),
+            Collection::Component(component) if component.component_name == component_name => {
+                Some(&component.errors)
+            }
+            Collection::Errors(errors) => Some(errors),
+            _ => None,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn parse_array() {
+        eprintln!(
+            "{:?}",
+            serde_json::from_str::<Vec<u32>>("[ 1, 2, 3]").unwrap()
+        )
     }
 }
