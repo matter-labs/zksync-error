@@ -1,9 +1,12 @@
+#![allow(unreachable_patterns)]
+
 #[derive(Debug)]
 pub enum ModelValidationError {
     UnknownType(String),
     UnmappedType(String),
     UnmappedName(String),
 }
+
 impl std::fmt::Display for ModelValidationError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {

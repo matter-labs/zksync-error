@@ -8,22 +8,19 @@ pub struct GenerationArguments {
     pub outputs: Vec<(PathBuf, Backend, VecMap<String, String>)>,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Backend {
     DocHtml,
     Rust,
-    MDBook,
+    Mdbook,
 }
 
-impl std::str::FromStr for Backend {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "doc-html" => Ok(Backend::DocHtml),
-            "rust" => Ok(Backend::Rust),
-            "markdown-mdbook" => Ok(Backend::MDBook),
-            _ => Err("Unrecognized backend".into()),
-        }
+impl std::fmt::Display for Backend {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Backend::DocHtml => "doc-html",
+            Backend::Rust => "rust",
+            Backend::Mdbook => "doc-mdbook",
+        })
     }
 }

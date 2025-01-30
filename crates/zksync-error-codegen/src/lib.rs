@@ -69,7 +69,7 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
                     .unwrap(),
                 })?
             }
-            arguments::Backend::MDBook => {
+            arguments::Backend::Mdbook => {
                 let mut backend = MDBookBackend::new(&model);
                 backend.generate(&MDBookBackendConfig)?
             }

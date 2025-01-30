@@ -12,9 +12,10 @@ edition.workspace = true
 # External dependencies #
 #########################
 
+clap.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-structopt = { version = "=0.3.26", default-features = false }
+strum.workspace = true
 vector-map.workspace = true
 
 #########################

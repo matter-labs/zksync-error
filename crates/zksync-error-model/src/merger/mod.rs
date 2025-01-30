@@ -4,7 +4,8 @@ use error::MergeError;
 use std::collections::BTreeMap;
 
 use super::inner::{
-    ComponentDescription, DomainDescription, ErrorDescription, ErrorDocumentation, Model, TypeDescription,
+    ComponentDescription, DomainDescription, ErrorDescription, ErrorDocumentation, Model,
+    TypeDescription,
 };
 
 fn merge_maps<K, V>(main: &mut BTreeMap<K, V>, other: &BTreeMap<K, V>) -> Result<(), MergeError>
@@ -74,7 +75,6 @@ impl Merge for Model {
     fn merge(&mut self, other: &Model) -> Result<(), MergeError> {
         merge_maps(&mut self.types, &other.types)?;
         merge_maps(&mut self.domains, &other.domains)
-
     }
 }
 
