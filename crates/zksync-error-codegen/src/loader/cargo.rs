@@ -1,6 +1,6 @@
 use cargo_metadata::MetadataCommand;
 
-use super::{DescriptionFile, ResolutionContext};
+use super::{resolution::ResolutionContext, CollectionFile};
 
 const METADATA_CATEGORY: &str = "zksync_error_codegen";
 
@@ -21,7 +21,7 @@ pub fn get_resolution_context() -> ResolutionContext {
                             .parent() // removing Cargo.toml
                             .unwrap();
                         let absolute_path = package_root.join(rel_path).into();
-                        context.files.push(DescriptionFile {
+                        context.files.push(CollectionFile {
                             package: pkg.name.to_owned(),
                             absolute_path,
                         });

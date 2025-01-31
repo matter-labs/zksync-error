@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use super::{error::LinkError, DescriptionFile};
+use super::{error::LinkError, CollectionFile};
 
 #[derive(Clone, Debug)]
 pub enum Link {
@@ -38,9 +38,9 @@ impl Link {
             Some(_) => Err(LinkError::InvalidLinkFormat(string)),
         }
     }
-    pub fn matches(link: &Link, file: &DescriptionFile) -> bool {
+    pub fn matches(link: &Link, file: &CollectionFile) -> bool {
         if let Link::PackageLink { package, filename } = link {
-            let DescriptionFile {
+            let CollectionFile {
                 package: candidate_package,
                 absolute_path,
             } = file;

@@ -1,8 +1,14 @@
+pub mod context;
 pub mod error;
 
 use std::collections::BTreeMap;
 use std::rc::Rc;
 
+use context::ComponentTranslationContext;
+use context::DomainTranslationContext;
+use context::ErrorTranslationContext;
+use context::ModelTranslationContext;
+use context::TypeTranslationContext;
 use error::MissingComponent;
 use error::ModelBuildingError;
 use error::TakeFromError;
@@ -32,42 +38,6 @@ use zksync_error_model::merger::Merge as _;
 use super::error::FileFormatError;
 use super::error::LoadError;
 use super::link::Link;
-
-pub struct ModelTranslationContext {
-    pub origin: Link,
-}
-struct TypeTranslationContext<'a> {
-    pub type_name: &'a str,
-    pub parent: &'a ModelTranslationContext,
-}
-struct DomainTranslationContext<'a> {
-    pub parent: &'a ModelTranslationContext,
-}
-
-struct ComponentTranslationContext<'a> {
-    pub domain: Rc<DomainMetadata>,
-    pub parent: &'a DomainTranslationContext<'a>,
-}
-
-impl ComponentTranslationContext<'_> {
-    fn get_domain(&self) -> String {
-        self.domain.name.to_string()
-    }
-}
-
-struct ErrorTranslationContext<'a> {
-    pub component: Rc<ComponentMetadata>,
-    pub parent: &'a ComponentTranslationContext<'a>,
-}
-
-impl ErrorTranslationContext<'_> {
-    fn get_component(&self) -> String {
-        self.component.name.to_string()
-    }
-    fn get_domain(&self) -> String {
-        self.parent.get_domain()
-    }
-}
 
 fn translate_type_bindings(
     value: &crate::description::ErrorNameMapping,

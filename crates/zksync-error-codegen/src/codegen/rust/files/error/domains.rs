@@ -74,7 +74,6 @@ impl crate::documentation::Documented for ZksyncError {
                 let domain = Self::domain_type_name(domain_description)?;
                 let component = Self::component_type_name(component_description)?;
                 let _component_code = Self::component_code_type_name(component_description)?;
-                let domain_code = Self::domain_code_type_name(domain_description)?;
 
                 gen.push_line(&format!(
                     "ZksyncError::{domain}({domain}::{component}(error)) => error.get_documentation() ,"

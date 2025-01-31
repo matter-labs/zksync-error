@@ -1,3 +1,7 @@
+//!
+//! Layout of the JSON file that holds a fragment of error hierarchy.
+//!
+
 #![allow(non_snake_case)]
 
 use serde::Deserialize;
