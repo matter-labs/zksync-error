@@ -36,10 +36,10 @@ pub fn load(link: &Link) -> Result<Collection, LoadError> {
 
 pub fn load_serialized(contents: &str) -> Result<Collection, LoadError> {
     serde_json::from_str::<crate::description::Collection>(contents).map_err(|error| {
-        LoadError::FileFormatError(FileFormatError::ParseError(
-            contents.to_owned(),
-            Box::new(error),
-        ))
+        LoadError::FileFormatError(FileFormatError::ParseError {
+            contents: contents.to_owned(),
+            inner: Box::new(error),
+        })
     })
 }
 
