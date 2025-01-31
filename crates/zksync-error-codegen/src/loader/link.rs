@@ -8,6 +8,7 @@ pub enum Link {
     FileLink { path: String },
     URL { url: String },
 }
+
 impl Link {
     /// Part before "://"
     pub const CARGO_FORMAT_PREFIX: &str = "cargo";
