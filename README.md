@@ -8,7 +8,7 @@ A unified description of possible failures in the components of ZKsync, along wi
 - Organized in a 3-level hierarchy: domains, their components, and failures in these components.
 - For each possible failure, the description includes the error message, its fields, and full documentation.
 - The description may be split into multiple files stored in multiple repositories, each project may independently develop their own component.
-- The crate `zksync-error-codegen` is able to generate Rust or TypeScript code to handle these errors, along with documentation in MDBook format.
+- The crate `zksync-error-codegen` is able to generate Rust code to handle these errors, along with documentation in MDBook format. In the future, a TypeScript backend will also be supported.
 
 [Architecture of ZKsync-error](ARCHITECTURE.md)
 
