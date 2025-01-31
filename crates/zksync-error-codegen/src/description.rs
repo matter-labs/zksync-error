@@ -186,15 +186,3 @@ impl Collection {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-
-    #[test]
-    fn parse_array() {
-        eprintln!(
-            "{:?}",
-            serde_json::from_str::<Vec<u32>>("[ 1, 2, 3]").unwrap()
-        )
-    }
-}

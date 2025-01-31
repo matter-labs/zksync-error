@@ -37,6 +37,7 @@ serde_json = { version = "1.0.128" }
 strum = "0.26.3"
 strum_macros = "0.26.4"
 tera = "1.20.0"
+thiserror = "1"
 vector-map = "1.0.1"
 
 #########################

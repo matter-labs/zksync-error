@@ -2444,6 +2444,7 @@ dependencies = [
  "strum",
  "strum_macros",
  "tera",
+ "thiserror 1.0.69",
  "vector-map",
  "zksync-error-description",
  "zksync-error-model",
@@ -2476,4 +2477,5 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "thiserror 1.0.69",
 ]
