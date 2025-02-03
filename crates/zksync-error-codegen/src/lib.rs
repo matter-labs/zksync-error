@@ -13,7 +13,6 @@ use arguments::GenerationArguments;
 use error::ProgramError;
 use loader::builder::build_model;
 use loader::link::Link;
-use vector_map::VecMap;
 
 use crate::codegen::file::File;
 use crate::codegen::mdbook::config::MDBookBackendConfig;
@@ -26,7 +25,7 @@ pub fn default_load_and_generate(root_link: &str, input_links: Vec<&str>) {
     if let Err(e) = load_and_generate(GenerationArguments {
         verbose: true,
         root_link: root_link.to_owned(),
-        outputs: vec![("../zksync_error".into(), Backend::Rust, VecMap::new())],
+        outputs: vec![("../zksync_error".into(), Backend::Rust, vec![])],
         input_links: input_links.into_iter().map(Into::into).collect(),
     }) {
         eprintln!("{e:#?}")
@@ -48,9 +47,11 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
     let model = build_model(&Link::parse(root_link)?, &additions?, *verbose)?;
 
     for (output_directory, backend_type, backend_arguments) in outputs {
+        let backend_arguments = vector_map::VecMap::from_iter(backend_arguments.iter().cloned());
         if *verbose {
-            eprintln!("Selected backend: {backend_type:?}. \nGenerating files...");
+            eprintln!("Selected backend: {backend_type:?}, \nGenerating files...");
         }
+
         let result = match backend_type {
             arguments::Backend::Rust => {
                 let mut backend = RustBackend::new(&model);
