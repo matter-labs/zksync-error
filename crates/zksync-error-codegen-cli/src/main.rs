@@ -14,6 +14,6 @@ fn main_inner(arguments: Arguments) -> Result<(), ProgramError> {
 fn main() {
     let arguments = Arguments::parse();
     if let Err(error) = main_inner(arguments) {
-        eprintln!("{error:#?}")
+        eprintln!("{error}")
     }
 }

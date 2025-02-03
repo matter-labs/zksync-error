@@ -152,7 +152,7 @@ where
     fn merge(&mut self, other: &Self) -> Result<(), MergeError> {
         match (self.as_mut(), other) {
             (None, None) => Ok(()),
-            (Some(_), None) => todo!(),
+            (Some(_), None) => Ok(()),
             (None, Some(_)) => {
                 *self = other.clone();
                 Ok(())

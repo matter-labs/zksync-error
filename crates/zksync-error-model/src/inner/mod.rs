@@ -49,6 +49,17 @@ impl Model {
     ) -> Self {
         Self { types, domains }
     }
+
+    pub fn components(&self) -> impl Iterator<Item = &ComponentDescription> {
+        self.domains
+            .values()
+            .flat_map(|domain| domain.components.values())
+    }
+
+    pub fn errors(&self) -> impl Iterator<Item = &ErrorDescription> {
+        self.components()
+            .flat_map(|component| component.errors.iter())
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize)]
@@ -69,6 +80,7 @@ pub struct DomainDescription {
 pub struct ComponentMetadata {
     pub name: ComponentName,
     pub code: ComponentCode,
+    pub domain: Rc<DomainMetadata>,
     pub bindings: BTreeMap<LanguageName, String>,
     pub identifier: String,
     pub description: String,

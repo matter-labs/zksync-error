@@ -115,16 +115,14 @@ fn translate_domain_metadata(
     }
 }
 
-fn translate_component_metadata(
-    meta: &crate::inner::ComponentMetadata,
-    domain_name: &str,
-) -> ComponentMetadata {
+fn translate_component_metadata(meta: &crate::inner::ComponentMetadata) -> ComponentMetadata {
     let crate::inner::ComponentMetadata {
         name,
         code,
         bindings,
         identifier,
         description,
+        domain,
     } = meta.clone();
     ComponentMetadata {
         name,
@@ -132,7 +130,7 @@ fn translate_component_metadata(
         bindings,
         identifier,
         description,
-        domain_name: domain_name.to_string(),
+        domain_name: domain.name.to_string(),
     }
 }
 fn translate_field(field: &crate::inner::FieldDescription) -> FieldDescription {
@@ -257,12 +255,11 @@ pub fn flatten(model: &Model) -> UnpackedModel {
             domain_name.to_string(),
             translate_domain_metadata(meta, component_names),
         );
-        result.components.extend(components.iter().map(|(n, c)| {
-            (
-                n.to_string(),
-                translate_component_metadata(&c.meta, domain_name.as_str()),
-            )
-        }));
+        result.components.extend(
+            components
+                .iter()
+                .map(|(n, c)| (n.to_string(), translate_component_metadata(&c.meta))),
+        );
 
         for component in components.values() {
             result.errors.extend(

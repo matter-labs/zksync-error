@@ -1,3 +1,4 @@
+pub mod cargo;
 pub mod documentation;
 pub mod error;
 pub mod identifier;

@@ -305,6 +305,7 @@ fn translate_component<'a>(
         },
         identifier: identifier_encoding.clone().unwrap_or_default(),
         description: description.clone().unwrap_or_default(),
+        domain: ctx.domain.clone(),
     });
 
     let transformed_errors = translate_errors(errors, ctx, &component_meta)?;

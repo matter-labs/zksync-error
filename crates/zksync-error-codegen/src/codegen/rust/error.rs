@@ -6,4 +6,6 @@ pub enum GenerationError {
     ModelError(#[from] ModelValidationError),
     #[error(transparent)]
     ModelSerialization(#[from] serde_json::Error),
+    #[error("rustfmt: {0:#?}")]
+    FormatError(#[from] rustfmt_wrapper::Error),
 }

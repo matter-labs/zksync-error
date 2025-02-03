@@ -1,178 +1,205 @@
+use proc_macro2::TokenStream;
+use quote::quote;
 use std::path::PathBuf;
-
-use crate::codegen::printer::PrettyPrinter;
-use crate::codegen::rust::config::Config;
-use crate::codegen::rust::error::GenerationError;
-use crate::codegen::rust::RustBackend;
-use crate::codegen::File;
 use zksync_error_model::inner::ComponentDescription;
 
+use crate::codegen::rust::config::Config;
+use crate::codegen::rust::error::GenerationError;
+use crate::codegen::rust::util::codegen::doc_tokens;
+use crate::codegen::rust::util::codegen::ident;
+use crate::codegen::rust::RustBackend;
+use crate::codegen::File;
+use zksync_error_model::inner::ErrorDescription;
+use zksync_error_model::inner::ErrorDocumentation;
+use zksync_error_model::inner::FieldDescription;
+
+fn error_documentation(description: &ErrorDescription) -> TokenStream {
+    if let Some(ErrorDocumentation {
+        description,
+        summary,
+        ..
+    }) = description.documentation.as_ref()
+    {
+        let summary = summary.clone().unwrap_or_default();
+        let result = if description.is_empty() {
+            summary
+        } else {
+            format!("# Summary \n{summary}\n\n# Description\n{description}\n")
+        };
+        let result_trimmed = result.trim();
+        if result_trimmed.is_empty() {
+            quote! {}
+        } else {
+            doc_tokens(result_trimmed)
+        }
+    } else {
+        quote! {}
+    }
+}
+
+fn component_doc(component: &ComponentDescription) -> TokenStream {
+    doc_tokens(&format!(
+        "{}
+
+Domain: {}",
+        component.meta.description, component.meta.domain.name,
+    ))
+}
+
 impl RustBackend {
-    fn define_errors_of_component(
-        &self,
-        component: &ComponentDescription,
-        config: &Config,
-    ) -> Result<String, GenerationError> {
-        let error_name = Self::component_type_name(component)?;
-        let mut result = PrettyPrinter::default();
-
-        if !component.meta.description.is_empty() {
-            for line in component.meta.description.lines() {
-                result.push_line(&format!(r#"/// {line}"#));
-            }
+    fn error_variant(&self, error: &ErrorDescription) -> Result<TokenStream, GenerationError> {
+        let ErrorDescription { code, fields, .. } = error;
+        let mut field_tokens = Vec::new();
+        for FieldDescription { name, r#type } in fields {
+            let name = ident(name);
+            let typ = ident(&self.get_rust_type(r#type)?);
+            field_tokens.push(quote! { #name : #typ  });
         }
-        result.push_line(&format!(
-            r#"
-#[repr(u32)]
-#[derive(AsRefStr, Clone, Debug, Eq, EnumDiscriminants, PartialEq, serde::Serialize, serde::Deserialize)]
-#[strum_discriminants(name({error_name}Code))]
-#[strum_discriminants(vis(pub))]
-#[strum_discriminants(derive(AsRefStr, FromRepr))]
-#[non_exhaustive]
-pub enum {error_name} {{"#
-        ));
-        result.indentation.increase();
-        for error in &component.errors {
-            result.push_block(&self.error_kind(error)?);
-        }
-        result.push_line(&format!(
-            r#"
-}} // end of {error_name}
-"#
-        ));
-        result.indentation.decrease();
-
-        result.push_line(&format!(
-            r#"
-impl std::error::Error for {error_name} {{}}
-
-impl NamedError for {error_name} {{
-    fn get_error_name(&self) -> String {{
-        self.as_ref().to_owned()
-    }}
-}}
-impl NamedError for {error_name}Code {{
-    fn get_error_name(&self) -> String {{
-        self.as_ref().to_owned()
-    }}
-}}
-
-impl From<{error_name}> for crate::ZksyncError {{
-    fn from(val: {error_name}) -> Self {{
-        val.to_unified()
-    }}
-}}
-"#
-        ));
-
-        if config.use_anyhow {
-            result.push_line(&format!(
-                r#"
-impl From<anyhow::Error> for {error_name} {{
-    fn from(value: anyhow::Error) -> Self {{
-        let message = format!("{{value:#?}}");
-        {error_name}::GenericError {{ message }}
-    }}
-}}
-"#
-            ));
-        }
-        result.push_line(&format!(r#"
-impl Documented for {error_name} {{
-    type Documentation = &'static zksync_error_description::ErrorDocumentation;
-
-    fn get_documentation(&self) -> Result<Option<Self::Documentation>, crate::documentation::DocumentationError> {{
-        self.to_unified().get_identifier().get_documentation()
-    }}
-}}
-"#
-        ));
-
-        result.push_line(&format!(
-            r#"
-impl std::fmt::Display for {error_name} {{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
-       f.write_fmt(format_args!("{{self:?}}"))
-    }}
-}}
-"#
-        ));
-
-        result.push_line(&format!(
-            r#"
-impl CustomErrorMessage for {error_name} {{
-    fn get_message(&self) -> String {{
-        match self {{"#,
-        ));
-        result.indentation.increase_by(3);
-
-        for error in &component.errors {
-            result.push_block(&self.error_kind_match(component, error)?);
-            let message = &error.message;
-            let identifier = &error.get_identifier().to_string();
-            result.push_line(&format!(" => {{ format!(\"{identifier} {message}\") }},"));
-        }
-        for _ in 0..3 {
-            result.indentation.decrease();
-            result.push_line("}");
-        }
-
-        result.push_line(&format!(
-            r#"
-impl From<{error_name}> for crate::packed::PackedError<crate::error::domains::ZksyncError> {{
-    fn from(value: {error_name}) -> Self {{
-        crate::packed::pack(value)
-    }}
-}}
-
-impl From<{error_name}> for crate::serialized::SerializedError {{
-    fn from(value: {error_name}) -> Self {{
-        let packed = crate::packed::pack(value);
-        crate::serialized::serialize(packed).expect("Internal serialization error.")
-    }}
-}}"#
-        ));
-
-        Ok(result.get_buffer())
+        let error_name = RustBackend::error_ident(error);
+        let doc = error_documentation(error);
+        let field_tokens_if_nonempty = if fields.is_empty() {
+            quote! {}
+        } else {
+            quote! { {  #( #field_tokens , )* } }
+        };
+        Ok(quote! { #doc
+                     #error_name #field_tokens_if_nonempty = # code
+        })
     }
 
     pub fn generate_file_error_definitions(
         &mut self,
         config: &Config,
     ) -> Result<File, GenerationError> {
-        let mut gen = PrettyPrinter::default();
+        let definitions = self.model.components().map(|component| -> TokenStream {
 
-        Self::preamble(&mut gen);
 
-        gen.push_str(
-            r#"
+            let component_code = RustBackend::component_code_ident(&component.meta);
+            let error_variants = component.errors.iter().flat_map(|component| self.error_variant(component));
+            let component_name = RustBackend::component_ident(&component.meta);
 
-#![allow(unused)]
-#![allow(non_camel_case_types)]
+            let component_doc = component_doc(component);
+            let from_anyhow =
+                config.use_anyhow.then_some(
+                    quote! {
+                        impl From<anyhow::Error> for #component_name {
+                            fn from(value: anyhow::Error) -> Self {
+                                let message = format!("{value:#?}");
+                                #component_name::GenericError { message }
+                            }
+                        }
+                    });
 
-use crate::documentation::Documented;
-use crate::error::CustomErrorMessage;
-use crate::error::NamedError;
-use crate::error::ICustomError as _;
-use crate::error::IError as _;
-use strum_macros::AsRefStr;
-use strum_macros::EnumDiscriminants;
-use strum_macros::FromRepr;
-"#,
-        );
+            let impl_custom_error_message = {
 
-        for component in self
-            .model
-            .domains
-            .values()
-            .flat_map(|domain| domain.components.values())
-        {
-            gen.push_str(&self.define_errors_of_component(component, config)?)
-        }
+                let branch_patterns = component.errors.iter().map(|error| {
+                    let error_name = RustBackend::error_ident(error);
+                    let field_tokens = if error.fields.is_empty() {
+                        quote! { }
+                    }
+                    else {
+                        let pattern_fields = error.fields.iter().map( | field | ident(&field.name));
+                        quote! { {  #( #pattern_fields, )* } }
+                    };
+                    quote! { #component_name :: #error_name #field_tokens }
+                });
+
+                let messages = component.errors.iter().map(|error| { format!("{} {}", error.get_identifier(), error.message) } );
+                quote! {
+                    impl CustomErrorMessage for #component_name {
+                        fn get_message(&self) -> String {
+                            match self {
+                                #( #branch_patterns => { format! ( #messages ) } , )*
+                            }
+                        }
+                    }
+                }
+
+            };
+            quote! {
+
+                #component_doc
+                #[repr(u32)]
+                #[derive(AsRefStr, Clone, Debug, Eq, EnumDiscriminants, PartialEq, serde::Serialize, serde::Deserialize)]
+                #[strum_discriminants(name(#component_code))]
+                #[strum_discriminants(vis(pub))]
+                #[strum_discriminants(derive(AsRefStr, FromRepr))]
+                #[non_exhaustive]
+                pub enum #component_name {
+
+                    #( #error_variants , )*
+                }
+
+                impl std::error::Error for #component_name {}
+
+                impl NamedError for #component_name {
+                    fn get_error_name(&self) -> String {
+                        self.as_ref().to_owned()
+                    }
+                }
+                impl NamedError for #component_code {
+                    fn get_error_name(&self) -> String {
+                        self.as_ref().to_owned()
+                    }
+                }
+
+                impl From<#component_name> for crate::ZksyncError {
+                    fn from(val: #component_name) -> Self {
+                        val.to_unified()
+                    }
+                }
+                impl std::fmt::Display for #component_name {
+                    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        f.write_fmt(format_args!("{self:?}"))
+                    }
+                }
+                impl Documented for #component_name {
+                    type Documentation = &'static zksync_error_description::ErrorDocumentation;
+
+                    fn get_documentation(&self) -> Result<Option<Self::Documentation>, crate::documentation::DocumentationError> {
+                        self.to_unified().get_identifier().get_documentation()
+                    }
+                }
+                #from_anyhow
+
+
+                impl From<#component_name> for crate::packed::PackedError<crate::error::domains::ZksyncError> {
+                    fn from(value: #component_name) -> Self {
+                        crate::packed::pack(value)
+                    }
+                }
+
+                impl From<#component_name> for crate::serialized::SerializedError {
+                    fn from(value: #component_name) -> Self {
+                        let packed = crate::packed::pack(value);
+                        crate::serialized::serialize(packed).expect("Internal serialization error.")
+                    }
+                }
+
+                #impl_custom_error_message
+            }
+
+        });
+
+        let contents = quote! {
+            #![allow(unused)]
+            #![allow(non_camel_case_types)]
+
+            use crate::documentation::Documented;
+            use crate::error::CustomErrorMessage;
+            use crate::error::NamedError;
+            use crate::error::ICustomError as _;
+            use crate::error::IError as _;
+            use strum_macros::AsRefStr;
+            use strum_macros::EnumDiscriminants;
+            use strum_macros::FromRepr;
+
+            #( #definitions )*
+        };
 
         Ok(File {
+            content: Self::format_with_preamble(contents)?,
             relative_path: PathBuf::from("src/error/definitions.rs"),
-            content: gen.get_buffer(),
         })
     }
 }

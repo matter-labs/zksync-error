@@ -31,11 +31,14 @@ cargo_metadata = "0.18"
 clap = { version = "4.5.21", features = ["derive", "string"] }
 include_dir = "0.7.4"
 maplit = "1.0.2"
+quote = { version = "1.0.38" }
 reqwest = { version = "0.12.9", features = [ "blocking" ] }
+rustfmt-wrapper = "0.2.1"
 serde = { version = "1.0.210", features = [ "derive" ] }
 serde_json = { version = "1.0.128" }
 strum = "0.26.3"
 strum_macros = "0.26.4"
+syn = { version = "2.0.96", features = [ "full" ] }
 tera = "1.20.0"
 thiserror = "1"
 vector-map = "1.0.1"
