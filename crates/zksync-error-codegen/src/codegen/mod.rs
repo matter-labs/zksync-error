@@ -1,6 +1,5 @@
 pub mod file;
 pub mod mdbook;
-pub mod printer;
 pub mod rust;
 
 use file::File;
