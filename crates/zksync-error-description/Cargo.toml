@@ -8,15 +8,17 @@ edition.workspace = true
 version.workspace = true
 
 [features]
-# This crate exposes a public model of error hierarchy, available for the
-# generated crate `zksync-error`
+# This crate `zksync-error-description` exposes a public model of error
+# hierarchy, available for the generated crate `zksync-error`
 #
-# The crate `zksync_error-model` defines an internal model of error hierarchy,
-# used by `zksync-error-codegen`.
+# The other crate `zksync-error-model` defines an internal model of error
+# hierarchy, used by `zksync-error-codegen`.
 #
-# Enable the feature `with_adapter` to provide a converter from the internal model used by `zksync_error` and  external-facing
-#Enable if this crate should expose the adapter from the internal model to the external model accessible to the generated code
-# `zksync-error-description` is a dependency
+# Enable the feature `with_adapter` only for `zksync-error-codegen`.
+# It exposes a converter from the internal model format (used by
+# `zksync-error-codegen`) to the user-facing model (used by generated code in
+# `zksync-error`).
+#
 with_adapter = [ "dep:zksync-error-model" ]
 
 
