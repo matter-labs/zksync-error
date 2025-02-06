@@ -29,6 +29,8 @@ impl RustBackend {
         let interface_modules = self.model.domains.values().map( |domain| ->TokenStream{
             let outer_module = ident(&domain.meta.identifier);
 
+            let domain_name = RustBackend::domain_ident(&domain.meta);
+            let domain_error_name = ident(&format!("{domain_name}Error"));
             let component_modules = domain.components.values().flat_map( |component| ->TokenStream {
 
 
@@ -58,6 +60,8 @@ impl RustBackend {
 
             quote!{
                 pub mod #outer_module {
+
+                   pub use crate::error::domains::#domain_name as #domain_error_name;
                    #( #component_modules )*
                 }
             }
