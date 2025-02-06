@@ -199,12 +199,12 @@
             ]
         },
         {
-            "domain_name": "Anvil",
+            "domain_name": "AnvilZKS",
             "domain_code": 5,
-            "identifier_encoding": "anvil",
+            "identifier_encoding": "anvil_zks",
             "description": "Errors originating in Anvil for ZKsync.",
             "bindings": {
-                "rust": "Anvil"
+                "rust": "AnvilZKS"
             },
             "components" : []
         },
