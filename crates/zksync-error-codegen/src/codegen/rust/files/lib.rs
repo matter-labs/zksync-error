@@ -54,6 +54,12 @@ impl RustBackend {
                             };
                         }
                         pub use crate:: #macro_name as generic_error;
+
+                        pub fn to_generic<T: std::fmt::Display>(err: T) -> #alias {
+                            GenericError {
+                                message: err.to_string(),
+                            }
+                        }
                     }
                 }
             });
