@@ -60,6 +60,11 @@ impl RustBackend {
                                 message: err.to_string(),
                             }
                         }
+                        pub fn to_domain<T: std::fmt::Display>(err: T) -> super::#domain_error_name {
+                            super::#domain_error_name::#enum_name( GenericError {
+                                message: err.to_string(),
+                            })
+                        }
                     }
                 }
             });
