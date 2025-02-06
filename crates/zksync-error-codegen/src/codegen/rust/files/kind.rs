@@ -34,7 +34,7 @@ impl RustBackend {
                 }
                 pub fn component_code(&self) -> u32 {
                     match self {
-                        #( Kind:: #domains (component) => component.clone() as u32, )*
+                        #( Kind:: #domains (component) => *component as u32, )*
                     }
                 }
             }
