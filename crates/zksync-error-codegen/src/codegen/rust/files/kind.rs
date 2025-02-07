@@ -16,11 +16,7 @@ impl RustBackend {
             use strum_macros::EnumDiscriminants;
             use strum_macros::FromRepr;
 
-            use crate::error::domains::AnvilCode;
-            use crate::error::domains::CompilerCode;
-            use crate::error::domains::CoreCode;
-            use crate::error::domains::FoundryCode;
-            use crate::error::domains::HardhatCode;
+            #(use crate::error::domains:: #domain_codes ;)*
 
             #[derive(Clone, Debug, EnumDiscriminants, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
             #[strum_discriminants(name(DomainCode))]
@@ -38,7 +34,7 @@ impl RustBackend {
                 }
                 pub fn component_code(&self) -> u32 {
                     match self {
-                        #( Kind:: #domains (component) => component.clone() as u32, )*
+                        #( Kind:: #domains (component) => *component as u32, )*
                     }
                 }
             }

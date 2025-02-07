@@ -132,7 +132,26 @@ impl RustBackend {
                                 ZksyncError::#domain( #domain :: #components (self.clone()))
                             }
                         }
+
+                        impl From<#components> for #domain {
+                            fn from(val: #components) -> Self {
+                                #domain::#components(val)
+                            }
+                        }
                     )*
+
+
+                    impl ICustomError<ZksyncError, ZksyncError> for #domain {
+                        fn to_unified(&self) -> ZksyncError {
+                            ZksyncError::#domain(self.clone())
+                        }
+                    }
+
+                    impl From<#domain> for ZksyncError {
+                        fn from(value: #domain) -> Self {
+                            value.to_unified()
+                        }
+                    }
                 }
             },
         );
