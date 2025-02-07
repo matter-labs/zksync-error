@@ -37,8 +37,8 @@ impl RustBackend {
         let result = quote! {
 
 
-            pub mod definitions;
-            pub mod domains;
+            pub(crate) mod definitions;
+            pub(crate) mod domains;
 
             use std::error::Error;
             use crate::identifier::Identifier;
