@@ -43,37 +43,6 @@ fn initialize_tera() -> Result<Tera, <MDBookBackend as Backend<MDBookBackendConf
 }
 
 impl MDBookBackend {
-    fn copy_css(&mut self, _config: &MDBookBackendConfig) -> Result<File, GenerationError> {
-        let filename = "css/version-box.css";
-        let content = TEMPLATES_DIR
-            .get_file(filename)
-            .unwrap_or_else(|| panic!("Missing file `{filename}`"))
-            .contents_utf8()
-            .unwrap_or_else(|| {
-                panic!("Internal error: decoding utf-8 string from file {filename}.")
-            });
-
-        Ok(File {
-            relative_path: PathBuf::from(filename),
-            content: content.into(),
-        })
-    }
-    fn copy_js(&mut self, _config: &MDBookBackendConfig) -> Result<File, GenerationError> {
-        let filename = "js/version-box.js";
-        let content = TEMPLATES_DIR
-            .get_file(filename)
-            .unwrap_or_else(|| panic!("Missing file `{filename}`"))
-            .contents_utf8()
-            .unwrap_or_else(|| {
-                panic!("Internal error: decoding utf-8 string from file {filename}.")
-            });
-
-        Ok(File {
-            relative_path: PathBuf::from(filename),
-            content: content.into(),
-        })
-    }
-
     fn copy_as_is(
         &mut self,
         filename: &str,
