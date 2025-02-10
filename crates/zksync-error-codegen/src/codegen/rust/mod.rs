@@ -69,15 +69,13 @@ impl RustBackend {
         let all_domains: Vec<_> = model
             .domains
             .values()
-            .cloned()
-            .map(|domain| ident(&Self::domain_type_name(domain.meta.as_ref()).unwrap()))
+            .map(|domain| Self::domain_ident(&domain.meta))
             .collect();
 
         let all_domain_codes: Vec<_> = model
             .domains
             .values()
-            .cloned()
-            .map(|domain| ident(&Self::domain_code_type_name(domain.meta.as_ref()).unwrap()))
+            .map(|domain| Self::domain_code_ident(&domain.meta))
             .collect();
 
         Self {
