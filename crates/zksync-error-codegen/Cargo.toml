@@ -21,6 +21,7 @@ reqwest.workspace = true
 rustfmt-wrapper.workspace = true
 serde = { workspace = true, features = [ "rc" ] }
 serde_json.workspace = true
+serde_json_path_to_error.workspace = true
 strum.workspace = true
 strum_macros.workspace = true
 syn.workspace = true
