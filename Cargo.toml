@@ -37,6 +37,7 @@ reqwest = { version = "0.12.9", features = [ "blocking" ] }
 rustfmt-wrapper = "0.2.1"
 serde = { version = "1.0.210", features = [ "derive" ] }
 serde_json = { version = "1.0.128" }
+serde_json_path_to_error = "0.1.4"
 strum = "0.26.3"
 strum_macros = "0.26.4"
 syn = { version = "2.0.96", features = [ "full" ] }

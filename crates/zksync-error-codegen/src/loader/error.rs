@@ -26,7 +26,12 @@ pub enum FileFormatError {
     ExpectedFullGotComponent { origin: Link },
     #[error("File `{origin}` contains just an array of errors, but a master error database should describe at least one domain and one component.")]
     ExpectedFullGotErrors { origin: Link },
-    #[error("Error parsing error description: {inner}.\n File contents: \n {contents}")]
+    #[error(
+        "Error parsing error description in JSON file.
+{inner}
+Note that the line number/column may be reported incorrectly.
+{contents}"
+    )]
     ParseError {
         contents: String,
         #[source]

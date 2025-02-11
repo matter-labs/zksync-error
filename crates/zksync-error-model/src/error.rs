@@ -42,5 +42,10 @@ Parent domain:
 {3:#?}
  "
     )]
-    NonUniqueErrors(ErrorDescription, ErrorDescription, ComponentMetadata, DomainMetadata),
+    NonUniqueErrors(
+        ErrorDescription,
+        ErrorDescription,
+        ComponentMetadata,
+        DomainMetadata,
+    ),
 }
