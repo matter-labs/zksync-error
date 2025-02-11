@@ -75,9 +75,7 @@ fn ensure_unique_components(domain: &DomainDescription) -> Result<(), ModelValid
 
 fn ensure_unique_errors(component: &ComponentDescription) -> Result<(), ModelValidationError> {
     if let Some((error1, error2)) = find_duplicate_by(component.errors.iter(), |e| &e.name)
-        .or(find_duplicate_by(component.errors.iter(), |e| {
-            e.code
-        }))
+        .or(find_duplicate_by(component.errors.iter(), |e| e.code))
     {
         Err(ModelValidationError::NonUniqueErrors(
             error1.clone(),
