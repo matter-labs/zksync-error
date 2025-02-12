@@ -6,12 +6,12 @@ use file::File;
 
 pub trait IBackendConfig {}
 
-pub trait Backend<Config>
-where
-    Config: IBackendConfig,
+pub trait Backend
 {
     type Error;
+    type Config: IBackendConfig;
     fn get_name() -> &'static str;
     fn get_language_name() -> &'static str;
-    fn generate(&mut self, config: &Config) -> Result<Vec<File>, Self::Error>;
+    fn generate(&mut self, config: &Self::Config) -> Result<Vec<File>, Self::Error>;
+
 }

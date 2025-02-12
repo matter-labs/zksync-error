@@ -26,9 +26,9 @@ pub struct RustBackend {
     all_domain_codes: Vec<TokenStream>,
 }
 
-impl Backend<RustBackendConfig> for RustBackend {
+impl Backend for RustBackend {
     type Error = GenerationError;
-
+    type Config = RustBackendConfig;
     fn get_name() -> &'static str {
         "rust"
     }
