@@ -30,7 +30,7 @@ impl MDBookBackend {
 
 static TEMPLATES_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/doc_templates/mdbook");
 
-fn initialize_tera() -> Result<Tera, <MDBookBackend as Backend<MDBookBackendConfig>>::Error> {
+fn initialize_tera() -> Result<Tera, <MDBookBackend as Backend>::Error> {
     let mut tera = Tera::default();
     for file in TEMPLATES_DIR.files() {
         if let Some(path) = file.path().to_str() {
@@ -150,11 +150,16 @@ impl MDBookBackend {
         })
     }
 }
-impl Backend<MDBookBackendConfig> for MDBookBackend {
+impl Backend for MDBookBackend {
+    type Config = MDBookBackendConfig;
     type Error = GenerationError;
 
     fn get_name() -> &'static str {
         "markdown-mdbook"
+    }
+
+    fn get_language_name() -> &'static str {
+        "markdown"
     }
 
     fn generate(&mut self, _config: &MDBookBackendConfig) -> Result<Vec<File>, Self::Error> {
@@ -185,9 +190,5 @@ impl Backend<MDBookBackendConfig> for MDBookBackend {
         }
 
         Ok(results)
-    }
-
-    fn get_language_name() -> &'static str {
-        "markdown"
     }
 }
