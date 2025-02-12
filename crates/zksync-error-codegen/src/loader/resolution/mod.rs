@@ -23,6 +23,7 @@ pub enum ResolvedLink {
     DescriptionFile(CollectionFile),
     LocalPath(PathBuf),
     Url(String),
+    Immediate(String),
 }
 
 pub fn resolve(query_link: &Link, context: &ResolutionContext) -> Result<ResolvedLink, LinkError> {
@@ -41,5 +42,8 @@ pub fn resolve(query_link: &Link, context: &ResolutionContext) -> Result<Resolve
         }
         Link::FileLink { path } => Ok(ResolvedLink::LocalPath(path.into())),
         Link::URL { url } => Ok(ResolvedLink::Url(url.to_owned())),
+        Link::DefaultLink => Ok(ResolvedLink::Immediate(
+            super::ZKSYNC_ROOT_CONTENTS.to_owned(),
+        )),
     }
 }

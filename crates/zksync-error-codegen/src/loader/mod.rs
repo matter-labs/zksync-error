@@ -29,6 +29,7 @@ pub fn load(link: &Link) -> Result<Collection, LoadError> {
         }
         ResolvedLink::LocalPath(path) => fetch::from_fs(&path)?,
         ResolvedLink::Url(url) => fetch::from_network(&url)?,
+        ResolvedLink::Immediate(immediate) => immediate,
     };
 
     load_serialized(&contents)
@@ -88,3 +89,8 @@ mod fetch {
         Ok(content)
     }
 }
+
+pub(crate) static ZKSYNC_ROOT_CONTENTS: &str = include_str!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../../zksync-root.json"
+));
