@@ -4,6 +4,7 @@ use super::{error::LinkError, CollectionFile};
 
 #[derive(Clone, Debug)]
 pub enum Link {
+    DefaultLink,
     PackageLink { package: String, filename: String },
     FileLink { path: String },
     URL { url: String },
@@ -13,6 +14,7 @@ impl Link {
     /// Part before "://"
     pub const CARGO_FORMAT_PREFIX: &str = "cargo";
     pub const FILE_FORMAT_PREFIX: &str = "file";
+    pub const DEFAULT_FORMAT_PREFIX: &str = "zksync-error";
     pub const NETWORK_FORMAT_PREFIXES: [&str; 2] = ["https", "http"];
     pub const PACKAGE_SEPARATOR: &str = "@@";
 
@@ -32,6 +34,7 @@ impl Link {
             Some((Link::FILE_FORMAT_PREFIX, path)) => Ok(Link::FileLink {
                 path: path.to_owned(),
             }),
+            Some((Link::DEFAULT_FORMAT_PREFIX, "zksync-root.json")) => Ok(Link::DefaultLink),
             Some((prefix, _)) if Link::NETWORK_FORMAT_PREFIXES.contains(&prefix) => Ok(Link::URL {
                 url: string.to_string(),
             }),
@@ -71,6 +74,9 @@ impl std::fmt::Display for Link {
             )),
             Link::URL { url } => f.write_str(url),
             Link::FileLink { path } => f.write_str(path),
+            Link::DefaultLink => {
+                f.write_str("<Default zksync-root.json file, provided by zksync-error crate>")
+            }
         }
     }
 }
