@@ -368,20 +368,20 @@ fn translate_domain<'a>(
 }
 
 fn load_root_model(root_link: &Link) -> Result<Model, LoadError> {
-    let source = root_link.clone();
+    let origin = root_link.clone();
     match load(root_link)? {
         Collection::Domain(_) => Err(LoadError::FileFormatError(
-            FileFormatError::ExpectedFullGotDomain { origin: source },
+            FileFormatError::ExpectedFullGotDomain { origin },
         )),
         Collection::Component(_) => Err(LoadError::FileFormatError(
-            FileFormatError::ExpectedFullGotComponent { origin: source },
+            FileFormatError::ExpectedFullGotComponent { origin },
         )),
         Collection::Errors(_) => Err(LoadError::FileFormatError(
-            FileFormatError::ExpectedFullGotComponent { origin: source },
+            FileFormatError::ExpectedFullGotComponent { origin },
         )),
         Collection::Root(root) => Ok(translate_model(
             &root,
-            ModelTranslationContext { origin: source },
+            ModelTranslationContext { origin },
         )?),
     }
 }
