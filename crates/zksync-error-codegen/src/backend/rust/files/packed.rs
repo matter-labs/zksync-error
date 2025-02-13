@@ -1,9 +1,9 @@
 use quote::quote;
 use std::path::PathBuf;
 
-use crate::codegen::rust::error::GenerationError;
-use crate::codegen::rust::RustBackend;
-use crate::codegen::File;
+use crate::backend::rust::error::GenerationError;
+use crate::backend::rust::RustBackend;
+use crate::backend::File;
 
 impl RustBackend {
     pub fn generate_file_packed(&mut self) -> Result<File, GenerationError> {

@@ -17,20 +17,13 @@ use zksync_error_model::unpacked::flatten;
 use zksync_error_model::unpacked::UnpackedModel;
 
 pub struct MDBookBackend {
+    _config: MDBookBackendConfig,
     model: Model,
-}
-
-impl MDBookBackend {
-    pub fn new(model: &Model) -> Self {
-        Self {
-            model: model.clone(),
-        }
-    }
 }
 
 static TEMPLATES_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/doc_templates/mdbook");
 
-fn initialize_tera() -> Result<Tera, <MDBookBackend as Backend>::Error> {
+fn initialize_tera() -> Result<Tera, <MDBookBackend as Backend>::GenerationError> {
     let mut tera = Tera::default();
     for file in TEMPLATES_DIR.files() {
         if let Some(path) = file.path().to_str() {
@@ -43,11 +36,7 @@ fn initialize_tera() -> Result<Tera, <MDBookBackend as Backend>::Error> {
 }
 
 impl MDBookBackend {
-    fn copy_as_is(
-        &mut self,
-        filename: &str,
-        _config: &MDBookBackendConfig,
-    ) -> Result<File, GenerationError> {
+    fn copy_as_is(&mut self, filename: &str) -> Result<File, GenerationError> {
         let content = TEMPLATES_DIR
             .get_file(filename)
             .unwrap_or_else(|| panic!("Missing file `{filename}`"))
@@ -67,7 +56,6 @@ impl MDBookBackend {
         &mut self,
         tera: &Tera,
         model: &UnpackedModel,
-        _config: &MDBookBackendConfig,
     ) -> Result<File, GenerationError> {
         let mut context = tera::Context::new();
         context.insert("domains", &model.domains.values().collect::<Vec<_>>());
@@ -86,7 +74,6 @@ impl MDBookBackend {
         tera: &Tera,
         component: &zksync_error_model::unpacked::ComponentMetadata,
         model: &UnpackedModel,
-        _config: &MDBookBackendConfig,
     ) -> Result<File, GenerationError> {
         let mut context = tera::Context::new();
         context.insert("component", component);
@@ -108,7 +95,6 @@ impl MDBookBackend {
         tera: &Tera,
         domain: &zksync_error_model::unpacked::DomainMetadata,
         model: &UnpackedModel,
-        _config: &MDBookBackendConfig,
     ) -> Result<File, GenerationError> {
         let mut context = tera::Context::new();
         context.insert("domain", domain);
@@ -130,7 +116,6 @@ impl MDBookBackend {
         component: &zksync_error_model::unpacked::ComponentMetadata,
         error: &zksync_error_model::unpacked::ErrorDescription,
         model: &UnpackedModel,
-        _config: &MDBookBackendConfig,
     ) -> Result<File, GenerationError> {
         let mut context = tera::Context::new();
         context.insert("domain", domain);
@@ -152,7 +137,14 @@ impl MDBookBackend {
 }
 impl Backend for MDBookBackend {
     type Config = MDBookBackendConfig;
-    type Error = GenerationError;
+    type GenerationError = GenerationError;
+
+    fn new(config: Self::Config, model: &Model) -> Self {
+        Self {
+            _config: config,
+            model: model.clone(),
+        }
+    }
 
     fn get_name() -> &'static str {
         "markdown-mdbook"
@@ -162,27 +154,27 @@ impl Backend for MDBookBackend {
         "markdown"
     }
 
-    fn generate(&mut self, _config: &MDBookBackendConfig) -> Result<Vec<File>, Self::Error> {
+    fn generate(&mut self) -> Result<Vec<File>, Self::GenerationError> {
         let tera = initialize_tera()?;
 
         let model = flatten(&self.model);
         let mut results = vec![
-            self.generate_summary(&tera, &model, _config)?,
-            self.copy_as_is("book.toml", _config)?,
-            self.copy_as_is("css/version-box.css", _config)?,
-            self.copy_as_is("js/version-box.js", _config)?,
+            self.generate_summary(&tera, &model)?,
+            self.copy_as_is("book.toml")?,
+            self.copy_as_is("css/version-box.css")?,
+            self.copy_as_is("js/version-box.js")?,
         ];
 
         for domain in model.domains.values() {
-            results.push(self.generate_domain(&tera, domain, &model, _config)?);
+            results.push(self.generate_domain(&tera, domain, &model)?);
             for component in model.components.values() {
                 if component.domain_name == domain.name {
-                    results.push(self.generate_component(&tera, component, &model, _config)?);
+                    results.push(self.generate_component(&tera, component, &model)?);
                     for error in model.errors.values() {
                         if error.component == component.name {
-                            results.push(self.generate_error(
-                                &tera, domain, component, error, &model, _config,
-                            )?);
+                            results.push(
+                                self.generate_error(&tera, domain, component, error, &model)?,
+                            );
                         }
                     }
                 }
