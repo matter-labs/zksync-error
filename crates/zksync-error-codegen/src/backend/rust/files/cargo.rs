@@ -9,19 +9,22 @@ impl RustBackend {
         if !self.config.generate_cargo_toml {
             return Ok(None);
         }
-
         let import_anyhow = if self.config.use_anyhow {
             r#"anyhow = "1.0""#
         } else {
             ""
         };
+
+        let preamble = RustBackendConfig::PREAMBLE;
         let content = format!(
-            r#"
+            r#"######################################
+# {preamble}
+######################################
+
 [package]
 name = "zksync_error"
 version = "0.1.0"
 edition = "2021"
-[lib]
 
 [dependencies]
 lazy_static = "1.5.0"
