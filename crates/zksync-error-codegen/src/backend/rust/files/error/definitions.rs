@@ -3,12 +3,11 @@ use quote::quote;
 use std::path::PathBuf;
 use zksync_error_model::inner::ComponentDescription;
 
-use crate::codegen::rust::config::Config;
-use crate::codegen::rust::error::GenerationError;
-use crate::codegen::rust::util::codegen::doc_tokens;
-use crate::codegen::rust::util::codegen::ident;
-use crate::codegen::rust::RustBackend;
-use crate::codegen::File;
+use crate::backend::rust::error::GenerationError;
+use crate::backend::rust::util::codegen::doc_tokens;
+use crate::backend::rust::util::codegen::ident;
+use crate::backend::rust::RustBackend;
+use crate::backend::File;
 use zksync_error_model::inner::ErrorDescription;
 use zksync_error_model::inner::ErrorDocumentation;
 use zksync_error_model::inner::FieldDescription;
@@ -67,10 +66,7 @@ impl RustBackend {
         })
     }
 
-    pub fn generate_file_error_definitions(
-        &mut self,
-        config: &Config,
-    ) -> Result<File, GenerationError> {
+    pub fn generate_file_error_definitions(&mut self) -> Result<File, GenerationError> {
         let definitions = self.model.components().map(|component| -> TokenStream {
 
 
@@ -80,7 +76,7 @@ impl RustBackend {
 
             let component_doc = component_doc(component);
             let from_anyhow =
-                config.use_anyhow.then_some(
+                self.config.use_anyhow.then_some(
                     quote! {
                         impl From<anyhow::Error> for #component_name {
                             fn from(value: anyhow::Error) -> Self {

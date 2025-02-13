@@ -21,32 +21,37 @@ use super::Backend;
 use super::File;
 
 pub struct RustBackend {
+    config: RustBackendConfig,
     model: Model,
     all_domains: Vec<TokenStream>,
     all_domain_codes: Vec<TokenStream>,
 }
 
 impl Backend for RustBackend {
-    type Error = GenerationError;
     type Config = RustBackendConfig;
+    type GenerationError = GenerationError;
     fn get_name() -> &'static str {
         "rust"
     }
 
-    fn generate(&mut self, config: &RustBackendConfig) -> Result<Vec<File>, Self::Error> {
-        Ok(vec![
-            self.generate_file_error_definitions(config)?,
-            self.generate_file_error_domains()?,
-            self.generate_file_documentation()?,
-            self.generate_file_error_mod()?,
-            self.generate_file_identifier()?,
-            self.generate_file_kind()?,
-            self.generate_file_lib()?,
-            self.generate_file_packed()?,
-            self.generate_file_serialized()?,
-            self.generate_file_untyped()?,
-            self.generate_file_cargo(config)?,
-            File {
+    fn get_language_name() -> &'static str {
+        "rust"
+    }
+
+    fn generate(&mut self) -> Result<Vec<File>, Self::GenerationError> {
+        Ok([
+            Some(self.generate_file_error_definitions()?),
+            Some(self.generate_file_error_domains()?),
+            Some(self.generate_file_documentation()?),
+            Some(self.generate_file_error_mod()?),
+            Some(self.generate_file_identifier()?),
+            Some(self.generate_file_kind()?),
+            Some(self.generate_file_lib()?),
+            Some(self.generate_file_packed()?),
+            Some(self.generate_file_serialized()?),
+            Some(self.generate_file_untyped()?),
+            self.generate_file_cargo()?,
+            Some(File {
                 relative_path: "resources/error-model-dump.json".into(),
                 content: {
                     let unpacked: UnpackedModel =
@@ -55,17 +60,14 @@ impl Backend for RustBackend {
                         unpacked.into();
                     serde_json::to_string_pretty(&user_facing_model.wrap())?
                 },
-            },
-        ])
+            }),
+        ]
+        .into_iter()
+        .flatten()
+        .collect())
     }
 
-    fn get_language_name() -> &'static str {
-        "rust"
-    }
-}
-
-impl RustBackend {
-    pub fn new(model: &Model) -> Self {
+    fn new(config: Self::Config, model: &Model) -> Self {
         let all_domains: Vec<_> = model
             .domains
             .values()
@@ -79,12 +81,15 @@ impl RustBackend {
             .collect();
 
         Self {
+            config,
             model: model.clone(),
             all_domains,
             all_domain_codes,
         }
     }
+}
 
+impl RustBackend {
     fn format_with_preamble(contents: impl ToString) -> Result<String, rustfmt_wrapper::Error> {
         rustfmt_wrapper::rustfmt(format!(
             r#"

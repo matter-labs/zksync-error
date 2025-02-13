@@ -1,15 +1,16 @@
 use std::path::PathBuf;
 
-use crate::codegen::rust::error::GenerationError;
-use crate::codegen::rust::{RustBackend, RustBackendConfig};
-use crate::codegen::File;
+use crate::backend::rust::error::GenerationError;
+use crate::backend::rust::{RustBackend, RustBackendConfig};
+use crate::backend::File;
 
 impl RustBackend {
-    pub fn generate_file_cargo(
-        &mut self,
-        config: &RustBackendConfig,
-    ) -> Result<File, GenerationError> {
-        let import_anyhow = if config.use_anyhow {
+    pub fn generate_file_cargo(&mut self) -> Result<Option<File>, GenerationError> {
+        if !self.config.generate_cargo_toml {
+            return Ok(None);
+        }
+
+        let import_anyhow = if self.config.use_anyhow {
             r#"anyhow = "1.0""#
         } else {
             ""
@@ -34,9 +35,9 @@ zksync-error-description = {{ git = "{}", branch = "main"}}
             RustBackendConfig::SHARED_MODEL_CRATE_URL,
         );
 
-        Ok(File {
+        Ok(Some(File {
             content,
             relative_path: PathBuf::from("Cargo.toml"),
-        })
+        }))
     }
 }

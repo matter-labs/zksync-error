@@ -1,4 +1,4 @@
-use crate::codegen::rust::RustBackend;
+use crate::backend::rust::RustBackend;
 use proc_macro2::TokenStream;
 use quote::quote;
 use zksync_error_model::inner::Model;
