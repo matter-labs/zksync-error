@@ -1,10 +1,16 @@
 use std::path::PathBuf;
 
+pub struct BackendOutput {
+    pub output_path: PathBuf,
+    pub backend: Backend,
+    pub arguments: Vec<(String, String)>,
+}
+
 pub struct GenerationArguments {
     pub verbose: bool,
     pub root_link: String,
     pub input_links: Vec<String>,
-    pub outputs: Vec<(PathBuf, Backend, Vec<(String, String)>)>,
+    pub outputs: Vec<BackendOutput>,
 }
 
 #[derive(Clone, Debug)]

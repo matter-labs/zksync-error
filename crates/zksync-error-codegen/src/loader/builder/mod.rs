@@ -445,7 +445,7 @@ pub fn build_model(
         root_model
             .merge(&part)
             .map_err(|error| ModelBuildingError::MergeError {
-                merge_error: error,
+                merge_error: Box::new(error),
                 main_model_origin: root_link.clone(),
                 additional_model_origin: input_link.clone(),
             })?
