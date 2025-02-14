@@ -59,7 +59,7 @@ pub enum ModelBuildingError {
         "Error merging models {main_model_origin} and {additional_model_origin}: {merge_error}"
     )]
     MergeError {
-        merge_error: MergeError,
+        merge_error: Box<MergeError>,
         main_model_origin: Link,
         additional_model_origin: Link,
     },

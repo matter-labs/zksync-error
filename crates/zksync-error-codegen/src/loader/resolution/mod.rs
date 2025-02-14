@@ -15,7 +15,7 @@ pub struct ResolutionContext {
 
 impl ResolutionContext {
     pub fn find_package(&self, package: &str) -> Option<&CollectionFile> {
-        self.files.iter().find(|df| &df.package == package)
+        self.files.iter().find(|df| df.package == package)
     }
 }
 

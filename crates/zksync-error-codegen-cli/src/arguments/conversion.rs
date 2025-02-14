@@ -1,3 +1,5 @@
+use zksync_error_codegen::arguments::BackendOutput;
+
 use super::Arguments;
 
 impl From<Arguments> for zksync_error_codegen::arguments::GenerationArguments {
@@ -13,11 +15,11 @@ impl From<Arguments> for zksync_error_codegen::arguments::GenerationArguments {
         zksync_error_codegen::arguments::GenerationArguments {
             verbose,
             root_link: definitions,
-            outputs: vec![(
-                output_directory.into(),
-                backend.into(),
-                backend_args.into_iter().collect(),
-            )],
+            outputs: vec![BackendOutput {
+                output_path: output_directory.into(),
+                backend: backend.into(),
+                arguments: backend_args.into_iter().collect(),
+            }],
             input_links: additional_inputs,
         }
     }

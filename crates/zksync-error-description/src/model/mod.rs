@@ -131,10 +131,4 @@ impl ErrorHierarchy {
             model: self,
         }
     }
-
-    pub fn from_str(serialized_model: &str) -> ErrorHierarchy {
-        let wrapped: WrappedErrorHierarchy =
-            serde_json::from_str(serialized_model).expect("Always valid");
-        wrapped.model
-    }
 }

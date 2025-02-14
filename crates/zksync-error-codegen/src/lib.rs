@@ -25,7 +25,11 @@ pub fn default_load_and_generate(root_link: &str, input_links: Vec<&str>) {
     if let Err(e) = load_and_generate(GenerationArguments {
         verbose: true,
         root_link: root_link.to_owned(),
-        outputs: vec![("../zksync_error".into(), Backend::Rust, vec![])],
+        outputs: vec![arguments::BackendOutput {
+            output_path: "../zksync_error".into(),
+            backend: Backend::Rust,
+            arguments: vec![],
+        }],
         input_links: input_links.into_iter().map(Into::into).collect(),
     }) {
         eprintln!("{e:#?}")
@@ -66,12 +70,17 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
     let additions: Result<Vec<_>, _> = input_links.iter().map(Link::parse).collect();
     let model = build_model(&Link::parse(root_link)?, &additions?, *verbose)?;
 
-    for (output_directory, backend_type, backend_arguments) in outputs {
+    for arguments::BackendOutput {
+        output_path,
+        backend,
+        arguments: backend_arguments,
+    } in outputs
+    {
         if *verbose {
-            eprintln!("Selected backend: {backend_type:?}, \nGenerating files...");
+            eprintln!("Selected backend: {backend:?}, \nGenerating files...");
         }
 
-        let result: Vec<File> = match backend_type {
+        let result: Vec<File> = match backend {
             Backend::Rust => generate::<RustBackend>(backend_arguments.iter().cloned(), &model)?,
             Backend::Mdbook => {
                 generate::<MDBookBackend>(backend_arguments.iter().cloned(), &model)?
@@ -86,7 +95,7 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
             eprintln!("Writing files to disk...");
         }
 
-        create_files_in_result_directory(output_directory, result)?;
+        create_files_in_result_directory(output_path, result)?;
         if *verbose {
             eprintln!("Writing successful.");
         }
