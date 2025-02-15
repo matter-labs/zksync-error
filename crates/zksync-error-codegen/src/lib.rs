@@ -106,11 +106,9 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
 fn create_files_in_result_directory(result_dir: &PathBuf, files: Vec<File>) -> std::io::Result<()> {
     let result_dir = Path::new(result_dir);
 
-    if result_dir.exists() {
-        std::fs::remove_dir_all(result_dir)?;
+    if !result_dir.exists() {
+        std::fs::create_dir(result_dir)?;
     }
-
-    std::fs::create_dir(result_dir)?;
 
     for file in files {
         let path = result_dir.join(file.relative_path);
