@@ -10,9 +10,12 @@ use context::ErrorTranslationContext;
 use context::ModelTranslationContext;
 use context::TypeTranslationContext;
 use error::MissingComponent;
+use error::MissingDomain;
 use error::ModelBuildingError;
 use error::TakeFromError;
 use maplit::btreemap;
+use zksync_error_model::inner::component;
+use zksync_error_model::inner::domain;
 use zksync_error_model::validator::validate;
 
 use crate::description::Collection;
@@ -236,38 +239,46 @@ fn translate_error(
     })
 }
 
-enum FetchComponentResult {
-    Errors(Vec<ErrorDescription>),
-    Component(ComponentDescription),
+fn fetch_named_domain<'a>(
+    link: &str,
+    identifier: &domain::Identifier,
+    ctx: &'a DomainTranslationContext<'a>,
+) -> Result<DomainDescription, TakeFromError> {
+    let file = load(&Link::parse(link)?)?;
+    let domain =
+        file.get_domain(&identifier.name)
+            .ok_or(MissingDomain {
+                domain_name: identifier.name.to_owned(),
+            })?;
+    Ok(translate_domain(domain, ctx)?)
 }
 
 fn fetch_named_component<'a>(
     link: &str,
-    present_component_metadata: &Rc<ComponentMetadata>,
+    identifier: &component::Identifier,
     ctx: &'a ComponentTranslationContext<'a>,
-) -> Result<FetchComponentResult, TakeFromError> {
-    let error_base = load(&Link::parse(link)?)?;
-    match error_base {
+) -> Result<ComponentDescription, TakeFromError> {
+    let file = load(&Link::parse(link)?)?;
+    let component = match file {
         Collection::Root(_) | Collection::Domain(_) | Collection::Component(_) => {
-            let component = error_base
-                .get_component(
-                    &ctx.get_domain(),
-                    &present_component_metadata.identifier.name,
-                )
+            file.get_component(&ctx.get_domain(), &identifier.name)
                 .ok_or(MissingComponent {
                     domain_name: ctx.get_domain(),
-                    component_name: present_component_metadata.identifier.name.to_owned(),
-                })?;
-            Ok(FetchComponentResult::Component(translate_component(
-                component, ctx,
-            )?))
+                    component_name: identifier.name.to_owned(),
+                })?
         }
-        Collection::Errors(errors) => Ok(FetchComponentResult::Errors(translate_errors(
-            &errors,
-            ctx,
-            present_component_metadata,
-        )?)),
-    }
+        Collection::Errors(errors) => &crate::description::Component {
+            component_name: identifier.name.clone(),
+            component_code: identifier.code,
+            identifier_encoding: None,
+            description: None,
+            bindings: crate::description::NameBindings::default(),
+            takeFrom: vec![],
+            errors,
+        },
+    };
+
+    Ok(translate_component(component, ctx)?)
 }
 
 fn translate_errors<'a>(
@@ -275,13 +286,13 @@ fn translate_errors<'a>(
     ctx: &'a ComponentTranslationContext<'a>,
     component_meta: &Rc<ComponentMetadata>,
 ) -> Result<Vec<ErrorDescription>, ModelBuildingError> {
-    let mut transformed_errors = Vec::default();
+    let ctx = ErrorTranslationContext {
+        parent: ctx,
+        component: component_meta.clone(),
+    };
 
+    let mut transformed_errors = Vec::default();
     for error in errors {
-        let ctx = ErrorTranslationContext {
-            parent: ctx,
-            component: component_meta.clone(),
-        };
         transformed_errors.push(translate_error(error, &ctx)?);
     }
     Ok(transformed_errors)
@@ -320,16 +331,12 @@ fn translate_component<'a>(
         errors: transformed_errors,
     };
     for take_from_address in takeFrom {
-        match fetch_named_component(take_from_address, &component_meta, ctx)
-            .map_err(|e| e.from_address(take_from_address))?
-        {
-            FetchComponentResult::Errors(vec) => result.errors.extend(vec),
-            FetchComponentResult::Component(component_description) => {
-                result
-                    .merge(&component_description)
-                    .map_err(|e| TakeFromError::MergeError(e).from_address(take_from_address))?;
-            }
-        };
+        let component_description =
+            fetch_named_component(take_from_address, &component_meta.identifier, ctx)
+                .map_err(|e| e.from_address(take_from_address))?;
+        result
+            .merge(&component_description)
+            .map_err(|e| TakeFromError::MergeError(e).from_address(take_from_address))?;
     }
 
     Ok(result)
@@ -346,6 +353,7 @@ fn translate_domain<'a>(
         description,
         components,
         bindings,
+        takeFrom,
     } = value;
     let mut new_components: BTreeMap<_, _> = BTreeMap::default();
     let metadata = Rc::new(DomainMetadata {
@@ -360,23 +368,37 @@ fn translate_domain<'a>(
             "typescript".into() => bindings.typescript.clone().unwrap_or(domain_name.clone()),
         },
     });
-    for component in components {
+
+    {
         let ctx = ComponentTranslationContext {
             domain: metadata.clone(),
             parent: ctx,
         };
+        for component in components {
 
-        let translated_component = translate_component(component, &ctx)?;
-        new_components.insert(
-            translated_component.meta.identifier.name.clone(),
-            translated_component,
-        );
+            let translated_component = translate_component(component, &ctx)?;
+            new_components.insert(
+                translated_component.meta.identifier.name.clone(),
+                translated_component,
+            );
+        }
     }
 
-    Ok(DomainDescription {
+    let mut result = DomainDescription {
         meta: metadata,
         components: new_components,
-    })
+    };
+
+    for take_from_address in takeFrom {
+        let domain_description =
+            fetch_named_domain(take_from_address, &result.meta.identifier, ctx)
+                .map_err(|e| e.from_address(take_from_address))?;
+        result
+            .merge(&domain_description)
+            .map_err(|e| TakeFromError::MergeError(e).from_address(take_from_address))?;
+    }
+
+    Ok(result)
 }
 
 fn load_root_model(root_link: &Link) -> Result<Model, LoadError> {

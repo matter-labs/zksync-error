@@ -59,6 +59,8 @@ pub struct Domain {
     pub components: Vec<Component>,
     #[serde(default)]
     pub bindings: NameBindings,
+    #[serde(default)]
+    pub takeFrom: Vec<String>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -142,8 +144,12 @@ pub enum Collection {
 }
 
 impl Root {
+    pub fn get_domain(&self, domain: &str) -> Option<&Domain> {
+        self.domains.iter().find(|d| d.domain_name == domain)
+    }
+
     pub fn get_component(&self, domain: &str, component: &str) -> Option<&Component> {
-        let domain = self.domains.iter().find(|d| d.domain_name == domain)?;
+        let domain = self.get_domain(domain)?;
         let component = domain
             .components
             .iter()
@@ -169,6 +175,13 @@ impl Collection {
             Collection::Component(component) if component.component_name == component_name => {
                 Some(component)
             }
+            _ => None,
+        }
+    }
+    pub fn get_domain(&self, domain_name: &str) -> Option<&Domain> {
+        match self {
+            Collection::Root(root) => root.get_domain(domain_name),
+            Collection::Domain(domain) if domain.domain_name == domain_name => Some(domain),
             _ => None,
         }
     }

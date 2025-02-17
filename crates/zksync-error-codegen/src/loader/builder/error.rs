@@ -12,12 +12,21 @@ pub struct MissingComponent {
 }
 
 #[derive(Debug, thiserror::Error)]
+#[error("Missing domain {domain_name}")]
+pub struct MissingDomain {
+    pub domain_name: String,
+}
+
+#[derive(Debug, thiserror::Error)]
 pub enum TakeFromError {
     #[error("Error while building model following a `takeFrom` link: {0}")]
     IOError(#[from] LoadError),
 
     #[error("Error while building model following a `takeFrom` link: {0}")]
     ParsingError(#[from] serde_json::Error),
+
+    #[error("Error while building model following a `takeFrom` link: {0}")]
+    MissingDomain(#[from] MissingDomain),
 
     #[error("Error while building model following a `takeFrom` link: {0}")]
     MissingComponent(#[from] MissingComponent),
