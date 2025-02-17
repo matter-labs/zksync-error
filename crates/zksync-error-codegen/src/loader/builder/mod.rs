@@ -258,13 +258,12 @@ fn fetch_named_component<'a>(
 ) -> Result<ComponentDescription, TakeFromError> {
     let file = load(&Link::parse(link)?)?;
     let component = match file {
-        Collection::Root(_) | Collection::Domain(_) | Collection::Component(_) => {
-            file.get_component(&ctx.get_domain(), &identifier.name)
-                .ok_or(MissingComponent {
-                    domain_name: ctx.get_domain(),
-                    component_name: identifier.name.to_owned(),
-                })?
-        }
+        Collection::Root(_) | Collection::Domain(_) | Collection::Component(_) => file
+            .get_component(&ctx.get_domain(), &identifier.name)
+            .ok_or(MissingComponent {
+                domain_name: ctx.get_domain(),
+                component_name: identifier.name.to_owned(),
+            })?,
         Collection::Errors(errors) => &crate::description::Component {
             component_name: identifier.name.clone(),
             component_code: identifier.code,
@@ -373,7 +372,6 @@ fn translate_domain<'a>(
             parent: ctx,
         };
         for component in components {
-
             let translated_component = translate_component(component, &ctx)?;
             new_components.insert(
                 translated_component.meta.identifier.name.clone(),
