@@ -377,7 +377,7 @@ fn load_root_model(root_link: &Link) -> Result<Model, LoadError> {
             FileFormatError::ExpectedFullGotComponent { origin },
         )),
         Collection::Errors(_) => Err(LoadError::FileFormatError(
-            FileFormatError::ExpectedFullGotComponent { origin },
+            FileFormatError::ExpectedFullGotErrors { origin },
         )),
         Collection::Root(root) => Ok(translate_model(&root, ModelTranslationContext { origin })?),
     }
