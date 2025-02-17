@@ -37,7 +37,7 @@ impl RustBackend {
         };
 
         let interface_modules = self.model.domains.values().map( |domain| ->TokenStream{
-            let outer_module = ident(&domain.meta.identifier);
+            let outer_module = ident(&domain.meta.identifier.encoding);
 
             let domain_name = RustBackend::domain_ident(&domain.meta);
             let domain_error_name = ident(&format!("{domain_name}Error"));
@@ -45,7 +45,7 @@ impl RustBackend {
             let component_modules = domain.components.values().flat_map( |component| ->TokenStream {
 
 
-                let inner_module = ident(&component.meta.identifier);
+                let inner_module = ident(&component.meta.identifier.encoding);
                 let enum_name = Self::component_ident(&component.meta);
                 let enum_code_name = Self::component_code_ident(&component.meta);
                 let alias = Self::component_error_alias_ident(&component.meta);

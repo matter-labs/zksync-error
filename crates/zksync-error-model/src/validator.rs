@@ -40,10 +40,12 @@ pub fn validate(model: &Model) -> Result<(), ModelValidationError> {
 }
 
 fn ensure_unique_domains(model: &Model) -> Result<(), ModelValidationError> {
-    if let Some((d1, d2)) = find_duplicate_by(model.domains.values(), |d| &d.meta.name)
-        .or(find_duplicate_by(model.domains.values(), |d| d.meta.code))
+    if let Some((d1, d2)) = find_duplicate_by(model.domains.values(), |d| &d.meta.identifier.name)
         .or(find_duplicate_by(model.domains.values(), |d| {
-            &d.meta.identifier
+            d.meta.identifier.code
+        }))
+        .or(find_duplicate_by(model.domains.values(), |d| {
+            &d.meta.identifier.encoding
         }))
     {
         Err(ModelValidationError::NonUniqueDomains(
@@ -55,13 +57,14 @@ fn ensure_unique_domains(model: &Model) -> Result<(), ModelValidationError> {
     }
 }
 fn ensure_unique_components(domain: &DomainDescription) -> Result<(), ModelValidationError> {
-    if let Some((c1, c2)) = find_duplicate_by(domain.components.values(), |c| &c.meta.name)
-        .or(find_duplicate_by(domain.components.values(), |d| {
-            d.meta.code
-        }))
-        .or(find_duplicate_by(domain.components.values(), |c| {
-            &c.meta.identifier
-        }))
+    if let Some((c1, c2)) =
+        find_duplicate_by(domain.components.values(), |c| &c.meta.identifier.name)
+            .or(find_duplicate_by(domain.components.values(), |d| {
+                d.meta.identifier.code
+            }))
+            .or(find_duplicate_by(domain.components.values(), |c| {
+                &c.meta.identifier.encoding
+            }))
     {
         Err(ModelValidationError::NonUniqueComponents(
             c1.meta.as_ref().clone(),

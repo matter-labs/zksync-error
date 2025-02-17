@@ -25,8 +25,8 @@ impl std::fmt::Display for ErrorIdentifier {
 impl ErrorDescription {
     pub fn get_identifier(&self) -> ErrorIdentifier {
         ErrorIdentifier {
-            domain: self.domain.identifier.clone(),
-            component: self.component.identifier.clone(),
+            domain: self.domain.identifier.name.clone(),
+            component: self.component.identifier.name.clone(),
             code: self.code,
         }
     }

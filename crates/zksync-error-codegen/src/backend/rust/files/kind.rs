@@ -9,7 +9,7 @@ impl RustBackend {
     pub fn generate_file_kind(&mut self) -> Result<File, GenerationError> {
         let domains = &self.all_domains;
         let domain_codes = &self.all_domain_codes;
-        let codes = self.model.domains.values().map(|d| d.meta.code);
+        let codes = self.model.domains.values().map(|d| d.meta.identifier.code);
 
         let contents = quote! {
 

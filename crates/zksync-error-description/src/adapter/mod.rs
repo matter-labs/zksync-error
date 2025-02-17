@@ -33,20 +33,23 @@ impl From<inner::TypeDescription> for model::TypeDescription {
 impl From<inner::DomainMetadata> for model::DomainMetadata {
     fn from(val: inner::DomainMetadata) -> Self {
         let inner::DomainMetadata {
-            name,
-            code,
             components,
             bindings,
-            identifier,
+            identifier:
+                zksync_error_model::inner::domain::Identifier {
+                    name,
+                    code,
+                    encoding,
+                },
             description,
         } = val;
         model::DomainMetadata {
-            name,
-            code,
             components,
             bindings,
-            identifier,
+            identifier: encoding.to_owned(),
             description,
+            name,
+            code,
         }
     }
 }
@@ -71,11 +74,14 @@ impl From<inner::UnpackedModel> for model::ErrorHierarchy {
 impl From<inner::ComponentMetadata> for model::ComponentMetadata {
     fn from(val: inner::ComponentMetadata) -> Self {
         let inner::ComponentMetadata {
-            name,
-            code,
             domain_name,
             bindings,
-            identifier,
+            identifier:
+                zksync_error_model::inner::component::Identifier {
+                    name,
+                    code,
+                    encoding,
+                },
             description,
         } = val;
         model::ComponentMetadata {
@@ -83,8 +89,8 @@ impl From<inner::ComponentMetadata> for model::ComponentMetadata {
             code,
             domain_name,
             bindings,
-            identifier,
             description,
+            identifier: encoding.to_owned(),
         }
     }
 }

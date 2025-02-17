@@ -2,6 +2,10 @@ use std::{collections::BTreeMap, rc::Rc};
 
 use super::error::ModelValidationError;
 
+pub mod component;
+pub mod domain;
+pub mod error;
+
 pub type LanguageName = String;
 pub type TypeName = String;
 pub type FieldName = String;
@@ -64,10 +68,8 @@ impl Model {
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize)]
 pub struct DomainMetadata {
-    pub name: DomainName,
-    pub code: DomainCode,
+    pub identifier: domain::Identifier,
     pub bindings: BTreeMap<LanguageName, String>,
-    pub identifier: String,
     pub description: String,
 }
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize)]
@@ -78,11 +80,9 @@ pub struct DomainDescription {
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize)]
 pub struct ComponentMetadata {
-    pub name: ComponentName,
-    pub code: ComponentCode,
+    pub identifier: component::Identifier,
     pub domain: Rc<DomainMetadata>,
     pub bindings: BTreeMap<LanguageName, String>,
-    pub identifier: String,
     pub description: String,
 }
 
@@ -167,6 +167,6 @@ impl Model {
 
 impl ComponentDescription {
     pub fn mergeable_with(&self, other: &Self) -> bool {
-        self.meta.name == other.meta.name && self.meta.code == other.meta.code
+        self.meta.identifier == other.meta.identifier
     }
 }

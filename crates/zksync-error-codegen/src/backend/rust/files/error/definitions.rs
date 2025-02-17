@@ -41,7 +41,7 @@ fn component_doc(component: &ComponentDescription) -> TokenStream {
         "{}
 
 Domain: {}",
-        component.meta.description, component.meta.domain.name,
+        component.meta.description, component.meta.domain.identifier.name,
     ))
 }
 

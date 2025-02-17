@@ -117,36 +117,32 @@ impl RustBackend {
     }
 
     fn component_type_name(component: &ComponentMetadata) -> Result<String, GenerationError> {
-        let name = component
-            .bindings
-            .get(Self::get_language_name())
-            .ok_or(ModelValidationError::UnmappedName(component.name.clone()))?;
+        let name = component.bindings.get(Self::get_language_name()).ok_or(
+            ModelValidationError::UnmappedName(component.identifier.name.clone()),
+        )?;
 
         Ok(name.to_string())
     }
     fn component_code_type_name(component: &ComponentMetadata) -> Result<String, GenerationError> {
-        let name = component
-            .bindings
-            .get(Self::get_language_name())
-            .ok_or(ModelValidationError::UnmappedName(component.name.clone()))?;
+        let name = component.bindings.get(Self::get_language_name()).ok_or(
+            ModelValidationError::UnmappedName(component.identifier.name.clone()),
+        )?;
 
         Ok(format!("{name}Code"))
     }
 
     fn domain_type_name(domain: &DomainMetadata) -> Result<String, GenerationError> {
-        let name = domain
-            .bindings
-            .get(Self::get_language_name())
-            .ok_or(ModelValidationError::UnmappedName(domain.name.clone()))?;
+        let name = domain.bindings.get(Self::get_language_name()).ok_or(
+            ModelValidationError::UnmappedName(domain.identifier.name.clone()),
+        )?;
 
         Ok(name.to_string())
     }
 
     fn domain_code_type_name(domain: &DomainMetadata) -> Result<String, GenerationError> {
-        let name = domain
-            .bindings
-            .get(Self::get_language_name())
-            .ok_or(ModelValidationError::UnmappedName(domain.name.clone()))?;
+        let name = domain.bindings.get(Self::get_language_name()).ok_or(
+            ModelValidationError::UnmappedName(domain.identifier.name.clone()),
+        )?;
 
         Ok(format!("{name}Code"))
     }

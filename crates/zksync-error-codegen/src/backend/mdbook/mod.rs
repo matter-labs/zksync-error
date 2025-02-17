@@ -81,7 +81,7 @@ impl MDBookBackend {
         context.insert("errors", &model.errors.values().collect::<Vec<_>>());
         let content = tera.render("component.md", &context)?;
         let domain_name = &component.domain_name;
-        let component_name = &component.name;
+        let component_name = &component.identifier.name;
 
         Ok(File {
             relative_path: PathBuf::from(format!(
@@ -101,7 +101,7 @@ impl MDBookBackend {
         context.insert("components", &model.components.values().collect::<Vec<_>>());
         context.insert("errors", &model.errors.values().collect::<Vec<_>>());
         let content = tera.render("domain.md", &context)?;
-        let domain_name = &domain.name;
+        let domain_name = &domain.identifier.name;
 
         Ok(File {
             relative_path: PathBuf::from(format!("src/domains/{domain_name}/README.md")),
@@ -123,8 +123,8 @@ impl MDBookBackend {
         context.insert("errors", &model.errors.values().collect::<Vec<_>>());
         context.insert("error", error);
         let content = tera.render("error.md", &context)?;
-        let domain_name = &domain.name;
-        let component_name = &component.name;
+        let domain_name = &domain.identifier.name;
+        let component_name = &component.identifier.name;
         let error_name = &error.name;
 
         Ok(File {
@@ -168,10 +168,10 @@ impl Backend for MDBookBackend {
         for domain in model.domains.values() {
             results.push(self.generate_domain(&tera, domain, &model)?);
             for component in model.components.values() {
-                if component.domain_name == domain.name {
+                if component.domain_name == domain.identifier.name {
                     results.push(self.generate_component(&tera, component, &model)?);
                     for error in model.errors.values() {
-                        if error.component == component.name {
+                        if error.component == component.identifier.name {
                             results.push(
                                 self.generate_error(&tera, domain, component, error, &model)?,
                             );

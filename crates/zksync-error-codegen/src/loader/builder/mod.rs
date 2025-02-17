@@ -122,9 +122,10 @@ fn translate_model(
     for domain in domains {
         let ctx = DomainTranslationContext { parent: &ctx };
         let transformed_domain: DomainDescription = translate_domain(domain, &ctx)?;
-        result
-            .domains
-            .insert(transformed_domain.meta.name.clone(), transformed_domain);
+        result.domains.insert(
+            transformed_domain.meta.identifier.name.clone(),
+            transformed_domain,
+        );
     }
 
     Ok(result)
@@ -249,10 +250,13 @@ fn fetch_named_component<'a>(
     match error_base {
         Collection::Root(_) | Collection::Domain(_) | Collection::Component(_) => {
             let component = error_base
-                .get_component(&ctx.get_domain(), &present_component_metadata.name)
+                .get_component(
+                    &ctx.get_domain(),
+                    &present_component_metadata.identifier.name,
+                )
                 .ok_or(MissingComponent {
                     domain_name: ctx.get_domain(),
-                    component_name: present_component_metadata.name.to_owned(),
+                    component_name: present_component_metadata.identifier.name.to_owned(),
                 })?;
             Ok(FetchComponentResult::Component(translate_component(
                 component, ctx,
@@ -297,13 +301,15 @@ fn translate_component<'a>(
     } = component;
 
     let component_meta: Rc<ComponentMetadata> = Rc::new(ComponentMetadata {
-        name: component_name.clone(),
-        code: *component_code,
         bindings: maplit::btreemap! {
             "rust".into() => bindings.rust.clone().unwrap_or(component_name.clone()),
             "typescript".into() => bindings.typescript.clone().unwrap_or(component_name.clone()),
         },
-        identifier: identifier_encoding.clone().unwrap_or_default(),
+        identifier: zksync_error_model::inner::component::Identifier {
+            name: component_name.clone(),
+            code: *component_code,
+            encoding: identifier_encoding.clone().unwrap_or_default(),
+        },
         description: description.clone().unwrap_or_default(),
         domain: ctx.domain.clone(),
     });
@@ -343,9 +349,11 @@ fn translate_domain<'a>(
     } = value;
     let mut new_components: BTreeMap<_, _> = BTreeMap::default();
     let metadata = Rc::new(DomainMetadata {
-        name: domain_name.clone(),
-        code: *domain_code,
-        identifier: identifier_encoding.clone().unwrap_or_default(),
+        identifier: zksync_error_model::inner::domain::Identifier {
+            name: domain_name.clone(),
+            code: *domain_code,
+            encoding: identifier_encoding.clone().unwrap_or_default(),
+        },
         description: description.clone().unwrap_or_default(),
         bindings: btreemap! {
             "rust".into() => bindings.rust.clone().unwrap_or(domain_name.clone()),
@@ -359,8 +367,12 @@ fn translate_domain<'a>(
         };
 
         let translated_component = translate_component(component, &ctx)?;
-        new_components.insert(translated_component.meta.name.clone(), translated_component);
+        new_components.insert(
+            translated_component.meta.identifier.name.clone(),
+            translated_component,
+        );
     }
+
     Ok(DomainDescription {
         meta: metadata,
         components: new_components,
@@ -422,13 +434,15 @@ fn bind_error_types(model: &mut Model) {
                     .map(|(k, v)| (k.to_owned(), error_name(v).as_str().into()))
                     .collect();
             let value = TypeDescription {
-                name: component.meta.name.clone(),
+                name: component.meta.identifier.name.clone(),
                 meta: TypeMetadata {
                     description: component.meta.description.clone(),
                 },
                 bindings,
             };
-            model.types.insert(component.meta.name.clone(), value);
+            model
+                .types
+                .insert(component.meta.identifier.name.clone(), value);
         }
     }
 }
