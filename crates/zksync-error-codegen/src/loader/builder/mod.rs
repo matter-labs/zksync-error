@@ -245,11 +245,9 @@ fn fetch_named_domain<'a>(
     ctx: &'a DomainTranslationContext<'a>,
 ) -> Result<DomainDescription, TakeFromError> {
     let file = load(&Link::parse(link)?)?;
-    let domain =
-        file.get_domain(&identifier.name)
-            .ok_or(MissingDomain {
-                domain_name: identifier.name.to_owned(),
-            })?;
+    let domain = file.get_domain(&identifier.name).ok_or(MissingDomain {
+        domain_name: identifier.name.to_owned(),
+    })?;
     Ok(translate_domain(domain, ctx)?)
 }
 
@@ -273,7 +271,7 @@ fn fetch_named_component<'a>(
             identifier_encoding: None,
             description: None,
             bindings: crate::description::NameBindings::default(),
-            takeFrom: vec![],
+            take_from: vec![],
             errors,
         },
     };
@@ -306,7 +304,7 @@ fn translate_component<'a>(
         component_code,
         identifier_encoding,
         description,
-        takeFrom,
+        take_from,
         errors,
         bindings,
     } = component;
@@ -330,7 +328,7 @@ fn translate_component<'a>(
         meta: component_meta.clone(),
         errors: transformed_errors,
     };
-    for take_from_address in takeFrom {
+    for take_from_address in take_from {
         let component_description =
             fetch_named_component(take_from_address, &component_meta.identifier, ctx)
                 .map_err(|e| e.from_address(take_from_address))?;
@@ -353,7 +351,7 @@ fn translate_domain<'a>(
         description,
         components,
         bindings,
-        takeFrom,
+        take_from,
     } = value;
     let mut new_components: BTreeMap<_, _> = BTreeMap::default();
     let metadata = Rc::new(DomainMetadata {
@@ -389,7 +387,7 @@ fn translate_domain<'a>(
         components: new_components,
     };
 
-    for take_from_address in takeFrom {
+    for take_from_address in take_from {
         let domain_description =
             fetch_named_domain(take_from_address, &result.meta.identifier, ctx)
                 .map_err(|e| e.from_address(take_from_address))?;

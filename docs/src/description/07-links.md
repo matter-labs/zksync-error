@@ -37,7 +37,7 @@ There are three types of links:
     }
     ```
 
-2. Domains and components may refer to other files through `takeFrom` fields: 
+2. Domains and components may refer to other files through `take_from` fields: 
 
   ```json
   {
@@ -45,7 +45,7 @@ There are three types of links:
         "domain_code": 5,
         "identifier_encoding": "anvil_zksync",
         "description": "Errors originating in Anvil for ZKsync.",
-        "takeFrom": [ "https://<url1>", "https://<url2>" ]
+        "take_from": [ "https://<url1>", "https://<url2>" ]
     }
   
   ```

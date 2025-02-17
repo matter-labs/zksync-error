@@ -21,7 +21,7 @@ At least one domain and at least one component should be defined.
 
 Such files may be:
 
-- referenced by other files through `takeFrom` fields;
+- referenced by other files through `take_from` fields;
 - used as the root error definition file;
 - provided as additional JSON files through CLI or library interfaces.
 
@@ -46,7 +46,7 @@ Domain files contain definition of a single component and some of its errors, fo
 
 Domain files may be:
 
-- referenced by other files through `takeFrom` fields.
+- referenced by other files through `take_from` fields.
 - provided as additional JSON files through CLI or library interfaces.
 
 When all input files and their dependencies are collected and merged, all
@@ -67,7 +67,7 @@ Component files: contain definition of a single component and some of its errors
 
 Such files may be:
 
-- referenced by other files through `takeFrom` fields.
+- referenced by other files through `take_from` fields.
 - provided as additional JSON files through CLI or library interfaces. In this case they will be merged with the already defined component of the same name/code/identifier.
 
 ## Error list files

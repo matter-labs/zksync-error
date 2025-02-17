@@ -2,8 +2,6 @@
 //! Layout of the JSON file that holds a fragment of error hierarchy.
 //!
 
-#![allow(non_snake_case)]
-
 use serde::Deserialize;
 
 #[derive(Clone, Debug, Deserialize)]
@@ -60,7 +58,7 @@ pub struct Domain {
     #[serde(default)]
     pub bindings: NameBindings,
     #[serde(default)]
-    pub takeFrom: Vec<String>,
+    pub take_from: Vec<String>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -74,7 +72,7 @@ pub struct Component {
     #[serde(default)]
     pub bindings: NameBindings,
     #[serde(default)]
-    pub takeFrom: Vec<String>,
+    pub take_from: Vec<String>,
 
     #[serde(default)]
     pub errors: Vec<Error>,
