@@ -99,14 +99,14 @@ impl RustBackend {
             let match_tokens = self.model.domains.values().flat_map(|domain_description| {
                 let domain_code = Self::domain_code_ident(&domain_description.meta);
                 let domain = Self::domain_ident(&domain_description.meta);
-                let domain_contribution = &domain_description.meta.identifier;
+                let domain_contribution = &domain_description.meta.identifier.encoding;
 
                 domain_description
                     .components
                     .values()
                     .map(move |component_description| {
                         let component = Self::component_ident(&component_description.meta);
-                        let component_contribution = &component_description.meta.identifier;
+                        let component_contribution = &component_description.meta.identifier.encoding;
                         let prefix = format!("{domain_contribution}-{component_contribution}");
                         quote! {
                             Kind :: #domain ( #domain_code :: #component ) =>

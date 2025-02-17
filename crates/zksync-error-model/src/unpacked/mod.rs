@@ -1,4 +1,4 @@
-use crate::identifier::ErrorIdentifier;
+use crate::identifier::PublicErrorIdentifier;
 use crate::inner::component::Identifier as ComponentIdentifier;
 use crate::inner::domain::Identifier as DomainIdentifier;
 
@@ -151,9 +151,9 @@ fn translate_error(meta: &crate::inner::ErrorDescription) -> ErrorDescription {
             )
         })
         .collect();
-    let identifier = ErrorIdentifier {
-        domain: domain.identifier.name.clone(),
-        component: component.identifier.name.clone(),
+    let identifier = PublicErrorIdentifier {
+        domain: domain.identifier.encoding.clone(),
+        component: component.identifier.encoding.clone(),
         code: *code,
     }
     .to_string();
