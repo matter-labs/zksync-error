@@ -2,7 +2,12 @@
 //! Layout of the JSON file that holds a fragment of error hierarchy.
 //!
 
+use std::collections::BTreeMap;
+
 use serde::Deserialize;
+
+pub type TypeMappings = BTreeMap<String, FullyQualifiedType>;
+pub type ErrorNameMapping = BTreeMap<String, ErrorType>;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Root {
@@ -18,19 +23,6 @@ pub struct Type {
     pub bindings: TypeMappings,
 }
 
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct ErrorNameMapping {
-    pub rust: Option<ErrorType>,
-    pub typescript: Option<ErrorType>,
-}
-
-#[derive(Clone, Debug, Deserialize)]
-pub struct TypeMappings {
-    pub rust: Option<FullyQualifiedType>,
-    #[serde(default)]
-    pub typescript: Option<FullyQualifiedType>,
-}
-
 #[derive(Clone, Debug, Deserialize)]
 pub struct ErrorType {
     pub name: String,
@@ -42,12 +34,6 @@ pub struct FullyQualifiedType {
     pub path: String,
 }
 
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct NameBindings {
-    pub rust: Option<String>,
-    pub typescript: Option<String>,
-}
-
 #[derive(Clone, Debug, Deserialize)]
 pub struct Domain {
     pub domain_name: String,
@@ -56,7 +42,7 @@ pub struct Domain {
     pub description: Option<String>,
     pub components: Vec<Component>,
     #[serde(default)]
-    pub bindings: NameBindings,
+    pub bindings: BTreeMap<String, String>,
     #[serde(default)]
     pub take_from: Vec<String>,
 }
@@ -70,7 +56,7 @@ pub struct Component {
     pub description: Option<String>,
 
     #[serde(default)]
-    pub bindings: NameBindings,
+    pub bindings: BTreeMap<String, String>,
     #[serde(default)]
     pub take_from: Vec<String>,
 

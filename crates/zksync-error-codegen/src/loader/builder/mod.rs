@@ -42,31 +42,63 @@ use super::error::FileFormatError;
 use super::error::LoadError;
 use super::link::Link;
 
+fn add_missing<U, S>(map: &mut BTreeMap<String, U>, default: U, keys: impl Iterator<Item = S>)
+where
+    U: Clone,
+    S: Into<String>,
+{
+    for key in keys {
+        let _ = map.entry(key.into()).or_insert(default.clone());
+    }
+}
+
+fn ensure_existing<U, S>(
+    map: BTreeMap<String, U>,
+    default: U,
+    keys: impl Iterator<Item = S>,
+) -> BTreeMap<String, U>
+where
+    U: Clone,
+    S: Into<String>,
+{
+    let mut result = map.clone();
+    add_missing(&mut result, default, keys);
+    result
+}
+fn translate_and_populate_bindings(
+    bindings: &BTreeMap<String, String>,
+    default: &str,
+) -> BTreeMap<String, String> {
+    ensure_existing(
+        bindings.clone(),
+        default.to_string(),
+        ["rust", "typescript"].into_iter(),
+    )
+}
+
 fn translate_type_bindings(
     value: &crate::description::ErrorNameMapping,
     error_name: &ErrorName,
 ) -> Result<BTreeMap<zksync_error_model::inner::LanguageName, TargetLanguageType>, ModelBuildingError>
 {
-    let mut result: BTreeMap<_, TargetLanguageType> = Default::default();
-    let rust_name = match &value.rust {
-        Some(crate::description::ErrorType { name }) => name,
-        None => error_name,
-    }
-    .to_string();
-    let typescript_name = match &value.typescript {
-        Some(crate::description::ErrorType { name }) => name,
-        None => error_name,
-    }
-    .to_string();
-
-    result.insert("rust".into(), TargetLanguageType { name: rust_name });
-    result.insert(
-        "typescript".into(),
+    let result: BTreeMap<_, _> = value
+        .iter()
+        .map(|(language_name, mapping)| {
+            (
+                language_name.clone(),
+                TargetLanguageType {
+                    name: mapping.name.clone(),
+                },
+            )
+        })
+        .collect();
+    Ok(ensure_existing(
+        result,
         TargetLanguageType {
-            name: typescript_name,
+            name: error_name.clone(),
         },
-    );
-    Ok(result)
+        ["rust", "typescript"].into_iter(),
+    ))
 }
 
 fn translate_type_mappings(
@@ -75,17 +107,18 @@ fn translate_type_mappings(
     BTreeMap<zksync_error_model::inner::LanguageName, FullyQualifiedTargetLanguageType>,
     ModelBuildingError,
 > {
-    let mut result: BTreeMap<_, FullyQualifiedTargetLanguageType> = Default::default();
-    if let Some(crate::description::FullyQualifiedType { name, path }) = &value.rust {
-        result.insert(
-            "rust".into(),
-            FullyQualifiedTargetLanguageType {
-                name: name.clone(),
-                path: path.clone(),
-            },
-        );
-    }
-    Ok(result)
+    Ok(value
+        .iter()
+        .map(|(language_name, mapping)| {
+            (
+                language_name.clone(),
+                FullyQualifiedTargetLanguageType {
+                    name: mapping.name.clone(),
+                    path: mapping.path.clone(),
+                },
+            )
+        })
+        .collect())
 }
 
 fn translate_type(
@@ -269,7 +302,7 @@ fn fetch_named_component<'a>(
             component_code: identifier.code,
             identifier_encoding: None,
             description: None,
-            bindings: crate::description::NameBindings::default(),
+            bindings: Default::default(),
             take_from: vec![],
             errors,
         },
@@ -308,11 +341,9 @@ fn translate_component<'a>(
         bindings,
     } = component;
 
+    let new_bindings = translate_and_populate_bindings(bindings, component_name);
     let component_meta: Rc<ComponentMetadata> = Rc::new(ComponentMetadata {
-        bindings: maplit::btreemap! {
-            "rust".into() => bindings.rust.clone().unwrap_or(component_name.clone()),
-            "typescript".into() => bindings.typescript.clone().unwrap_or(component_name.clone()),
-        },
+        bindings: new_bindings,
         identifier: zksync_error_model::inner::component::Identifier {
             name: component_name.clone(),
             code: *component_code,
@@ -360,10 +391,7 @@ fn translate_domain<'a>(
             encoding: identifier_encoding.clone().unwrap_or_default(),
         },
         description: description.clone().unwrap_or_default(),
-        bindings: btreemap! {
-            "rust".into() => bindings.rust.clone().unwrap_or(domain_name.clone()),
-            "typescript".into() => bindings.typescript.clone().unwrap_or(domain_name.clone()),
-        },
+        bindings: translate_and_populate_bindings(bindings, domain_name),
     });
 
     {
