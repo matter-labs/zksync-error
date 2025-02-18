@@ -80,9 +80,9 @@ impl Merge for Model {
 
 impl Merge for DomainDescription {
     fn merge(&mut self, other: &DomainDescription) -> Result<(), MergeError> {
-        if self.meta.name != other.meta.name || self.meta.code != other.meta.code {
+        if self.meta.identifier != other.meta.identifier {
             return Err(MergeError::ConflictingDomainDefinitions(
-                self.meta.name.clone(),
+                self.meta.identifier.clone(),
             ));
         }
         // merge_maps(&mut self.meta.bindings, &other.meta.bindings)?;
@@ -100,7 +100,7 @@ impl Merge for ComponentDescription {
     fn merge(&mut self, other: &ComponentDescription) -> Result<(), MergeError> {
         if !self.mergeable_with(other) {
             return Err(MergeError::ConflictingComponentDefinitions(
-                self.meta.name.clone(),
+                self.meta.identifier.clone(),
             ));
         }
         // merge_maps(&mut self.meta.bindings, &other.meta.bindings)?;

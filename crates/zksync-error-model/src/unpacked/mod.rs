@@ -1,7 +1,10 @@
-use crate::identifier::ErrorIdentifier;
+use crate::identifier::PublicErrorIdentifier;
+use crate::inner::component::Identifier as ComponentIdentifier;
+use crate::inner::domain::Identifier as DomainIdentifier;
+
 use crate::inner::{
-    ComponentCode, ComponentName, DomainCode, DomainName, ErrorCode, ErrorMessageTemplate,
-    ErrorName, FieldName, LanguageName, Model, Semver, TypeName,
+    ComponentName, DomainName, ErrorCode, ErrorMessageTemplate, ErrorName, FieldName, LanguageName,
+    Model, Semver, TypeName,
 };
 use std::collections::BTreeMap;
 
@@ -27,11 +30,9 @@ pub struct TypeDescription {
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub struct DomainMetadata {
-    pub name: DomainName,
-    pub code: DomainCode,
     pub components: Vec<ComponentName>,
     pub bindings: BTreeMap<LanguageName, String>,
-    pub identifier: String,
+    pub identifier: DomainIdentifier,
     pub description: String,
 }
 
@@ -45,11 +46,9 @@ pub struct UnpackedModel {
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ComponentMetadata {
-    pub name: ComponentName,
-    pub code: ComponentCode,
     pub domain_name: DomainName,
     pub bindings: BTreeMap<LanguageName, String>,
-    pub identifier: String,
+    pub identifier: ComponentIdentifier,
     pub description: String,
 }
 
@@ -99,15 +98,11 @@ fn translate_domain_metadata(
     components: Vec<ComponentName>,
 ) -> DomainMetadata {
     let crate::inner::DomainMetadata {
-        name,
-        code,
         bindings,
         identifier,
         description,
     } = meta.clone();
     DomainMetadata {
-        name,
-        code,
         bindings,
         identifier,
         description,
@@ -117,20 +112,16 @@ fn translate_domain_metadata(
 
 fn translate_component_metadata(meta: &crate::inner::ComponentMetadata) -> ComponentMetadata {
     let crate::inner::ComponentMetadata {
-        name,
-        code,
         bindings,
         identifier,
         description,
         domain,
     } = meta.clone();
     ComponentMetadata {
-        name,
-        code,
         bindings,
         identifier,
         description,
-        domain_name: domain.name.to_string(),
+        domain_name: domain.identifier.name.to_string(),
     }
 }
 fn translate_field(field: &crate::inner::FieldDescription) -> FieldDescription {
@@ -160,15 +151,15 @@ fn translate_error(meta: &crate::inner::ErrorDescription) -> ErrorDescription {
             )
         })
         .collect();
-    let identifier = ErrorIdentifier {
-        domain: domain.identifier.clone(),
-        component: component.identifier.clone(),
+    let identifier = PublicErrorIdentifier {
+        domain: domain.identifier.encoding.clone(),
+        component: component.identifier.encoding.clone(),
         code: *code,
     }
     .to_string();
     ErrorDescription {
-        domain: domain.name.clone(),
-        component: component.name.clone(),
+        domain: domain.identifier.name.clone(),
+        component: component.identifier.name.clone(),
         name: name.clone(),
         code: *code,
         identifier,

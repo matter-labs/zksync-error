@@ -25,7 +25,7 @@ pub(super) struct ComponentTranslationContext<'a> {
 
 impl ComponentTranslationContext<'_> {
     pub(super) fn get_domain(&self) -> String {
-        self.domain.name.to_string()
+        self.domain.identifier.name.to_string()
     }
 }
 
@@ -36,7 +36,7 @@ pub(super) struct ErrorTranslationContext<'a> {
 
 impl ErrorTranslationContext<'_> {
     fn get_component(&self) -> String {
-        self.component.name.to_string()
+        self.component.identifier.name.to_string()
     }
     fn get_domain(&self) -> String {
         self.parent.get_domain()

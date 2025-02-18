@@ -2,9 +2,12 @@
 //! Layout of the JSON file that holds a fragment of error hierarchy.
 //!
 
-#![allow(non_snake_case)]
+use std::collections::BTreeMap;
 
 use serde::Deserialize;
+
+pub type TypeMappings = BTreeMap<String, FullyQualifiedType>;
+pub type ErrorNameMapping = BTreeMap<String, ErrorType>;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Root {
@@ -20,19 +23,6 @@ pub struct Type {
     pub bindings: TypeMappings,
 }
 
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct ErrorNameMapping {
-    pub rust: Option<ErrorType>,
-    pub typescript: Option<ErrorType>,
-}
-
-#[derive(Clone, Debug, Deserialize)]
-pub struct TypeMappings {
-    pub rust: Option<FullyQualifiedType>,
-    #[serde(default)]
-    pub typescript: Option<FullyQualifiedType>,
-}
-
 #[derive(Clone, Debug, Deserialize)]
 pub struct ErrorType {
     pub name: String,
@@ -44,12 +34,6 @@ pub struct FullyQualifiedType {
     pub path: String,
 }
 
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct NameBindings {
-    pub rust: Option<String>,
-    pub typescript: Option<String>,
-}
-
 #[derive(Clone, Debug, Deserialize)]
 pub struct Domain {
     pub domain_name: String,
@@ -58,7 +42,9 @@ pub struct Domain {
     pub description: Option<String>,
     pub components: Vec<Component>,
     #[serde(default)]
-    pub bindings: NameBindings,
+    pub bindings: BTreeMap<String, String>,
+    #[serde(default)]
+    pub take_from: Vec<String>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -70,9 +56,9 @@ pub struct Component {
     pub description: Option<String>,
 
     #[serde(default)]
-    pub bindings: NameBindings,
+    pub bindings: BTreeMap<String, String>,
     #[serde(default)]
-    pub takeFrom: Vec<String>,
+    pub take_from: Vec<String>,
 
     #[serde(default)]
     pub errors: Vec<Error>,
@@ -142,8 +128,12 @@ pub enum Collection {
 }
 
 impl Root {
+    pub fn get_domain(&self, domain: &str) -> Option<&Domain> {
+        self.domains.iter().find(|d| d.domain_name == domain)
+    }
+
     pub fn get_component(&self, domain: &str, component: &str) -> Option<&Component> {
-        let domain = self.domains.iter().find(|d| d.domain_name == domain)?;
+        let domain = self.get_domain(domain)?;
         let component = domain
             .components
             .iter()
@@ -169,6 +159,13 @@ impl Collection {
             Collection::Component(component) if component.component_name == component_name => {
                 Some(component)
             }
+            _ => None,
+        }
+    }
+    pub fn get_domain(&self, domain_name: &str) -> Option<&Domain> {
+        match self {
+            Collection::Root(root) => root.get_domain(domain_name),
+            Collection::Domain(domain) if domain.domain_name == domain_name => Some(domain),
             _ => None,
         }
     }

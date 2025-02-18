@@ -12,23 +12,32 @@ pub struct MissingComponent {
 }
 
 #[derive(Debug, thiserror::Error)]
+#[error("Missing domain {domain_name}")]
+pub struct MissingDomain {
+    pub domain_name: String,
+}
+
+#[derive(Debug, thiserror::Error)]
 pub enum TakeFromError {
-    #[error("Error while building model following a `takeFrom` link: {0}")]
+    #[error("Error while building model following a `take_from` link: {0}")]
     IOError(#[from] LoadError),
 
-    #[error("Error while building model following a `takeFrom` link: {0}")]
+    #[error("Error while building model following a `take_from` link: {0}")]
     ParsingError(#[from] serde_json::Error),
 
-    #[error("Error while building model following a `takeFrom` link: {0}")]
+    #[error("Error while building model following a `take_from` link: {0}")]
+    MissingDomain(#[from] MissingDomain),
+
+    #[error("Error while building model following a `take_from` link: {0}")]
     MissingComponent(#[from] MissingComponent),
 
-    #[error("Error while building model following a `takeFrom` link: {0}")]
+    #[error("Error while building model following a `take_from` link: {0}")]
     ModelBuildingError(/* from */ Box<ModelBuildingError>), // Can't derive `From` implementation because of `Box`.
 
-    #[error("Error while merging with the error base fetched from `takeFrom` link: {0}")]
+    #[error("Error while merging with the error base fetched from `take_from` link: {0}")]
     MergeError(#[from] MergeError),
 
-    #[error("Error while building model following a `takeFrom` link: {0}")]
+    #[error("Error while building model following a `take_from` link: {0}")]
     LinkError(#[from] LinkError),
 }
 
@@ -59,7 +68,7 @@ pub enum ModelBuildingError {
         "Error merging models {main_model_origin} and {additional_model_origin}: {merge_error}"
     )]
     MergeError {
-        merge_error: MergeError,
+        merge_error: Box<MergeError>,
         main_model_origin: Link,
         additional_model_origin: Link,
     },

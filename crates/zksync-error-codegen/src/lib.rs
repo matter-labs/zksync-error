@@ -1,5 +1,5 @@
 pub mod arguments;
-pub mod codegen;
+pub mod backend;
 pub mod description;
 pub mod error;
 pub mod loader;
@@ -10,28 +10,52 @@ use std::path::PathBuf;
 
 use arguments::Backend;
 use arguments::GenerationArguments;
+use backend::IBackendConfig as _;
 use error::ProgramError;
 use loader::builder::build_model;
 use loader::link::Link;
+use zksync_error_model::inner::Model;
 
-use crate::codegen::file::File;
-use crate::codegen::mdbook::config::MDBookBackendConfig;
-use crate::codegen::mdbook::MDBookBackend;
-use crate::codegen::rust::RustBackend;
-use crate::codegen::rust::RustBackendConfig;
-use crate::codegen::Backend as _;
+use crate::backend::file::File;
+use crate::backend::mdbook::MDBookBackend;
+use crate::backend::rust::RustBackend;
+use crate::backend::Backend as CodegenBackend;
 
 pub fn default_load_and_generate(root_link: &str, input_links: Vec<&str>) {
     if let Err(e) = load_and_generate(GenerationArguments {
         verbose: true,
         root_link: root_link.to_owned(),
-        outputs: vec![("../zksync_error".into(), Backend::Rust, vec![])],
+        outputs: vec![arguments::BackendOutput {
+            output_path: "../zksync_error".into(),
+            backend: Backend::Rust,
+            arguments: vec![],
+        }],
         input_links: input_links.into_iter().map(Into::into).collect(),
     }) {
         eprintln!("{e:#?}")
     };
 }
 
+fn generate<Backend>(
+    backend_args: impl Iterator<Item = (String, String)>,
+    model: &Model,
+) -> Result<Vec<File>, ProgramError>
+where
+    Backend: CodegenBackend,
+{
+    let config = Backend::Config::parse_arguments(backend_args).map_err(|error| {
+        ProgramError::BackendError {
+            backend_name: Backend::get_name().to_string(),
+            inner: Box::new(error),
+        }
+    })?;
+    Backend::new(config, model)
+        .generate()
+        .map_err(|error| ProgramError::BackendError {
+            backend_name: Backend::get_name().to_string(),
+            inner: Box::new(error),
+        })
+}
 pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramError> {
     let GenerationArguments {
         verbose,
@@ -46,27 +70,20 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
     let additions: Result<Vec<_>, _> = input_links.iter().map(Link::parse).collect();
     let model = build_model(&Link::parse(root_link)?, &additions?, *verbose)?;
 
-    for (output_directory, backend_type, backend_arguments) in outputs {
-        let backend_arguments = vector_map::VecMap::from_iter(backend_arguments.iter().cloned());
+    for arguments::BackendOutput {
+        output_path,
+        backend,
+        arguments: backend_arguments,
+    } in outputs
+    {
         if *verbose {
-            eprintln!("Selected backend: {backend_type:?}, \nGenerating files...");
+            eprintln!("Selected backend: {backend:?}, \nGenerating files...");
         }
 
-        let result = match backend_type {
-            arguments::Backend::Rust => {
-                let mut backend = RustBackend::new(&model);
-                backend.generate(&RustBackendConfig {
-                    use_anyhow: std::str::FromStr::from_str(
-                        backend_arguments
-                            .get(&String::from("use_anyhow"))
-                            .unwrap_or(&String::from("false")),
-                    )
-                    .unwrap(),
-                })?
-            }
-            arguments::Backend::Mdbook => {
-                let mut backend = MDBookBackend::new(&model);
-                backend.generate(&MDBookBackendConfig)?
+        let result: Vec<File> = match backend {
+            Backend::Rust => generate::<RustBackend>(backend_arguments.iter().cloned(), &model)?,
+            Backend::Mdbook => {
+                generate::<MDBookBackend>(backend_arguments.iter().cloned(), &model)?
             }
         };
 
@@ -78,7 +95,7 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
             eprintln!("Writing files to disk...");
         }
 
-        create_files_in_result_directory(output_directory, result)?;
+        create_files_in_result_directory(output_path, result)?;
         if *verbose {
             eprintln!("Writing successful.");
         }
@@ -89,11 +106,9 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
 fn create_files_in_result_directory(result_dir: &PathBuf, files: Vec<File>) -> std::io::Result<()> {
     let result_dir = Path::new(result_dir);
 
-    if result_dir.exists() {
-        std::fs::remove_dir_all(result_dir)?;
+    if !result_dir.exists() {
+        std::fs::create_dir(result_dir)?;
     }
-
-    std::fs::create_dir(result_dir)?;
 
     for file in files {
         let path = result_dir.join(file.relative_path);
