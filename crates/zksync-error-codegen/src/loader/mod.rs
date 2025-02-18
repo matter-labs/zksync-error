@@ -5,8 +5,6 @@ use resolution::resolve;
 use resolution::ResolvedLink;
 use zksync_error_model::link::Link;
 
-use std::path::PathBuf;
-
 use crate::description::Collection;
 
 pub mod builder;
@@ -14,34 +12,7 @@ pub mod cargo;
 pub mod error;
 pub mod resolution;
 
-#[derive(Clone, Debug)]
-pub struct CollectionFile {
-    pub package: String,
-    pub absolute_path: PathBuf,
-}
-
-pub fn link_matches(link: &Link, file: &CollectionFile) -> bool {
-    if let Link::PackageLink { package, filename } = link {
-        let CollectionFile {
-            package: candidate_package,
-            absolute_path,
-        } = file;
-
-        if package != candidate_package {
-            return false;
-        };
-        let pathbuf = PathBuf::from(absolute_path);
-        let stripped_filename = pathbuf
-            .file_name()
-            .unwrap_or_else(|| panic!("Error accessing file `{absolute_path:?}`."));
-
-        stripped_filename.to_str().is_some_and(|s| s == filename)
-    } else {
-        false
-    }
-}
-
-pub fn load(link: &Link) -> Result<Collection, LoadError> {
+pub fn load_file(link: &Link) -> Result<Collection, LoadError> {
     let context = get_resolution_context();
     let contents = match resolve(link, &context)? {
         ResolvedLink::DescriptionFile(description_file) => {

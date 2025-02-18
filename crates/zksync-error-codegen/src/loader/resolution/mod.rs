@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use error::ResolutionError;
 use zksync_error_model::link::Link;
 
-use super::{link_matches, CollectionFile};
+use super::cargo::{link_matches, CollectionFile};
 
 #[derive(Clone, Debug, Default)]
 pub struct ResolutionContext {

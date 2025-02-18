@@ -20,7 +20,7 @@ use zksync_error_model::link::Link;
 use zksync_error_model::validator::validate;
 
 use crate::description::Collection;
-use crate::loader::load;
+use crate::loader::load_file;
 
 use zksync_error_model::inner::ComponentDescription;
 use zksync_error_model::inner::ComponentMetadata;
@@ -277,7 +277,7 @@ fn fetch_named_domain<'a>(
     identifier: &domain::Identifier,
     ctx: &'a DomainTranslationContext<'a>,
 ) -> Result<DomainDescription, TakeFromError> {
-    let file = load(&Link::parse(link)?)?;
+    let file = load_file(&Link::parse(link)?)?;
     let domain = file.get_domain(&identifier.name).ok_or(MissingDomain {
         domain_name: identifier.name.to_owned(),
     })?;
@@ -289,7 +289,7 @@ fn fetch_named_component<'a>(
     identifier: &component::Identifier,
     ctx: &'a ComponentTranslationContext<'a>,
 ) -> Result<ComponentDescription, TakeFromError> {
-    let file = load(&Link::parse(link)?)?;
+    let file = load_file(&Link::parse(link)?)?;
     let component = match file {
         Collection::Root(_) | Collection::Domain(_) | Collection::Component(_) => file
             .get_component(&ctx.get_domain(), &identifier.name)
@@ -427,7 +427,7 @@ fn translate_domain<'a>(
 
 fn load_root_model(root_link: &Link) -> Result<Model, LoadError> {
     let origin = root_link.clone();
-    match load(root_link)? {
+    match load_file(root_link)? {
         Collection::Domain(_) => Err(LoadError::FileFormatError(
             FileFormatError::ExpectedFullGotDomain { origin },
         )),

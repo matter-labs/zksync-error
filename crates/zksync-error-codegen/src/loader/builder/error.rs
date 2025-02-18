@@ -1,6 +1,6 @@
 use zksync_error_model::error::ModelValidationError;
-use zksync_error_model::link::Link;
 use zksync_error_model::link::error::LinkError;
+use zksync_error_model::link::Link;
 use zksync_error_model::merger::error::MergeError;
 
 use crate::loader::error::LoadError;
