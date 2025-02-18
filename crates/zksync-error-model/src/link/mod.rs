@@ -1,6 +1,6 @@
-use std::path::PathBuf;
+use error::LinkError;
 
-use super::{error::LinkError, CollectionFile};
+pub mod error;
 
 #[derive(Clone, Debug)]
 pub enum Link {
@@ -40,26 +40,6 @@ impl Link {
             }),
             None => Ok(Link::FileLink { path: string }),
             Some(_) => Err(LinkError::InvalidLinkFormat(string)),
-        }
-    }
-    pub fn matches(link: &Link, file: &CollectionFile) -> bool {
-        if let Link::PackageLink { package, filename } = link {
-            let CollectionFile {
-                package: candidate_package,
-                absolute_path,
-            } = file;
-
-            if package != candidate_package {
-                return false;
-            };
-            let pathbuf = PathBuf::from(absolute_path);
-            let stripped_filename = pathbuf
-                .file_name()
-                .unwrap_or_else(|| panic!("Error accessing file `{absolute_path:?}`."));
-
-            stripped_filename.to_str().is_some_and(|s| s == filename)
-        } else {
-            false
         }
     }
 }

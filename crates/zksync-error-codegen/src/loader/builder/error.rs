@@ -1,8 +1,9 @@
-use crate::loader::{
-    error::{LinkError, LoadError},
-    link::Link,
-};
-use zksync_error_model::{error::ModelValidationError, merger::error::MergeError};
+use zksync_error_model::error::ModelValidationError;
+use zksync_error_model::link::Link;
+use zksync_error_model::link::error::LinkError;
+use zksync_error_model::merger::error::MergeError;
+
+use crate::loader::error::LoadError;
 
 #[derive(Debug, thiserror::Error)]
 #[error("Missing component {component_name} in the domain {domain_name}")]

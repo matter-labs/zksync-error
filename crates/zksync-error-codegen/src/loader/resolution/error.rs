@@ -1,4 +1,4 @@
-use crate::loader::link::Link;
+use zksync_error_model::link::Link;
 
 use super::ResolutionContext;
 

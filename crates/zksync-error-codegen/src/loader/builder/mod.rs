@@ -16,6 +16,7 @@ use error::TakeFromError;
 use maplit::btreemap;
 use zksync_error_model::inner::component;
 use zksync_error_model::inner::domain;
+use zksync_error_model::link::Link;
 use zksync_error_model::validator::validate;
 
 use crate::description::Collection;
@@ -40,7 +41,6 @@ use zksync_error_model::merger::Merge as _;
 
 use super::error::FileFormatError;
 use super::error::LoadError;
-use super::link::Link;
 
 fn add_missing<U, S>(map: &mut BTreeMap<String, U>, default: U, keys: impl Iterator<Item = S>)
 where

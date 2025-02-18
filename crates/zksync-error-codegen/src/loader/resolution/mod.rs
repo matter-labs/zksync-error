@@ -3,10 +3,9 @@ pub mod error;
 use std::path::PathBuf;
 
 use error::ResolutionError;
+use zksync_error_model::link::Link;
 
-use super::error::LinkError;
-use super::link::Link;
-use super::CollectionFile;
+use super::{link_matches, CollectionFile};
 
 #[derive(Clone, Debug, Default)]
 pub struct ResolutionContext {
@@ -26,18 +25,19 @@ pub enum ResolvedLink {
     Immediate(String),
 }
 
-pub fn resolve(query_link: &Link, context: &ResolutionContext) -> Result<ResolvedLink, LinkError> {
+pub fn resolve(
+    query_link: &Link,
+    context: &ResolutionContext,
+) -> Result<ResolvedLink, ResolutionError> {
     match query_link {
         link @ Link::PackageLink { .. } => {
-            if let Some(df) = context.files.iter().find(|file| Link::matches(link, file)) {
+            if let Some(df) = context.files.iter().find(|file| link_matches(link, file)) {
                 Ok(ResolvedLink::DescriptionFile(df.clone()))
             } else {
-                Err(LinkError::FailedResolution(
-                    ResolutionError::CargoLinkResolutionError {
-                        link: link.clone(),
-                        context: context.clone(),
-                    },
-                ))
+                Err(ResolutionError::CargoLinkResolutionError {
+                    link: link.clone(),
+                    context: context.clone(),
+                })
             }
         }
         Link::FileLink { path } => Ok(ResolvedLink::LocalPath(path.into())),

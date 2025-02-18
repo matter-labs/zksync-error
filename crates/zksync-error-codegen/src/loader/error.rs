@@ -1,22 +1,8 @@
+use zksync_error_model::link::error::LinkError;
+use zksync_error_model::link::Link;
+
 use super::builder::error::ModelBuildingError;
-use super::link::Link;
 use super::resolution::error::ResolutionError;
-
-#[derive(Debug, thiserror::Error)]
-pub enum LinkError {
-    InvalidLinkFormat(String),
-    FailedResolution(ResolutionError),
-}
-
-impl std::fmt::Display for LinkError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            LinkError::InvalidLinkFormat(link) =>
-                f.write_fmt(format_args!("Link `{link}` has an invalid format. Expected `{}://<crate_name>{}<filename-with-extension>`.", Link::CARGO_FORMAT_PREFIX, Link::PACKAGE_SEPARATOR)),
-            LinkError::FailedResolution(r) => r.fmt(f),
-        }
-    }
-}
 
 #[derive(Debug, thiserror::Error)]
 pub enum FileFormatError {

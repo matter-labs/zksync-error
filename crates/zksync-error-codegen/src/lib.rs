@@ -13,8 +13,8 @@ use arguments::GenerationArguments;
 use backend::IBackendConfig as _;
 use error::ProgramError;
 use loader::builder::build_model;
-use loader::link::Link;
 use zksync_error_model::inner::Model;
+use zksync_error_model::link::Link;
 
 use crate::backend::file::File;
 use crate::backend::mdbook::MDBookBackend;

@@ -106,7 +106,8 @@ impl RustBackend {
                     .values()
                     .map(move |component_description| {
                         let component = Self::component_ident(&component_description.meta);
-                        let component_contribution = &component_description.meta.identifier.encoding;
+                        let component_contribution =
+                            &component_description.meta.identifier.encoding;
                         let prefix = format!("{domain_contribution}-{component_contribution}");
                         quote! {
                             Kind :: #domain ( #domain_code :: #component ) =>
