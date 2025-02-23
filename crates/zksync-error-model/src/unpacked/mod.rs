@@ -4,7 +4,7 @@ use crate::inner::domain::Identifier as DomainIdentifier;
 
 use crate::inner::{
     ComponentName, DomainName, ErrorCode, ErrorMessageTemplate, ErrorName, FieldName, LanguageName,
-    Model, Semver, TypeName,
+    Model, Origins, Semver, TypeName,
 };
 use std::collections::BTreeMap;
 
@@ -34,6 +34,7 @@ pub struct DomainMetadata {
     pub bindings: BTreeMap<LanguageName, String>,
     pub identifier: DomainIdentifier,
     pub description: String,
+    pub origins: Origins,
 }
 
 #[derive(Debug, Default, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
@@ -50,6 +51,7 @@ pub struct ComponentMetadata {
     pub bindings: BTreeMap<LanguageName, String>,
     pub identifier: ComponentIdentifier,
     pub description: String,
+    pub origins: Origins,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
@@ -63,6 +65,7 @@ pub struct ErrorDescription {
     pub fields: Vec<FieldDescription>,
     pub documentation: Option<ErrorDocumentation>,
     pub bindings: BTreeMap<LanguageName, TargetLanguageType>,
+    pub origins: Origins,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
@@ -101,12 +104,14 @@ fn translate_domain_metadata(
         bindings,
         identifier,
         description,
+        origins,
     } = meta.clone();
     DomainMetadata {
         bindings,
         identifier,
         description,
         components,
+        origins,
     }
 }
 
@@ -116,12 +121,14 @@ fn translate_component_metadata(meta: &crate::inner::ComponentMetadata) -> Compo
         identifier,
         description,
         domain,
+        origins,
     } = meta.clone();
     ComponentMetadata {
         bindings,
         identifier,
         description,
         domain_name: domain.identifier.name.to_string(),
+        origins,
     }
 }
 fn translate_field(field: &crate::inner::FieldDescription) -> FieldDescription {
@@ -138,6 +145,7 @@ fn translate_error(meta: &crate::inner::ErrorDescription) -> ErrorDescription {
         fields,
         documentation,
         bindings,
+        origins,
     } = meta;
     let new_bindings: BTreeMap<_, _> = bindings
         .iter()
@@ -167,6 +175,7 @@ fn translate_error(meta: &crate::inner::ErrorDescription) -> ErrorDescription {
         fields: fields.iter().map(translate_field).collect(),
         documentation: documentation.clone().map(|d| translate_documentation(&d)),
         bindings: new_bindings,
+        origins: origins.clone(),
     }
 }
 

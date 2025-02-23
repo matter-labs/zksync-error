@@ -1,87 +1,119 @@
-use cargo::get_resolution_context;
-use error::FileFormatError;
+use std::collections::BTreeSet;
+
 use error::LoadError;
-use resolution::resolve;
-use resolution::ResolvedLink;
+use error::TakeFromError;
+use fetch::load_text;
 use zksync_error_model::link::Link;
 
-use crate::description::Collection;
+use crate::description::accessors::annotate_origins;
+use crate::description::error::FileFormatError;
+use crate::description::normalization::binding::BindingPoint;
+use crate::description::normalization::produce_root;
+use crate::description::HierarchyFragment;
+use crate::description::Root;
 
 pub mod builder;
 pub mod cargo;
 pub mod error;
+pub mod fetch;
 pub mod resolution;
 
-pub fn load_file(link: &Link) -> Result<Collection, LoadError> {
-    let context = get_resolution_context();
-    let contents = match resolve(link, &context)? {
-        ResolvedLink::DescriptionFile(description_file) => {
-            fetch::from_fs(&description_file.absolute_path)?
-        }
-        ResolvedLink::LocalPath(path) => fetch::from_fs(&path)?,
-        ResolvedLink::Url(url) => fetch::from_network(&url)?,
-        ResolvedLink::Immediate(immediate) => immediate,
-    };
-
-    load_serialized(&contents)
+///
+/// A fragment of a model, loaded through a link.
+/// - No default values are assigned.
+///
+#[derive(Clone, Debug)]
+pub struct NormalizedDescriptionFragment {
+    pub origin: Link,
+    pub root: Root,
 }
 
-fn pretty_print_fragment(text: &str, line: usize, column: usize) -> String {
-    let half_window = 3;
-    let first_line = (line - half_window).max(0);
-    let last_line_excl = (line + half_window).min(text.lines().count());
+fn root_from_text(contents: &str, context: &BindingPoint) -> Result<Root, FileFormatError> {
+    let fragment = HierarchyFragment::parse(contents)?;
+    produce_root(&fragment, context)
+}
 
-    let mut result = String::with_capacity(1024);
-    for (text_line, line_no) in text
-        .lines()
-        .skip(first_line)
-        .take(last_line_excl - first_line)
-        .zip(first_line + 1..)
-    {
-        result.push_str(&format!("{line_no:6}{text_line}\n"));
-        if line_no == line {
-            for _ in 0..column + 6 {
-                result.push(' ');
+fn load_single_fragment(
+    link: &Link,
+    binding: &BindingPoint,
+) -> Result<NormalizedDescriptionFragment, LoadError> {
+    let origin = link.clone();
+    let contents = load_text(link)?;
+    match root_from_text(&contents, binding) {
+        Ok(mut root) => {
+            annotate_origins(&mut root, &origin.to_string());
+
+            Ok(NormalizedDescriptionFragment { origin, root })
+        }
+        Err(inner) => Err(LoadError::FileFormatError { origin, inner }),
+    }
+}
+
+fn fetch_connected_fragments_aux(
+    fragment: NormalizedDescriptionFragment,
+    visited: &mut BTreeSet<Link>,
+) -> Result<Vec<NormalizedDescriptionFragment>, TakeFromError> {
+    let mut results = vec![];
+    let NormalizedDescriptionFragment { origin, root } = &fragment;
+
+    let visit =
+        |link, binding: &BindingPoint, visited: &mut BTreeSet<Link>| -> Result<_, TakeFromError> {
+            let new_fragment = load_single_fragment(&link, binding)?;
+            let addend = fetch_connected_fragments_aux(new_fragment, visited)?;
+            visited.insert(link.clone());
+            Ok(addend)
+        };
+
+    visited.insert(origin.clone());
+
+    for domain in &root.domains {
+        let domain_binding = BindingPoint::for_domain(domain);
+
+        for raw_link in &domain.take_from {
+            let link = Link::parse(raw_link)?;
+            if visited.contains(&link) {
+                return Err(TakeFromError::CircularDependency {
+                    trigger: origin.clone(),
+                    visited: link.clone(),
+                });
+            } else {
+                results.extend(visit(link, &domain_binding, visited)?)
             }
-            result.push_str("^\n");
+        }
+        for component in &domain.components {
+            let component_binding = BindingPoint::for_component(domain, component);
+
+            for raw_link in &component.take_from {
+                let link = Link::parse(raw_link)?;
+                if visited.contains(&link) {
+                    return Err(TakeFromError::CircularDependency {
+                        trigger: origin.clone(),
+                        visited: link.clone(),
+                    });
+                } else {
+                    results.extend(visit(link, &component_binding, visited)?)
+                }
+            }
         }
     }
-    result
-}
-pub fn load_serialized(contents: &str) -> Result<Collection, LoadError> {
-    serde_json_path_to_error::from_str::<crate::description::Collection>(contents).map_err(
-        |error| {
-            let inner = error.inner();
-            LoadError::FileFormatError(FileFormatError::ParseError {
-                contents: pretty_print_fragment(contents, inner.line(), inner.column()),
-                inner: Box::new(error),
-            })
-        },
-    )
+    results.push(fragment);
+    Ok(results)
 }
 
-mod fetch {
-    use reqwest;
-    use std::fs;
-    use std::path::PathBuf;
+pub fn load_connected_fragments(
+    fragment: NormalizedDescriptionFragment,
+) -> Result<Vec<NormalizedDescriptionFragment>, TakeFromError> {
+    let result = fetch_connected_fragments_aux(fragment, &mut BTreeSet::new())?;
+    Ok(result)
+}
 
-    pub fn from_fs(path: &PathBuf) -> std::io::Result<String> {
-        eprintln!(
-            "Trying to read local file: {}",
-            path.to_str().expect("Incorrect path")
-        );
-        fs::read_to_string(path)
-    }
-
-    pub fn from_network(url: &str) -> Result<String, reqwest::Error> {
-        eprintln!("Trying to fetch file from network: {url}");
-        let response = reqwest::blocking::get(url)?;
-        let content = response.text()?;
-        Ok(content)
-    }
+pub fn load_fragments(link: Link) -> Result<Vec<NormalizedDescriptionFragment>, TakeFromError> {
+    let root_fragment = load_single_fragment(&link, &BindingPoint::Root)?;
+    load_connected_fragments(root_fragment)
 }
 
 pub(crate) static ZKSYNC_ROOT_CONTENTS: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../../zksync-root.json"
 ));
+

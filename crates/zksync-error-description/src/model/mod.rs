@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, str};
 
 pub type LanguageName = String;
 pub type TypeName = String;
@@ -12,6 +12,7 @@ pub type ComponentCode = u32;
 pub type DomainCode = u32;
 pub type ErrorMessageTemplate = String;
 pub type Semver = String;
+pub type Origins = Vec<String>;
 
 #[non_exhaustive]
 #[derive(Debug, Default, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
@@ -43,6 +44,7 @@ pub struct DomainMetadata {
     pub bindings: BTreeMap<LanguageName, String>,
     pub identifier: String,
     pub description: String,
+    pub origins: Origins,
 }
 #[non_exhaustive]
 #[derive(Debug, Default, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
@@ -62,6 +64,7 @@ pub struct ComponentMetadata {
     pub bindings: BTreeMap<LanguageName, String>,
     pub identifier: String,
     pub description: String,
+    pub origins: Origins,
 }
 
 #[non_exhaustive]
@@ -76,6 +79,7 @@ pub struct ErrorDescription {
     pub fields: Vec<FieldDescription>,
     pub documentation: Option<ErrorDocumentation>,
     pub bindings: BTreeMap<LanguageName, TargetLanguageType>,
+    pub origins: Origins,
 }
 
 #[non_exhaustive]
@@ -132,7 +136,7 @@ impl ErrorHierarchy {
         }
     }
 
-    pub fn from_str(serialized_model: &str) -> ErrorHierarchy {
+    pub fn deserialize(serialized_model: &str) -> ErrorHierarchy {
         let wrapped: WrappedErrorHierarchy = serde_json::from_str(serialized_model).expect(
             "Impossible to parse error hierarchy dump -- have you changed the dump JSON file?",
         );
