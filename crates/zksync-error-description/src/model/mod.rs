@@ -131,4 +131,11 @@ impl ErrorHierarchy {
             model: self,
         }
     }
+
+    pub fn from_str(serialized_model: &str) -> ErrorHierarchy {
+        let wrapped: WrappedErrorHierarchy = serde_json::from_str(serialized_model).expect(
+            "Impossible to parse error hierarchy dump -- have you changed the dump JSON file?",
+        );
+        wrapped.model
+    }
 }
