@@ -116,4 +116,3 @@ pub(crate) static ZKSYNC_ROOT_CONTENTS: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../../zksync-root.json"
 ));
-

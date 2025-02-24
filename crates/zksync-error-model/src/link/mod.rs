@@ -54,9 +54,7 @@ impl std::fmt::Display for Link {
             )),
             Link::URL { url } => f.write_str(url),
             Link::FileLink { path } => f.write_str(path),
-            Link::DefaultLink => {
-                f.write_str("<default zksync-root.json>")
-            }
+            Link::DefaultLink => f.write_str("<default zksync-root.json>"),
         }
     }
 }

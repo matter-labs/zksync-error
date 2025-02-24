@@ -22,7 +22,7 @@ pub(crate) fn pretty_print_fragment(text: &str, line: usize, column: usize) -> S
 }
 
 #[allow(unused)]
-pub(crate) fn vec_display<T>(vec: &Vec<T>, sep: &str) -> String
+pub(crate) fn vec_display<T>(vec: &[T], sep: &str) -> String
 where
     T: std::fmt::Display,
 {
@@ -32,7 +32,7 @@ where
         .join(sep)
 }
 
-pub(crate) fn vec_debug<T>(vec: &Vec<T>, sep: &str) -> String
+pub(crate) fn vec_debug<T>(vec: &[T], sep: &str) -> String
 where
     T: std::fmt::Debug,
 {

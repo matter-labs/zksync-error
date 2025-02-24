@@ -468,7 +468,6 @@ pub fn build_model(
         },
     )?;
 
-
     add_default_error(&mut root_model);
     bind_error_types(&mut root_model);
     validate(&root_model)?;
