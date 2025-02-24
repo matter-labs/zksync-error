@@ -17,6 +17,7 @@ pub type ComponentCode = u32;
 pub type DomainCode = u32;
 pub type ErrorMessageTemplate = String;
 pub type Semver = String;
+pub type Origins = Vec<String>;
 
 #[derive(Debug, Default, Eq, PartialEq, Clone, serde::Serialize)]
 pub struct FullyQualifiedTargetLanguageType {
@@ -71,6 +72,7 @@ pub struct DomainMetadata {
     pub identifier: domain::Identifier,
     pub bindings: BTreeMap<LanguageName, String>,
     pub description: String,
+    pub origins: Origins,
 }
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize)]
 pub struct DomainDescription {
@@ -84,6 +86,7 @@ pub struct ComponentMetadata {
     pub domain: Rc<DomainMetadata>,
     pub bindings: BTreeMap<LanguageName, String>,
     pub description: String,
+    pub origins: Origins,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize)]
@@ -102,6 +105,7 @@ pub struct ErrorDescription {
     pub fields: Vec<FieldDescription>,
     pub documentation: Option<ErrorDocumentation>,
     pub bindings: BTreeMap<LanguageName, TargetLanguageType>,
+    pub origins: Origins,
 }
 
 impl From<TargetLanguageType> for FullyQualifiedTargetLanguageType {

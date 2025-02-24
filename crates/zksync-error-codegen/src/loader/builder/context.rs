@@ -4,8 +4,7 @@ use std::rc::Rc;
 
 use zksync_error_model::inner::ComponentMetadata;
 use zksync_error_model::inner::DomainMetadata;
-
-use crate::loader::link::Link;
+use zksync_error_model::link::Link;
 
 pub struct ModelTranslationContext {
     pub origin: Link,

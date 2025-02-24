@@ -42,6 +42,7 @@ impl From<inner::DomainMetadata> for model::DomainMetadata {
                     encoding,
                 },
             description,
+            origins,
         } = val;
         model::DomainMetadata {
             components,
@@ -50,6 +51,7 @@ impl From<inner::DomainMetadata> for model::DomainMetadata {
             description,
             name,
             code,
+            origins: origins.clone(),
         }
     }
 }
@@ -83,6 +85,7 @@ impl From<inner::ComponentMetadata> for model::ComponentMetadata {
                     encoding,
                 },
             description,
+            origins,
         } = val;
         model::ComponentMetadata {
             name,
@@ -91,6 +94,7 @@ impl From<inner::ComponentMetadata> for model::ComponentMetadata {
             bindings,
             description,
             identifier: encoding.to_owned(),
+            origins,
         }
     }
 }
@@ -107,6 +111,7 @@ impl From<inner::ErrorDescription> for model::ErrorDescription {
             fields,
             documentation,
             bindings,
+            origins,
         } = val;
         model::ErrorDescription {
             domain,
@@ -118,6 +123,7 @@ impl From<inner::ErrorDescription> for model::ErrorDescription {
             fields: fields.into_iter().map(|f| f.into()).collect(),
             documentation: documentation.map(|d| d.into()),
             bindings: bindings.into_iter().map(|(k, v)| (k, v.into())).collect(),
+            origins: origins.clone(),
         }
     }
 }

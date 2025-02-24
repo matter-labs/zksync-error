@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub mod context;
 pub mod error;
 
@@ -9,17 +11,10 @@ use context::DomainTranslationContext;
 use context::ErrorTranslationContext;
 use context::ModelTranslationContext;
 use context::TypeTranslationContext;
-use error::MissingComponent;
-use error::MissingDomain;
 use error::ModelBuildingError;
-use error::TakeFromError;
 use maplit::btreemap;
-use zksync_error_model::inner::component;
 use zksync_error_model::inner::domain;
-use zksync_error_model::validator::validate;
-
-use crate::description::Collection;
-use crate::loader::load;
+use zksync_error_model::link::Link;
 
 use zksync_error_model::inner::ComponentDescription;
 use zksync_error_model::inner::ComponentMetadata;
@@ -36,11 +31,10 @@ use zksync_error_model::inner::TargetLanguageType;
 use zksync_error_model::inner::TypeDescription;
 use zksync_error_model::inner::TypeMetadata;
 use zksync_error_model::inner::VersionedOwner;
-use zksync_error_model::merger::Merge as _;
+use zksync_error_model::validator::validate;
 
-use super::error::FileFormatError;
-use super::error::LoadError;
-use super::link::Link;
+use crate::description::merge::Mergeable as _;
+use crate::description::Root;
 
 fn add_missing<U, S>(map: &mut BTreeMap<String, U>, default: U, keys: impl Iterator<Item = S>)
 where
@@ -251,6 +245,7 @@ fn translate_error(
         bindings,
         fields,
         doc,
+        origins,
     } = error;
     let transformed_fields: Result<_, _> = fields.iter().map(translate_field).collect();
     let transformed_bindings = translate_type_bindings(bindings, &error.name)?;
@@ -269,46 +264,8 @@ fn translate_error(
         bindings: transformed_bindings,
         domain: ctx.parent.domain.clone(),
         component: ctx.component.clone(),
+        origins: origins.clone(),
     })
-}
-
-fn fetch_named_domain<'a>(
-    link: &str,
-    identifier: &domain::Identifier,
-    ctx: &'a DomainTranslationContext<'a>,
-) -> Result<DomainDescription, TakeFromError> {
-    let file = load(&Link::parse(link)?)?;
-    let domain = file.get_domain(&identifier.name).ok_or(MissingDomain {
-        domain_name: identifier.name.to_owned(),
-    })?;
-    Ok(translate_domain(domain, ctx)?)
-}
-
-fn fetch_named_component<'a>(
-    link: &str,
-    identifier: &component::Identifier,
-    ctx: &'a ComponentTranslationContext<'a>,
-) -> Result<ComponentDescription, TakeFromError> {
-    let file = load(&Link::parse(link)?)?;
-    let component = match file {
-        Collection::Root(_) | Collection::Domain(_) | Collection::Component(_) => file
-            .get_component(&ctx.get_domain(), &identifier.name)
-            .ok_or(MissingComponent {
-                domain_name: ctx.get_domain(),
-                component_name: identifier.name.to_owned(),
-            })?,
-        Collection::Errors(errors) => &crate::description::Component {
-            component_name: identifier.name.clone(),
-            component_code: identifier.code,
-            identifier_encoding: None,
-            description: None,
-            bindings: Default::default(),
-            take_from: vec![],
-            errors,
-        },
-    };
-
-    Ok(translate_component(component, ctx)?)
 }
 
 fn translate_errors<'a>(
@@ -339,6 +296,7 @@ fn translate_component<'a>(
         take_from,
         errors,
         bindings,
+        origins,
     } = component;
 
     let new_bindings = translate_and_populate_bindings(bindings, component_name);
@@ -351,6 +309,7 @@ fn translate_component<'a>(
         },
         description: description.clone().unwrap_or_default(),
         domain: ctx.domain.clone(),
+        origins: origins.clone(),
     });
 
     let transformed_errors = translate_errors(errors, ctx, &component_meta)?;
@@ -358,14 +317,6 @@ fn translate_component<'a>(
         meta: component_meta.clone(),
         errors: transformed_errors,
     };
-    for take_from_address in take_from {
-        let component_description =
-            fetch_named_component(take_from_address, &component_meta.identifier, ctx)
-                .map_err(|e| e.from_address(take_from_address))?;
-        result
-            .merge(&component_description)
-            .map_err(|e| TakeFromError::MergeError(e).from_address(take_from_address))?;
-    }
 
     Ok(result)
 }
@@ -382,6 +333,7 @@ fn translate_domain<'a>(
         components,
         bindings,
         take_from,
+        origins,
     } = value;
     let mut new_components: BTreeMap<_, _> = BTreeMap::default();
     let metadata = Rc::new(DomainMetadata {
@@ -392,6 +344,7 @@ fn translate_domain<'a>(
         },
         description: description.clone().unwrap_or_default(),
         bindings: translate_and_populate_bindings(bindings, domain_name),
+        origins: origins.clone(),
     });
 
     {
@@ -413,32 +366,7 @@ fn translate_domain<'a>(
         components: new_components,
     };
 
-    for take_from_address in take_from {
-        let domain_description =
-            fetch_named_domain(take_from_address, &result.meta.identifier, ctx)
-                .map_err(|e| e.from_address(take_from_address))?;
-        result
-            .merge(&domain_description)
-            .map_err(|e| TakeFromError::MergeError(e).from_address(take_from_address))?;
-    }
-
     Ok(result)
-}
-
-fn load_root_model(root_link: &Link) -> Result<Model, LoadError> {
-    let origin = root_link.clone();
-    match load(root_link)? {
-        Collection::Domain(_) => Err(LoadError::FileFormatError(
-            FileFormatError::ExpectedFullGotDomain { origin },
-        )),
-        Collection::Component(_) => Err(LoadError::FileFormatError(
-            FileFormatError::ExpectedFullGotComponent { origin },
-        )),
-        Collection::Errors(_) => Err(LoadError::FileFormatError(
-            FileFormatError::ExpectedFullGotErrors { origin },
-        )),
-        Collection::Root(root) => Ok(translate_model(&root, ModelTranslationContext { origin })?),
-    }
 }
 
 fn add_default_error(model: &mut Model) {
@@ -460,12 +388,12 @@ fn add_default_error(model: &mut Model) {
                         "rust".into() => TargetLanguageType { name: "GenericError".into()} ,
                         "typescript".into() => TargetLanguageType { name: "GenericError".into()} ,
                     },
+                    origins: vec![],
                 });
             }
         }
     }
 }
-
 fn bind_error_types(model: &mut Model) {
     fn error_name(component_name: &str) -> String {
         format!("Box<{component_name}>")
@@ -498,26 +426,55 @@ pub fn build_model(
     additions: &Vec<Link>,
     diagnostic: bool,
 ) -> Result<Model, ModelBuildingError> {
-    let mut root_model = load_root_model(root_link)?;
+    let root_fragment = super::load_single_fragment(root_link, &super::BindingPoint::Root)?;
+
+    let mut collection = super::load_connected_fragments(root_fragment).map_err(|inner| {
+        ModelBuildingError::TakeFrom {
+            address: root_link.clone(),
+            inner,
+        }
+    })?;
 
     for input_link in additions {
-        let part = load_root_model(input_link)?;
-        root_model
-            .merge(&part)
-            .map_err(|error| ModelBuildingError::MergeError {
-                merge_error: Box::new(error),
-                main_model_origin: root_link.clone(),
-                additional_model_origin: input_link.clone(),
-            })?
+        let part = super::load_single_fragment(input_link, &super::BindingPoint::Root)?;
+        let connected_component = super::load_connected_fragments(part).map_err(|inner| {
+            ModelBuildingError::TakeFrom {
+                address: input_link.clone(),
+                inner,
+            }
+        })?;
+        collection.extend(connected_component);
     }
+
+    let mut acc = Root::default();
+
+    for element in collection {
+        acc = acc
+            .merge(element.root)
+            .map_err(|inner| ModelBuildingError::MergeError {
+                inner: Box::new(inner),
+                origin: element.origin,
+            })?;
+    }
+
+    if diagnostic {
+        eprintln!("\n --- Combined description ---\n{acc}")
+    }
+
+    let mut root_model = translate_model(
+        &acc,
+        ModelTranslationContext {
+            origin: root_link.clone(),
+        },
+    )?;
 
     add_default_error(&mut root_model);
     bind_error_types(&mut root_model);
+    validate(&root_model)?;
+
     if diagnostic {
         eprintln!("Model: {root_model:#?}");
-        eprintln!("Model validation...");
     }
 
-    validate(&root_model)?;
     Ok(root_model)
 }

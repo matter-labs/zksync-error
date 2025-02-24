@@ -1,54 +1,39 @@
+use std::path::PathBuf;
+
 use super::builder::error::ModelBuildingError;
-use super::link::Link;
 use super::resolution::error::ResolutionError;
+use crate::description::error::FileFormatError;
+use zksync_error_model::link::error::LinkError;
+use zksync_error_model::link::Link;
 
 #[derive(Debug, thiserror::Error)]
-pub enum LinkError {
-    InvalidLinkFormat(String),
-    FailedResolution(ResolutionError),
-}
+pub enum TakeFromError {
+    #[error("Error while building model following a `take_from` link: {0}")]
+    LoadError(#[from] LoadError),
 
-impl std::fmt::Display for LinkError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            LinkError::InvalidLinkFormat(link) =>
-                f.write_fmt(format_args!("Link `{link}` has an invalid format. Expected `{}://<crate_name>{}<filename-with-extension>`.", Link::CARGO_FORMAT_PREFIX, Link::PACKAGE_SEPARATOR)),
-            LinkError::FailedResolution(r) => r.fmt(f),
-        }
-    }
-}
+    #[error("Error while building model following a `take_from` link: {0}")]
+    LinkError(#[from] LinkError),
 
-#[derive(Debug, thiserror::Error)]
-pub enum FileFormatError {
-    #[error("File `{origin}` contains just an error domain description, but a master error database should describe at least one domain and one component.")]
-    ExpectedFullGotDomain { origin: Link },
-    #[error("File `{origin}` contains just an error component description, but a master error database should describe at least one domain and one component.")]
-    ExpectedFullGotComponent { origin: Link },
-    #[error("File `{origin}` contains just an array of errors, but a master error database should describe at least one domain and one component.")]
-    ExpectedFullGotErrors { origin: Link },
-    #[error(
-        "Error parsing error description in JSON file.
-{inner}
-Note that the line number/column may be reported incorrectly.
-{contents}"
-    )]
-    ParseError {
-        contents: String,
-        #[source]
-        inner: Box<dyn std::error::Error>,
-    },
+    #[error("Circular dependency detected: file {trigger} attempted to reference {visited} which was already visited.")]
+    CircularDependency { trigger: Link, visited: Link },
 }
 
 #[derive(Debug, thiserror::Error)]
 pub enum LoadError {
-    #[error(transparent)]
-    IOError(#[from] std::io::Error),
+    #[error("Error loading file from {path}: {inner}")]
+    IOError {
+        path: PathBuf,
+        inner: std::io::Error,
+    },
 
     #[error(transparent)]
     NetworkError(#[from] reqwest::Error),
 
-    #[error(transparent)]
-    FileFormatError(#[from] FileFormatError),
+    #[error("Error loading errors from {origin}: {inner}")]
+    FileFormatError {
+        origin: Link,
+        inner: FileFormatError,
+    },
 
     #[error(transparent)]
     LinkError(#[from] LinkError),

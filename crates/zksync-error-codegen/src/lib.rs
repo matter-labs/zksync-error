@@ -3,6 +3,7 @@ pub mod backend;
 pub mod description;
 pub mod error;
 pub mod loader;
+pub(crate) mod util;
 
 use std::io::Write as _;
 use std::path::Path;
@@ -13,8 +14,8 @@ use arguments::GenerationArguments;
 use backend::IBackendConfig as _;
 use error::ProgramError;
 use loader::builder::build_model;
-use loader::link::Link;
 use zksync_error_model::inner::Model;
+use zksync_error_model::link::Link;
 
 use crate::backend::file::File;
 use crate::backend::mdbook::MDBookBackend;
@@ -67,7 +68,7 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
         eprintln!("Reading config from \"{root_link}\"");
     }
 
-    let additions: Result<Vec<_>, _> = input_links.iter().map(Link::parse).collect();
+    let additions: Result<Vec<_>, _> = input_links.iter().map(|s| Link::parse(s)).collect();
     let model = build_model(&Link::parse(root_link)?, &additions?, *verbose)?;
 
     for arguments::BackendOutput {

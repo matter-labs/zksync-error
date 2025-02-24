@@ -1,8 +1,11 @@
-use crate::loader::{
-    error::{LinkError, LoadError},
-    link::Link,
+use zksync_error_model::error::ModelValidationError;
+use zksync_error_model::link::error::LinkError;
+use zksync_error_model::link::Link;
+
+use crate::{
+    description::merge::error::MergeError,
+    loader::error::{LoadError, TakeFromError},
 };
-use zksync_error_model::{error::ModelValidationError, merger::error::MergeError};
 
 #[derive(Debug, thiserror::Error)]
 #[error("Missing component {component_name} in the domain {domain_name}")]
@@ -18,59 +21,18 @@ pub struct MissingDomain {
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum TakeFromError {
-    #[error("Error while building model following a `take_from` link: {0}")]
-    IOError(#[from] LoadError),
-
-    #[error("Error while building model following a `take_from` link: {0}")]
-    ParsingError(#[from] serde_json::Error),
-
-    #[error("Error while building model following a `take_from` link: {0}")]
-    MissingDomain(#[from] MissingDomain),
-
-    #[error("Error while building model following a `take_from` link: {0}")]
-    MissingComponent(#[from] MissingComponent),
-
-    #[error("Error while building model following a `take_from` link: {0}")]
-    ModelBuildingError(/* from */ Box<ModelBuildingError>), // Can't derive `From` implementation because of `Box`.
-
-    #[error("Error while merging with the error base fetched from `take_from` link: {0}")]
-    MergeError(#[from] MergeError),
-
-    #[error("Error while building model following a `take_from` link: {0}")]
-    LinkError(#[from] LinkError),
-}
-
-impl From<ModelBuildingError> for TakeFromError {
-    fn from(v: ModelBuildingError) -> Self {
-        Self::ModelBuildingError(Box::new(v))
-    }
-}
-
-impl TakeFromError {
-    pub fn from_address(self, address: &str) -> ModelBuildingError {
-        ModelBuildingError::TakeFrom {
-            address: address.to_string(),
-            inner: self,
-        }
-    }
-}
-#[derive(Debug, thiserror::Error)]
 pub enum ModelBuildingError {
     #[error("Failed to import a file {address}: {inner}")]
     TakeFrom {
-        address: String,
+        address: Link,
         #[source]
         inner: TakeFromError,
     },
 
-    #[error(
-        "Error merging models {main_model_origin} and {additional_model_origin}: {merge_error}"
-    )]
+    #[error("Error merging description {origin}: {inner}")]
     MergeError {
-        merge_error: Box<MergeError>,
-        main_model_origin: Link,
-        additional_model_origin: Link,
+        inner: Box<MergeError>,
+        origin: Link,
     },
     #[error("Error validating combined model: {0}")]
     ModelValidationError(#[from] ModelValidationError),

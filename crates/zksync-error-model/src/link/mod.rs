@@ -1,8 +1,8 @@
-use std::path::PathBuf;
+use error::LinkError;
 
-use super::{error::LinkError, CollectionFile};
+pub mod error;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq)]
 pub enum Link {
     DefaultLink,
     PackageLink { package: String, filename: String },
@@ -18,7 +18,7 @@ impl Link {
     pub const NETWORK_FORMAT_PREFIXES: [&str; 2] = ["https", "http"];
     pub const PACKAGE_SEPARATOR: &str = "@@";
 
-    pub fn parse(link: impl Into<String>) -> Result<Link, LinkError> {
+    pub fn parse(link: &str) -> Result<Link, LinkError> {
         let string: String = link.into();
 
         match string.split_once("://") {
@@ -35,31 +35,11 @@ impl Link {
                 path: path.to_owned(),
             }),
             Some((Link::DEFAULT_FORMAT_PREFIX, "zksync-root.json")) => Ok(Link::DefaultLink),
-            Some((prefix, _)) if Link::NETWORK_FORMAT_PREFIXES.contains(&prefix) => Ok(Link::URL {
-                url: string.to_string(),
-            }),
+            Some((prefix, _)) if Link::NETWORK_FORMAT_PREFIXES.contains(&prefix) => {
+                Ok(Link::URL { url: string })
+            }
             None => Ok(Link::FileLink { path: string }),
             Some(_) => Err(LinkError::InvalidLinkFormat(string)),
-        }
-    }
-    pub fn matches(link: &Link, file: &CollectionFile) -> bool {
-        if let Link::PackageLink { package, filename } = link {
-            let CollectionFile {
-                package: candidate_package,
-                absolute_path,
-            } = file;
-
-            if package != candidate_package {
-                return false;
-            };
-            let pathbuf = PathBuf::from(absolute_path);
-            let stripped_filename = pathbuf
-                .file_name()
-                .unwrap_or_else(|| panic!("Error accessing file `{absolute_path:?}`."));
-
-            stripped_filename.to_str().is_some_and(|s| s == filename)
-        } else {
-            false
         }
     }
 }
@@ -74,9 +54,7 @@ impl std::fmt::Display for Link {
             )),
             Link::URL { url } => f.write_str(url),
             Link::FileLink { path } => f.write_str(path),
-            Link::DefaultLink => {
-                f.write_str("<Default zksync-root.json file, provided by zksync-error crate>")
-            }
+            Link::DefaultLink => f.write_str("<default zksync-root.json>"),
         }
     }
 }
