@@ -179,6 +179,7 @@ impl RustBackend {
 
         let contents = quote! {
             #![allow(unused)]
+            #![allow(clippy::useless_format)]
             #![allow(non_camel_case_types)]
 
             use crate::documentation::Documented;
