@@ -1,13 +1,13 @@
-# {{ domain.name }} (domain code: {{ domain.code }})
+# {{ domain.identifier.name }} (domain code: {{ domain.identifier.code }})
 
 {{ domain.description }}
 
 
 # Components
 
-{% for component in components  | filter(attribute="domain_name", value=domain.name) %}
+{% for component in components  | filter(attribute="domain_name", value=domain.identifier.name) %}
 
-## [{{ component.name }} (code {{ component.code }})](components/{{component.identifier}}/{{component.name}}.md)
+## [{{ component.identifier.name }} (code {{ component.identifier.code }})](components/{{component.identifier}}/{{component.identifier.name}}.md)
 
 ### Description 
 
@@ -15,8 +15,8 @@
 
 ### Errors
 
-{% for error in errors | filter(attribute="component", value=component.name) | filter(attribute="domain", value=domain.name) | sort(attribute="code") %}
-- [`{{error.identifier}} {{ error.name }}`]({{component.name}}/{{error.name}}.md)
+{% for error in errors | filter(attribute="component", value=component.identifier.name) | filter(attribute="domain", value=domain.identifier.name) | sort(attribute="code") %}
+- [`{{error.identifier}} {{ error.name }}`]({{component.identifier.name}}/{{error.name}}.md)
 {% endfor %}
 
 {% endfor %}

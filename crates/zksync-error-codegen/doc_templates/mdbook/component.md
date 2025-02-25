@@ -1,23 +1,23 @@
-# {{ component.name }} (component code: {{ component.code }})
+# {{ component.identifier.name }} (component code: {{ component.identifier.code }})
 
+{% if component.description %}
 ## Description 
 
 {{ component.description }}
-
-## Errors
-
-{% for error in errors | filter(attribute="component", value=component.name) | sort(attribute="code") %}
-### [`{{error.identifier}} {{ error.name }}`]({{error.name}}.md)
-{% if error.documentation.short_description %}
-{{ error.documentation.short_description }}
 {% endif %}
 
-- Message: {{ error.identifier }} {{ error.message }}
+{% for error in errors | filter(attribute="component", value=component.identifier.name) | sort(attribute="code") %}
+
+- [`{{error.identifier}} {{ error.name }}`]({{error.name}}.md)
+{% if error.documentation.short_description %}
+     {{ error.documentation.short_description }}
+{% endif %}
+   - Message: `{{ error.identifier }} {{ error.message }}`
 
 {% if error.fields | length > 0 %}
-- Fields:
+   - Fields:
 {% for field in error.fields %}
-  - `{{ field.name }} : {{ field.type }}`
+      - `{{ field.name }} : {{ field.type }}`
 {% endfor %}
 {% endif %}
 

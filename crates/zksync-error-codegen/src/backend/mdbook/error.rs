@@ -4,6 +4,6 @@ use zksync_error_model::error::ModelValidationError;
 pub enum GenerationError {
     #[error(transparent)]
     ModelError(#[from] ModelValidationError),
-    #[error(transparent)]
+    #[error("Tera library error: {0:?}")]
     TemplateError(#[from] tera::Error),
 }
