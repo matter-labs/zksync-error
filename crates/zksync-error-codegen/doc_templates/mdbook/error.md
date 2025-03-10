@@ -4,7 +4,7 @@
 - Domain: {{ error.domain }}
 - Component: {{ error.component }}
 - Error Code: {{ error.code }}
-- Message: {{ error.identifier }} {{ error.message }}
+- Message: `{{ error.identifier }} {{ error.message }}`
 
 {% if error.documentation.short_description %}
 ## Short description 
@@ -32,7 +32,10 @@
     {% for cause in error.documentation.likely_causes %}
 ###     {{ cause.cause }}
 
+{% if cause.owner %}
 - Owner: {{ cause.owner.name }} (Version {{ cause.owner.version }})
+{% endif %}
+
 - Report to: {{ cause.report }}
 
 {% if cause.references | length > 0 %}
@@ -43,8 +46,7 @@
 
 {% for fix in cause.fixes %}
 #### Possible fix
-
-{{ fix }}
+    {{ fix }}
 
 {% endfor %}
 
