@@ -3,7 +3,7 @@ pub mod error;
 use error::MergeError;
 use std::collections::BTreeMap;
 
-use super::{Component, Domain, Root, Type};
+use super::{ArrayMultilineString, Component, Domain, Root, Type};
 
 pub trait Mergeable {
     fn merge(self, other: Self) -> Result<Self, MergeError>
@@ -54,6 +54,20 @@ impl Mergeable for String {
             Ok(self)
         } else {
             Err(MergeError::StringsDiffer(self.clone(), other.clone()))
+        }
+    }
+}
+
+impl Mergeable for ArrayMultilineString {
+    fn merge(self, other: ArrayMultilineString) -> Result<Self, MergeError> {
+        if self == other {
+            Ok(self)
+        } else if self.is_empty() {
+            Ok(other)
+        } else if other.is_empty() {
+            Ok(self)
+        } else {
+            Err(MergeError::StringsDiffer(self.into(), other.into()))
         }
     }
 }
