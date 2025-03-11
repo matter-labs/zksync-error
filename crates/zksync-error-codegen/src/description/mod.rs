@@ -30,7 +30,7 @@ pub struct Root {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Type {
     pub name: String,
-    pub description: String,
+    pub description: ArrayMultilineString,
     pub bindings: TypeMappings,
 }
 
@@ -50,7 +50,7 @@ pub struct Domain {
     pub domain_name: String,
     pub domain_code: u32,
     pub identifier_encoding: Option<String>,
-    pub description: Option<String>,
+    pub description: Option<ArrayMultilineString>,
     pub components: Vec<Component>,
     #[serde(default)]
     pub bindings: BTreeMap<String, String>,
@@ -66,7 +66,7 @@ pub struct Component {
     pub component_code: u32,
 
     pub identifier_encoding: Option<String>,
-    pub description: Option<String>,
+    pub description: Option<ArrayMultilineString>,
 
     #[serde(default)]
     pub bindings: BTreeMap<String, String>,
@@ -104,7 +104,7 @@ pub struct Field {
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ErrorDocumentation {
-    pub description: String,
+    pub description: ArrayMultilineString,
     pub summary: Option<String>,
     #[serde(default)]
     pub likely_causes: Vec<LikelyCause>,
@@ -136,6 +136,13 @@ pub struct VersionedOwner {
     pub version: String,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ArrayMultilineString {
+    SingleLine(String),
+    Multiline(Vec<String>),
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, EnumDiscriminants)]
 #[strum_discriminants(name(HierarchyFragmentKind))]
 #[serde(untagged)]
@@ -158,5 +165,28 @@ impl HierarchyFragment {
                 inner: Box::new(error),
             }
         })
+    }
+}
+
+impl Default for ArrayMultilineString {
+    fn default() -> Self {
+        Self::SingleLine("".to_string())
+    }
+}
+
+impl From<ArrayMultilineString> for String {
+    fn from(val: ArrayMultilineString) -> Self {
+        match val {
+            ArrayMultilineString::SingleLine(s) => s,
+            ArrayMultilineString::Multiline(vec) => vec.join("\n"),
+        }
+    }
+}
+impl ArrayMultilineString {
+    pub fn is_empty(&self) -> bool {
+        match self {
+            ArrayMultilineString::SingleLine(s) => s.is_empty(),
+            ArrayMultilineString::Multiline(vec) => vec.is_empty(),
+        }
     }
 }

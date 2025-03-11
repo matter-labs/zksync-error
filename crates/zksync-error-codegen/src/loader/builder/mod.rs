@@ -127,7 +127,7 @@ fn translate_type(
     Ok(TypeDescription {
         name: name.clone(),
         meta: TypeMetadata {
-            description: description.clone(),
+            description: description.clone().into(),
         },
         bindings: translate_type_mappings(codegen)?,
     })
@@ -228,7 +228,7 @@ fn translate_error_documentation(
         .collect();
 
     Ok(ErrorDocumentation {
-        description: description.clone(),
+        description: description.clone().into(),
         summary: short_description.clone(),
         likely_causes,
     })
@@ -307,7 +307,7 @@ fn translate_component<'a>(
             code: *component_code,
             encoding: identifier_encoding.clone().unwrap_or_default(),
         },
-        description: description.clone().unwrap_or_default(),
+        description: description.clone().unwrap_or_default().into(),
         domain: ctx.domain.clone(),
         origins: origins.clone(),
     });
@@ -342,7 +342,7 @@ fn translate_domain<'a>(
             code: *domain_code,
             encoding: identifier_encoding.clone().unwrap_or_default(),
         },
-        description: description.clone().unwrap_or_default(),
+        description: description.clone().unwrap_or_default().into(),
         bindings: translate_and_populate_bindings(bindings, domain_name),
         origins: origins.clone(),
     });
