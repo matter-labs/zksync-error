@@ -146,7 +146,7 @@ impl RustBackend {
                 }
                 impl std::fmt::Display for #component_name {
                     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                        f.write_fmt(format_args!("{self:?}"))
+                        f.write_str(&self.get_message())
                     }
                 }
                 impl Documented for #component_name {
