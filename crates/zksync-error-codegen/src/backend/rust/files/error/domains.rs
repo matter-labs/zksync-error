@@ -23,16 +23,12 @@ impl RustBackend {
             .map(|component| RustBackend::component_code_ident(&component.meta));
 
         let documented = {
-            let documentation_branches = map_components(
-                &self.model,
-                |ComponentContext {
-                     domain, component, ..
-                 }| {
+            let documentation_branches =
+                map_domains(&self.model, |DomainContext { domain, .. }| {
                     quote! {
-                        ZksyncError::#domain ( #domain :: #component (error)) => error.get_documentation() ,
+                        ZksyncError::#domain ( error ) => error.get_documentation() ,
                     }
-                },
-            );
+                });
 
             quote! {
                 impl crate::documentation::Documented for ZksyncError {
@@ -47,6 +43,23 @@ impl RustBackend {
             }
         };
 
+        let display = {
+            let display_branches = map_domains(&self.model, |DomainContext { domain, .. }| {
+                quote! {
+                    ZksyncError::#domain ( domain_error ) => domain_error.fmt(f),
+                }
+            });
+
+            quote! {
+            impl std::fmt::Display for ZksyncError {
+                fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                                    match self {
+                                        #( #display_branches )*
+                                    }
+                }
+            }
+                        }
+        };
         let impl_zksync_error = {
             let get_kind = {
                 let branches = map_components(
@@ -129,7 +142,7 @@ impl RustBackend {
                     #(
                         impl ICustomError<ZksyncError, ZksyncError> for #components {
                             fn to_unified(&self) -> ZksyncError {
-                                ZksyncError::#domain( #domain :: #components (self.clone()))
+                                 #domain :: #components (self.clone()).to_unified()
                             }
                         }
 
@@ -152,6 +165,27 @@ impl RustBackend {
                             value.to_unified()
                         }
                     }
+
+                    impl crate::documentation::Documented for #domain {
+                        type Documentation = &'static zksync_error_description::ErrorDocumentation;
+                        fn get_documentation(
+                            &self,
+                        ) -> Result<Option<Self::Documentation>, crate::documentation::DocumentationError> {
+                            match self {
+                                #( #domain :: #components(error) => error.get_documentation(),) *
+                            }
+                        }
+                    }
+
+                    impl std::fmt::Display for #domain {
+                        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                            match self {
+                                #( #domain :: #components(component) => component.fmt(f), ) *
+                            }
+                        }
+                    }
+                    impl std::error::Error for #domain {}
+
                 }
             },
         );
@@ -178,13 +212,10 @@ impl RustBackend {
 
             #documented
 
+            #display
+
             #impl_zksync_error
 
-            impl std::fmt::Display for ZksyncError {
-                fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                    f.write_fmt(format_args!("{:#?}", self))
-                }
-            }
             impl IUnifiedError<ZksyncError> for ZksyncError {}
             impl std::error::Error for ZksyncError {}
 
