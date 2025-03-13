@@ -17,6 +17,11 @@ pub struct ComponentContext {
     pub component_code: TokenStream,
 }
 
+pub fn type_ident(name: &str) -> TokenStream {
+    name.parse()
+        .unwrap_or_else(|_| panic!("Unable to parse Rust expression: {name}"))
+}
+
 pub fn ident(name: &str) -> TokenStream {
     sanitize(name)
         .parse()

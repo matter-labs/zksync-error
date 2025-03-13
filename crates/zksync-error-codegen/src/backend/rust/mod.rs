@@ -8,6 +8,7 @@ use error::GenerationError;
 use proc_macro2::TokenStream;
 use util::codegen::ident;
 use util::codegen::sanitize;
+use util::codegen::type_ident;
 use zksync_error_model::inner::ComponentMetadata;
 use zksync_error_model::inner::DomainMetadata;
 use zksync_error_model::unpacked::UnpackedModel;
@@ -104,10 +105,11 @@ impl RustBackend {
     }
     fn type_as_rust(typ: &FullyQualifiedTargetLanguageType) -> String {
         let FullyQualifiedTargetLanguageType { name, path } = typ;
+        let name = sanitize(name);
         if path.is_empty() {
-            name.to_string()
+            name
         } else {
-            format!("{path}.{name}")
+            format!("{path}::{name}")
         }
     }
 
@@ -147,19 +149,19 @@ impl RustBackend {
         Ok(format!("{name}Code"))
     }
     fn domain_code_ident(domain: &DomainMetadata) -> TokenStream {
-        ident(&Self::domain_code_type_name(domain).expect("Internal error"))
+        type_ident(&Self::domain_code_type_name(domain).expect("Internal error"))
     }
     fn domain_ident(domain: &DomainMetadata) -> TokenStream {
-        ident(&Self::domain_type_name(domain).expect("Internal error"))
+        type_ident(&Self::domain_type_name(domain).expect("Internal error"))
     }
     fn component_code_ident(component: &ComponentMetadata) -> TokenStream {
-        ident(&Self::component_code_type_name(component).expect("Internal error"))
+        type_ident(&Self::component_code_type_name(component).expect("Internal error"))
     }
     fn component_ident(component: &ComponentMetadata) -> TokenStream {
-        ident(&Self::component_type_name(component).expect("Internal error"))
+        type_ident(&Self::component_type_name(component).expect("Internal error"))
     }
     fn component_error_alias_ident(component: &ComponentMetadata) -> TokenStream {
-        ident(&format!(
+        type_ident(&format!(
             "{}Error",
             &Self::component_type_name(component).expect("Internal error")
         ))
