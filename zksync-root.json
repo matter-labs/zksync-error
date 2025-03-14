@@ -38,7 +38,7 @@
             "bindings": {
                 "rust": {
                     "name": "H160",
-                    "path": "zksync_types"
+                    "path": "zksync_basic_types"
                 }
             }
         },
@@ -48,7 +48,7 @@
             "bindings": {
                 "rust": {
                     "name": "H256",
-                    "path": "zksync_types"
+                    "path": "zksync_basic_types"
                 }
             }
         },
@@ -58,7 +58,7 @@
             "bindings": {
                 "rust": {
                     "name": "U256",
-                    "path": "zksync_types"
+                    "path": "zksync_basic_types"
                 }
             }
         },
