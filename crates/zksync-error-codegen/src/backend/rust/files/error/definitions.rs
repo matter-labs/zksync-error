@@ -6,6 +6,7 @@ use zksync_error_model::inner::ComponentDescription;
 use crate::backend::rust::error::GenerationError;
 use crate::backend::rust::util::codegen::doc_tokens;
 use crate::backend::rust::util::codegen::ident;
+use crate::backend::rust::util::codegen::type_ident;
 use crate::backend::rust::RustBackend;
 use crate::backend::File;
 use zksync_error_model::inner::ErrorDescription;
@@ -51,7 +52,7 @@ impl RustBackend {
         let mut field_tokens = Vec::new();
         for FieldDescription { name, r#type } in fields {
             let name = ident(name);
-            let typ = ident(&self.get_rust_type(r#type)?);
+            let typ = type_ident(&self.get_rust_type(r#type)?);
             field_tokens.push(quote! { #name : #typ  });
         }
         let error_name = RustBackend::error_ident(error);

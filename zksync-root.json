@@ -33,6 +33,36 @@
             }
         },
         {
+            "name": "H160",
+            "description": "160-bit hash",
+            "bindings": {
+                "rust": {
+                    "name": "H160",
+                    "path": "zksync_basic_types"
+                }
+            }
+        },
+        {
+            "name": "H256",
+            "description": "256-bit hash",
+            "bindings": {
+                "rust": {
+                    "name": "H256",
+                    "path": "zksync_basic_types"
+                }
+            }
+        },
+        {
+            "name": "U256",
+            "description": "256-bit unsigned integer",
+            "bindings": {
+                "rust": {
+                    "name": "U256",
+                    "path": "zksync_basic_types"
+                }
+            }
+        },
+        {
             "name": "map",
             "description": "String to string mapping.",
             "bindings": {

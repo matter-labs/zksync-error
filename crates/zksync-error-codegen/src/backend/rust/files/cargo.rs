@@ -32,6 +32,10 @@ serde = {{ version = "1.0.210", features = [ "derive", "rc" ] }}
 serde_json = "1.0.128"
 strum = "0.26.3"
 strum_macros = "0.26.4"
+
+# Required for types such as H160, H256, and U256.
+zksync_basic_types = {{ git = "https://github.com/matter-labs/zksync-era", tag = "core-v26.4.0" }}
+
 zksync-error-description = {{ git = "{}", branch = "main"}}
 {import_anyhow}
 "#,
