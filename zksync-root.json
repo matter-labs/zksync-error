@@ -34,7 +34,7 @@
             "description": "160-bit hash",
             "bindings": {
                 "rust": {
-                    "expression": "zksync_basic_types::H160"
+                    "expression": "Box<zksync_basic_types::H160>"
                 }
             }
         },
@@ -43,7 +43,7 @@
             "description": "256-bit hash",
             "bindings": {
                 "rust": {
-                    "expression": "zksync_basic_types::H256"
+                    "expression": "Box<zksync_basic_types::H256>"
                 }
             }
         },
@@ -52,7 +52,7 @@
             "description": "256-bit unsigned integer",
             "bindings": {
                 "rust": {
-                    "expression": "zksync_basic_types::U256"
+                    "expression": "Box<zksync_basic_types::U256>"
                 }
             }
         },
