@@ -15,7 +15,6 @@ use zksync_error_model::unpacked::UnpackedModel;
 
 use zksync_error_model::error::ModelValidationError;
 use zksync_error_model::inner::ErrorDescription;
-use zksync_error_model::inner::FullyQualifiedTargetLanguageType;
 use zksync_error_model::inner::Model;
 
 use super::Backend;
@@ -103,19 +102,10 @@ impl RustBackend {
             contents.to_string()
         ))
     }
-    fn type_as_rust(typ: &FullyQualifiedTargetLanguageType) -> String {
-        let FullyQualifiedTargetLanguageType { name, path } = typ;
-        let name = sanitize(name);
-        if path.is_empty() {
-            name
-        } else {
-            format!("{path}::{name}")
-        }
-    }
 
     fn get_rust_type(&self, name: &str) -> Result<String, GenerationError> {
         let typ = self.model.get_type(Self::get_language_name(), name)?;
-        Ok(Self::type_as_rust(typ))
+        Ok(typ.expression.clone())
     }
 
     fn component_type_name(component: &ComponentMetadata) -> Result<String, GenerationError> {
@@ -172,7 +162,7 @@ impl RustBackend {
             .bindings
             .get(Self::get_language_name())
             .ok_or(ModelValidationError::UnmappedName(error.name.clone()))?;
-        Ok(sanitize(&name.name))
+        Ok(sanitize(&name.expression))
     }
 
     fn error_ident(error: &ErrorDescription) -> TokenStream {

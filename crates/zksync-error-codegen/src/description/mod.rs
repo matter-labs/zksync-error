@@ -41,8 +41,7 @@ pub struct ErrorType {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FullyQualifiedType {
-    pub name: String,
-    pub path: String,
+    pub expression: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Default, Serialize, Deserialize)]

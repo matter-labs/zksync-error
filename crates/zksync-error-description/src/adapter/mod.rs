@@ -3,8 +3,9 @@ use zksync_error_model::unpacked as inner;
 
 impl From<inner::TargetLanguageType> for model::TargetLanguageType {
     fn from(val: inner::TargetLanguageType) -> Self {
-        let inner::TargetLanguageType { name, path } = val;
-        model::TargetLanguageType { name, path }
+        model::TargetLanguageType {
+            expression: val.expression,
+        }
     }
 }
 
