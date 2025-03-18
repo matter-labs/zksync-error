@@ -234,8 +234,7 @@ impl Mergeable for super::FullyQualifiedType {
         Self: Sized,
     {
         Ok(Self {
-            name: self.name.merge(other.name)?,
-            path: self.path.merge(other.path)?,
+            expression: self.expression.merge(other.expression)?,
         })
     }
 }

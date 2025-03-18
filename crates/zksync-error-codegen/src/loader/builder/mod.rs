@@ -81,7 +81,7 @@ fn translate_type_bindings(
             (
                 language_name.clone(),
                 TargetLanguageType {
-                    name: mapping.name.clone(),
+                    expression: mapping.name.clone(),
                 },
             )
         })
@@ -89,7 +89,7 @@ fn translate_type_bindings(
     Ok(ensure_existing(
         result,
         TargetLanguageType {
-            name: error_name.clone(),
+            expression: error_name.clone(),
         },
         ["rust", "typescript"].into_iter(),
     ))
@@ -107,8 +107,7 @@ fn translate_type_mappings(
             (
                 language_name.clone(),
                 FullyQualifiedTargetLanguageType {
-                    name: mapping.name.clone(),
-                    path: mapping.path.clone(),
+                    expression: mapping.expression.clone(),
                 },
             )
         })
@@ -385,8 +384,8 @@ fn add_default_error(model: &mut Model) {
                     }],
                     documentation: None,
                     bindings: btreemap! {
-                        "rust".into() => TargetLanguageType { name: "GenericError".into()} ,
-                        "typescript".into() => TargetLanguageType { name: "GenericError".into()} ,
+                        "rust".into() => TargetLanguageType { expression: "GenericError".into()} ,
+                        "typescript".into() => TargetLanguageType { expression: "GenericError".into()} ,
                     },
                     origins: vec![],
                 });

@@ -6,8 +6,7 @@
             "bindings": {
                 "rust":
                 {
-                    "name": "u32",
-                    "path": ""
+                    "expression": "u32"
                 }
             }
         },
@@ -17,8 +16,7 @@
             "bindings": {
                 "rust":
                 {
-                    "name": "i32",
-                    "path": ""
+                    "expression": "i32"
                 }
             }
         },
@@ -27,8 +25,7 @@
             "description": "Unicode zero-terminated string",
             "bindings": {
                 "rust": {
-                    "name": "String",
-                    "path": ""
+                    "expression": "String"
                 }
             }
         },
@@ -37,8 +34,7 @@
             "description": "160-bit hash",
             "bindings": {
                 "rust": {
-                    "name": "H160",
-                    "path": "zksync_basic_types"
+                    "expression": "Box<zksync_basic_types::H160>"
                 }
             }
         },
@@ -47,8 +43,7 @@
             "description": "256-bit hash",
             "bindings": {
                 "rust": {
-                    "name": "H256",
-                    "path": "zksync_basic_types"
+                    "expression": "Box<zksync_basic_types::H256>"
                 }
             }
         },
@@ -57,8 +52,7 @@
             "description": "256-bit unsigned integer",
             "bindings": {
                 "rust": {
-                    "name": "U256",
-                    "path": "zksync_basic_types"
+                    "expression": "Box<zksync_basic_types::U256>"
                 }
             }
         },
@@ -67,8 +61,7 @@
             "description": "String to string mapping.",
             "bindings": {
                 "rust": {
-                    "name": "Vec<(String,String)>",
-                    "path": ""
+                    "expression": "Vec<(String,String)>"
                 }
             }
         },
@@ -77,8 +70,7 @@
             "description": "Any wrapped error",
             "bindings": {
                 "rust": {
-                    "name": "serde_json::Value",
-                    "path": ""
+                    "expression": "serde_json::Value"
                 }
             }
         },
@@ -87,8 +79,7 @@
             "description": "Sequence of bytes",
             "bindings": {
                 "rust": {
-                    "name": "Vec<u8>",
-                    "path": ""
+                    "expression": "Vec<u8>"
                 }
             }
         }

@@ -21,12 +21,11 @@ pub type Origins = Vec<String>;
 
 #[derive(Debug, Default, Eq, PartialEq, Clone, serde::Serialize)]
 pub struct FullyQualifiedTargetLanguageType {
-    pub name: String,
-    pub path: String,
+    pub expression: String,
 }
 #[derive(Debug, Default, Eq, PartialEq, Clone, serde::Serialize)]
 pub struct TargetLanguageType {
-    pub name: String,
+    pub expression: String,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize)]
@@ -110,15 +109,14 @@ pub struct ErrorDescription {
 
 impl From<TargetLanguageType> for FullyQualifiedTargetLanguageType {
     fn from(value: TargetLanguageType) -> Self {
-        Self::from(value.name.as_str())
+        Self::from(value.expression.as_str())
     }
 }
 
 impl From<&str> for FullyQualifiedTargetLanguageType {
     fn from(value: &str) -> Self {
         FullyQualifiedTargetLanguageType {
-            name: value.into(),
-            path: "".into(),
+            expression: value.into(),
         }
     }
 }

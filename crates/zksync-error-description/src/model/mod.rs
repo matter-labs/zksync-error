@@ -17,8 +17,7 @@ pub type Origins = Vec<String>;
 #[non_exhaustive]
 #[derive(Debug, Default, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub struct TargetLanguageType {
-    pub name: String,
-    pub path: String,
+    pub expression: String,
 }
 
 #[non_exhaustive]

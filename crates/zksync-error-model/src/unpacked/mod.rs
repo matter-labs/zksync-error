@@ -12,8 +12,7 @@ type ErrorIdentifierRepr = String;
 
 #[derive(Debug, Default, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub struct TargetLanguageType {
-    pub name: String,
-    pub path: String,
+    pub expression: String,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
@@ -153,8 +152,7 @@ fn translate_error(meta: &crate::inner::ErrorDescription) -> ErrorDescription {
             (
                 k.to_string(),
                 TargetLanguageType {
-                    name: v.name.to_string(),
-                    path: String::default(),
+                    expression: v.expression.clone(),
                 },
             )
         })
@@ -230,8 +228,7 @@ fn translate_type(typ: &crate::inner::TypeDescription) -> TypeDescription {
             (
                 k.to_string(),
                 TargetLanguageType {
-                    name: v.name.to_string(),
-                    path: String::default(),
+                    expression: v.expression.to_string(),
                 },
             )
         })
