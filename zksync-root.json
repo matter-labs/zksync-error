@@ -48,6 +48,15 @@
             }
         },
         {
+            "name": "u64",
+            "description": "64-bit unsigned integer",
+            "bindings": {
+                "rust": {
+                    "expression": "zksync_basic_types::U64"
+                }
+            }
+        },
+        {
             "name": "U256",
             "description": "256-bit unsigned integer",
             "bindings": {
