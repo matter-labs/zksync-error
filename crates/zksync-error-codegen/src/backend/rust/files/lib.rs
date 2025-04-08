@@ -96,6 +96,7 @@ impl RustBackend {
         );
 
         let contents = quote! {
+            #![allow(non_camel_case_types)]
 
             #imports
 
