@@ -157,6 +157,12 @@ impl RustBackend {
         ))
     }
 
+    fn component_result_alias_ident(component: &ComponentMetadata) -> TokenStream {
+        type_ident(&format!(
+            "{}Result",
+            &Self::component_type_name(component).expect("Internal error")
+        ))
+    }
     fn error_variant_name(error: &ErrorDescription) -> Result<String, GenerationError> {
         let name = error
             .bindings
