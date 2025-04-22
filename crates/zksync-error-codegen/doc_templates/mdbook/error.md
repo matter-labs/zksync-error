@@ -36,7 +36,9 @@
 - Owner: {{ cause.owner.name }} (Version {{ cause.owner.version }})
 {% endif %}
 
+{% if cause.report %}
 - Report to: {{ cause.report }}
+{% endif %}
 
 {% if cause.references | length > 0 %}
 - References:
@@ -62,6 +64,4 @@
 
 | Language   | Type                            |
 |:----------:|:-------------------------------:|
-| Rust       | {{ error.bindings.rust.name }} |
-| Typescript | {{ error.bindings.typescript.name }} |
-
+{% for name, binding in error.bindings %} | {{ name }} | {{ binding.expression }} | {% endfor %}
