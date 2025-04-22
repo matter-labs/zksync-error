@@ -1,4 +1,4 @@
-# Error {{error.identifier }} {{ error.name }} 
+# {{error.identifier }} {{ error.name }} 
 
 
 - **Domain**: {{ error.domain }}
