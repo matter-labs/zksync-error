@@ -26,7 +26,7 @@ jobs:
         with:
           mdbook-version: '0.4.40'
 
-      - run:
+      - run: |
           cargo run -- --root-definitions zksync-error://zksync-root.json --additional-definitions https://raw.githubusercontent.com/matter-labs/anvil-zksync/refs/heads/main/etc/errors/anvil.json --backend doc-mdbook --verbose --output book
           cd book
           mdbook build
