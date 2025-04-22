@@ -1,0 +1,778 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>ZKsync error crate documentation</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="css/version-box.css">
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="01-introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="02-getting-started.html"><strong aria-hidden="true">2.</strong> Getting started</a></li><li class="chapter-item expanded affix "><li class="part-title">Interfaces</li><li class="chapter-item expanded "><a href="interfaces/01-command-line-interface.html"><strong aria-hidden="true">3.</strong> Command line interface</a></li><li class="chapter-item expanded "><a href="interfaces/02-library-interface.html"><strong aria-hidden="true">4.</strong> Library interface</a></li><li class="chapter-item expanded "><a href="interfaces/03-library-interface.html"><strong aria-hidden="true">5.</strong> Runtime documentation interface</a></li><li class="chapter-item expanded affix "><li class="part-title">Guides</li><li class="chapter-item expanded "><a href="guides/01-migrating-rust.html"><strong aria-hidden="true">6.</strong> Migrating errors to ZKsync error in Rust</a></li><li class="chapter-item expanded affix "><li class="part-title">Error description reference</li><li class="chapter-item expanded "><a href="description/01-overview.html"><strong aria-hidden="true">7.</strong> Overview</a></li><li class="chapter-item expanded "><a href="description/02-file-types.html"><strong aria-hidden="true">8.</strong> JSON file types</a></li><li class="chapter-item expanded "><a href="description/03-types.html"><strong aria-hidden="true">9.</strong> Types</a></li><li class="chapter-item expanded "><a href="description/04-domains.html"><strong aria-hidden="true">10.</strong> Domains</a></li><li class="chapter-item expanded "><a href="description/05-components.html"><strong aria-hidden="true">11.</strong> Components</a></li><li class="chapter-item expanded "><a href="description/06-errors.html"><strong aria-hidden="true">12.</strong> Errors</a></li><li class="chapter-item expanded "><a href="description/07-links.html"><strong aria-hidden="true">13.</strong> Links</a></li><li class="chapter-item expanded affix "><li class="part-title">Implementation</li><li class="chapter-item expanded "><a href="implementation/01-architecture.html"><strong aria-hidden="true">14.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="implementation/02-models.html"><strong aria-hidden="true">15.</strong> Models</a></li><li class="chapter-item expanded affix "><li class="part-title">Rust backend</li><li class="chapter-item expanded "><a href="backend/rust/01-overview.html"><strong aria-hidden="true">16.</strong> Overview</a></li><li class="chapter-item expanded "><a href="backend/rust/02-errors.html"><strong aria-hidden="true">17.</strong> Types of errors</a></li><li class="chapter-item expanded "><a href="backend/rust/03-marshaling.html"><strong aria-hidden="true">18.</strong> Marshaling</a></li><li class="chapter-item expanded "><a href="backend/rust/04-debugging.html"><strong aria-hidden="true">19.</strong> Debugging</a></li><li class="chapter-item expanded affix "><li class="part-title">MDBook backend</li><li class="chapter-item expanded "><a href="backend/mdbook/01-overview.html"><strong aria-hidden="true">20.</strong> Overview</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ZKsync error crate documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>Project <code>zksync-error</code> aims at describing user-facing failures in ZKsync
+components and generating their definitions and documentation for Rust and
+Typescript modules.</p>
+<p>This description is distributed across multiple interconnected JSON files hosted
+in repositories of ZKsync components, allowing for asynchronous work on them.</p>
+<h2 id="motivation"><a class="header" href="#motivation">Motivation</a></h2>
+<ul>
+<li>Provide a smooth and uniform developer and user experience by agreeing on a
+single source of truth across different code bases, the rules of their pretty printing, and their description.</li>
+<li>Retain the ability to work on parts of different ZKsync components separately for smooth adoption.</li>
+<li>Provide ZKsync components with access to the documentation in runtime so that
+they could react to failures and guide users towards solutions.</li>
+</ul>
+<p>Every component of ZKsync has, and will have their own ways of handling internal
+failures.  <code>zksync-error</code> is only concerned with providing an abstraction layer
+for outwards facing failures, visible to users.</p>
+<h2 id="project-structure"><a class="header" href="#project-structure">Project structure</a></h2>
+<p>The project contains the following crates:</p>
+<ol>
+<li><code>zksync-error-codegen</code> -- library hosting code generation logic for different
+backends (Rust, MDbook, TypeScript etc).</li>
+<li><code>zksync-error-codegen-cli</code> -- command-line interface for <code>zksync-error-codegen</code>.</li>
+<li><code>zksync-error-description</code> -- public model of error hierarchy used by the
+<em>generated Rust code</em>. It allows the generated code to provide full
+documentation for errors in runtime.</li>
+<li><code>zksync-error-model</code> -- internal model of error hierarchy used by
+<code>zksync-error-codegen</code>.</li>
+</ol>
+<p>The code generator of the crate <code>zksync-error-codegen</code> generates a crate
+<code>zksync-error</code> which is included in the workspaces of ZKsync components such as
+<code>anvil-zksync</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="getting-started"><a class="header" href="#getting-started">Getting started</a></h1>
+<p>The main JSON file is located in <a href="https://github.com/matter-labs/zksync-error/blob/main/zksync-root.json">zksync-error
+repository</a>.
+It is also baked inside the <code>zksync-error-codegen</code> crate, so that when you pin a
+version of <code>zksync-error</code> you also pin a version of <code>zksync-root.json</code> file,
+accessible to the codegen through the link <code>zksync-errors://zksync-root.json</code>.</p>
+<p>It is linked to similar files in other repositories through <code>take_from</code> fields.
+These files are automatically merged to produce a single tree of
+domains-components-errors.  This tree-like model can be used to generate:</p>
+<ul>
+<li><code>zksync-error</code> crate, defining errors for Rust code;</li>
+<li>documentation for errors in MDbook format.</li>
+<li>in future, TypeScript code to interact with these errors.</li>
+</ul>
+<p>This approach allows to define errors in the projects where they are used, for
+example in Solidity compiler or VM.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="command-line-interface"><a class="header" href="#command-line-interface">Command line interface</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="library-interface"><a class="header" href="#library-interface">Library interface</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="runtime-documentation-interface"><a class="header" href="#runtime-documentation-interface">Runtime documentation interface</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="migrating-rust-code-to-zksync-error"><a class="header" href="#migrating-rust-code-to-zksync-error">Migrating Rust code to ZKsync error</a></h1>
+<h2 id="if-the-function-returns-result_anyhowerror"><a class="header" href="#if-the-function-returns-result_anyhowerror">If the function returns <code>Result&lt;_,anyhow::Error&gt;</code></a></h2>
+<p>Suppose you want to throw an error from a component <code>AnvilEnvironment</code> of domain <code>Anvil</code> instead of <code>anyhow::Error</code>. Follow these steps:</p>
+<ol>
+<li>
+<p>Change the return type of the function to <code>Result&lt;_, zksync_error::anvil::gen::GenericError&gt;</code> and it will be automatically cast to
+a <code>GenericError</code> of this component.</p>
+<p>On error throwing sites, if the implicit call to <code>into</code> is not sufficient or is not applicable, then try to do the following:</p>
+<ul>
+<li>map the error using the function <code>zksync_error::anvil::gen::to_generic</code>,
+for example:</li>
+</ul>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>//replace the first line with the second
+    let log_file = File::create(&amp;config.log_file_path)?;
+    // Instead of returning `std::io::Error` you now return `anvil::gen::GenericError` containing it
+    let log_file = File::create(&amp;config.log_file_path).map_err(to_generic)?;
+
+//This is equivalent to `return anyhow!(error)`
+anyhow::bail!(
+        "fork is using unsupported fee parameters: {:?}",
+        fork_client.details.fee_params
+    )
+
+// We still return `anyhow::Error` but it is cast to `GenericError` of our component
+return Err(anyhow!(
+    "fork is using unsupported fee parameters: {:?}",
+    fork_client.details.fee_params
+)
+.into())
+
+// Instead of `into` we may use a macro `generic_error` imported from `anvil::gen::generic_error`, or from a namespace of a different component.
+return Err(generic_error!(
+    "fork is using unsupported fee parameters: {:?}",
+    fork_client.details.fee_params
+))
+<span class="boring">}</span></code></pre></pre>
+</li>
+<li>
+<p>Introduce more errors, corresponding to different failure situations.</p>
+<p>Describe the new error in the JSON file, and replace it on the throw site.</p>
+</li>
+</ol>
+<h2 id="if-the-function-returns-result-with-an-internal-error"><a class="header" href="#if-the-function-returns-result-with-an-internal-error">If the function returns <code>Result</code> with an internal error</a></h2>
+<p>Many functions return <code>Result&lt;_, CustomErrorType&gt;</code> and if the error
+<code>CustomErrorType</code> ends up getting outside the component, you may want to modify
+the function to return
+<code>Result&lt;_, zksync_error::anvil::env::AnvilEnvironmentError&gt;</code> instead,  or an
+error related to a different component.</p>
+<p>Suppose functions <code>caller1</code>, <code>caller2</code> and so on call a function
+<code>fn f()-&gt;Result&lt;_, CustomErrorType&gt;</code>, and we want to migrate <code>f</code> to
+<code>AnvilEnvironmentError</code> step by step.</p>
+<ol>
+<li>Assess if you <em>really</em> need to rewrite it. Remember that all error types
+described in JSON and provided by <code>zksync_error</code> are for public errors only!
+If this error gets through the call stack to the component user, then it
+makes sense to migrate it to <code>ZksyncError</code>.</li>
+<li>On the call site, in <code>caller</code>, map the error value using
+<code>map_err(to_generic)</code> and refactor the <code>caller</code> until it compiles.</li>
+<li>Make a copy of <code>f</code>, say, <code>f_new</code>.</li>
+<li>Replace the return type in <code>f_new</code> with <code>Result&lt;_, AnvilEnvironmentError&gt;</code>.
+Whenever <code>f_new</code> returns <code>Err(e:CustomErrorType)</code>,  it may return <code>anvil::env::GenericError</code> instead.
+Use <code>.map_err(to_generic)</code>, explicit or implicit <code>into</code>, and <code>anvil::env::generic_error!</code> macros.</li>
+<li>Work through the callers, one at a time. Pick a caller, say, <code>caller1</code>.
+Replace calls to <code>f</code> with calls to <code>f_new</code> and remove unused conversions.</li>
+<li>Repeat until all callers are refactored.</li>
+<li>Remove the function <code>f</code> and rename <code>f_new</code> back to <code>f</code>.</li>
+</ol>
+<h2 id="functions-returning-errors-from-multiple-components"><a class="header" href="#functions-returning-errors-from-multiple-components">Functions returning errors from multiple components</a></h2>
+<p>If a function may return errors that are spread among components (e.g. either
+<code>AnvilEnvironment</code> or <code>AnvilStateLoader</code> components) then we advise to return a
+type <code>AnvilError</code> from it.
+Such function are rare and require more manual work, but the algorithm is the
+same -- just use <code>to_domain</code> helper along with <code>generic_error!</code> macro.</p>
+<ul>
+<li>Choosing between CLI and <code>build.rs</code></li>
+</ul>
+<h2 id="publishing"><a class="header" href="#publishing">Publishing</a></h2>
+<p>After you change your repository's JSON file, rebuild <code>anvil-zksync</code> and <code>zksync-error</code> crate
+will be regenerated.
+You may also build <code>zksync-error</code> crate using CLI.</p>
+<p>When you publish your <code>anvil.json</code> to the repository, other projects will see
+the updated definitions. Then they should regenerate their <code>zksync-error</code> crates
+to use them.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p>Error and their documentation are described in JSON files.</p>
+<ul>
+<li>Every error has a <em>code</em>, belongs to a <em>component</em>, and every component
+belongs to a <em>domain</em>. This structure matches the structure of JSON files. For example, this file describes one domain <code>Anvil</code> with one component <code>AnvilEnvironment</code> and one
+error <code>LogFileAccessError</code>:</li>
+</ul>
+<pre><code class="language-json">{
+    "types": [],
+    "domains": [
+        {
+            "domain_name": "AnvilZksync",
+            "domain_code": 5,
+            "identifier_encoding": "anvil_zksync",
+            "components" : [
+                {
+                    "component_name": "AnvilEnvironment",
+                    "component_code": 1,
+                    "identifier_encoding": "env",
+                    "errors" : [
+                        {
+                            "name": "LogFileAccessError",
+                            "code": 1,
+                            "message": "Unable to access log file: {log_filename}",
+                            "fields": [
+                                {
+                                    "name": "log_filename",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "wrapped_error",
+                                    "type": "string"
+                                }
+                            ]
+                       }
+                    ]
+                }
+            ]
+        }
+        ]
+}
+</code></pre>
+<ul>
+<li>
+<p>One file is considered a <em>root</em> file, and is used as a start to collect
+information about all errors.</p>
+</li>
+<li>
+<p>The root file should contain high levels of hierarchy: domains, components. It
+may define errors, but it may also link definitions of domains and components
+in other files through the mechanism of <a href="description/07-links.html">links</a>.</p>
+</li>
+<li>
+<p>The root file is merged with all files it links to (and their linked files, transitively), and with any additional files provided by the user through CLI or library interfaces.</p>
+</li>
+<li>
+<p>Each linked file may contain a fragment of a full error hierarchy with
+domains, components, and errors, or a smaller fragment e.g. just a list of errors.</p>
+</li>
+</ul>
+<p>Let us now walk through the levels of this hierarchy, from errors towards domains.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="json-file-types"><a class="header" href="#json-file-types">JSON file types</a></h1>
+<p>There are several types of descriptions hosted in JSON files:</p>
+<ol>
+<li>Full files (describe type bindings, domains and some of their components and errors).</li>
+<li>Domain files (describe a single domain and some of its components and errors).</li>
+<li>Component files (describe a single component and some of its errors).</li>
+<li>Error files (describe one or more errors of a single component).</li>
+</ol>
+<h2 id="full-files"><a class="header" href="#full-files">Full files</a></h2>
+<p>Full files contain full hierarchy description with additional information about type mappings:</p>
+<pre><code class="language-json">{
+  "types": [],
+  "domains": []
+}
+</code></pre>
+<p>At least one domain and at least one component should be defined.</p>
+<p>Such files may be:</p>
+<ul>
+<li>referenced by other files through <code>take_from</code> fields;</li>
+<li>used as the root error definition file;</li>
+<li>provided as additional JSON files through CLI or library interfaces.</li>
+</ul>
+<p>Only full files can be used as the description root.</p>
+<h2 id="domain-files"><a class="header" href="#domain-files">Domain files</a></h2>
+<p>Domain files contain definition of a single component and some of its errors, for example:</p>
+<pre><code class="language-json">{
+  "domain_name": "Core",
+  "domain_code": 1,
+  "identifier_encoding": "core",
+  "description": "Errors in core ZKsync components such as sequencer or mempool.",
+  "bindings": {
+    "rust": "Core"
+  },
+  "components": []
+}
+</code></pre>
+<p>Domain files may be:</p>
+<ul>
+<li>referenced by other files through <code>take_from</code> fields.</li>
+<li>provided as additional JSON files through CLI or library interfaces.</li>
+</ul>
+<p>When all input files and their dependencies are collected and merged, all
+domains should have at least one component.</p>
+<h2 id="component-files"><a class="header" href="#component-files">Component files</a></h2>
+<p>Component files: contain definition of a single component and some of its errors, for example.</p>
+<pre><code class="language-json">{
+  "component_name": "API",
+  "component_code": 4,
+  "identifier_encoding": "api",
+  "errors": []
+}
+</code></pre>
+<p>Such files may be:</p>
+<ul>
+<li>referenced by other files through <code>take_from</code> fields.</li>
+<li>provided as additional JSON files through CLI or library interfaces. In this case they will be merged with the already defined component of the same name/code/identifier.</li>
+</ul>
+<h2 id="error-list-files"><a class="header" href="#error-list-files">Error list files</a></h2>
+<p>Error list files contain lists of errors, for example:</p>
+<pre><code class="language-json">
+[
+  {
+    "name": "LoadingStateOverExistingStateError",
+    "code": 1,
+    "message": "Loading state into a node with existing state is not allowed.",
+    "doc": {
+      "summary": "It is not allowed to load a state overriding the existing node state.",
+      "description": "It is not allowed to load a state overriding the existing node state. If you have a use case for that, please create an issue."
+    }
+  },
+  {
+    "name": "StateDecompressionError",
+    "code": 3,
+    "message": "Failed to decompress state: {details}.",
+    "fields": [
+      {
+        "name": "details",
+        "type": "string"
+      }
+    ]
+  }
+]
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="types"><a class="header" href="#types">Types</a></h1>
+<p>Errors are data structures, they contain named fields. Fields may have one of
+the types  defined in the JSON files in the section <code>types</code> next to <code>domains</code>,
+for example:</p>
+<pre><code class="language-json">"types": [
+    {
+        "name": "uint",
+        "description": "Unsigned 32-bit integer",
+        "bindings": {
+            "rust":
+            {
+                "name": "u32",
+                "path": ""
+            }
+        }
+    },
+    {
+        "name": "int",
+        "description": "Signed 32-bit integer",
+        "bindings": {
+            "rust":
+            {
+                "name": "i32",
+                "path": ""
+            }
+        }
+    },
+
+</code></pre>
+<p>Initially, thanks to the definitions provided in <code>zksync-error</code>, error fields
+can have one of the following types:</p>
+<ul>
+<li><code>string</code>;</li>
+<li><code>int</code> for 32-bit signed integers;</li>
+<li><code>uint</code> for 32-bit unsigned integers;</li>
+<li><code>wrapped_error</code>: a JSON value serialized through <code>serde_json</code>.</li>
+<li><code>map</code>: a map from <code>string</code> to <code>string</code>;</li>
+<li><code>bytes</code>: a sequence of bytes:</li>
+<li>type of any other error <code>E</code>, defined in one of JSONs. In Rust it is mapped to
+<code>Box&lt;E&gt;</code>. This allows wrapping one error inside another.</li>
+</ul>
+<p>Errors in <code>zksync-error</code> are part of a component's interface, so they can not
+have types that are unknown to other components.
+This prevents directly wrapping errors that are defined internally in one of components.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="domains"><a class="header" href="#domains">Domains</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="components"><a class="header" href="#components">Components</a></h1>
+<p>Every component implicitly contains an error with code 0 meaning an umbrella
+"generic error". You usually should not define this error yourself.</p>
+<pre><code class="language-json">{
+  "name": "GenericError",
+  "code": 0,
+  "message": "Generic error: {message}",
+  "fields": [
+    {
+      "name": "message",
+      "type": "string"
+    }
+  ]
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="errors"><a class="header" href="#errors">Errors</a></h1>
+<p>Let us start with a minimal example of an error with a single field <code>msg</code> of type <code>string</code>:</p>
+<pre><code class="language-json"> {
+    "name": "FailedToAppendTransactionToL2Block",
+    "code": 17,
+    "message": "Failed to append the transaction to the current L2 block: {msg}",
+    "fields": [
+        {
+            "name": "msg",
+            "type": "string"
+        }
+    ]
+}
+...
+</code></pre>
+<h2 id="name"><a class="header" href="#name">Name</a></h2>
+<p>All errors have human-readable names, which may contain alphanumeric characters,
+underscores, but should not start with a digit.</p>
+<h2 id="code"><a class="header" href="#code">Code</a></h2>
+<p>All errors are assigned a numeric code from 0 to 9999. It is assumed that every
+component has an error with a code 0 meaning "a generic error" and named
+"GenericError". Therefore the code 0 is reserved for such error; you may still
+redefine it, but you have to keep its semantic.</p>
+<p>Error codes should be unique inside a single component. Once allocated, the
+error code is never reused, even if the error is deprecated.</p>
+<h2 id="fields"><a class="header" href="#fields">Fields</a></h2>
+<p>Errors are data structures and may have zero or more fields. See
+<a href="description/./03-types.html">Types</a> for a reference on the supported field types.</p>
+<p>Each type definition contains a human-readable documentation in the field <code>description</code> and bindings to <code>rust</code> and other languages.</p>
+<h2 id="identifiers"><a class="header" href="#identifiers">Identifiers</a></h2>
+<p>Errors have identifiers in form
+<code>[&lt;domain_identifier&gt;-&lt;component_identifier&gt;-&lt;error_code&gt;]</code>. For example, the
+error <code>LogFileAccessError</code> in the example above has an identifier
+<code>[anvil_zksync-env-1]</code>:
+Identifiers are globally unique and never reused if the error is deprecated.</p>
+<h2 id="message"><a class="header" href="#message">Message</a></h2>
+<p>The description of an error must provide an error message shown to the users.
+The message may include error fields referenced by their names: <code>{field_name}</code>.</p>
+<p>Users will see this message prepended with the error identifier. For example, suppose that the domain <code>AnvilZksync</code> (identifier <code>anvil_zksync</code>)  contains a component <code>Node</code> (identifier <code>node</code>) with an error <code>FailedToAppendTransactionToL2Block</code>:</p>
+<pre><code class="language-json">{
+  "name": "FailedToAppendTransactionToL2Block",
+  "code": 17,
+  "message": "Failed to append the transaction to the current L2 block: {msg}",
+  "fields": [
+    {
+      "name": "msg",
+      "type": "string"
+    }
+  ]
+}
+</code></pre>
+<p>Suppose the Rust code emits an error <code>FailedToAppendTransactionToL2Block</code> and provides "Specific error message" as a value for field <code>msg</code>. Then this error is signaled with a message <code>[anvil_zksync-node-17] Failed to append the transaction to the current L2 block: Specific error message</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="links-between-descriptions"><a class="header" href="#links-between-descriptions">Links between descriptions</a></h1>
+<p>Links identify files that host parts of the error hierarchy.</p>
+<h2 id="types-of-links"><a class="header" href="#types-of-links">Types of links</a></h2>
+<p>There are three types of links:</p>
+<ul>
+<li>Default links.
+<ul>
+<li>Format: <code>zksync-error://&lt;file-name&gt;</code>.</li>
+<li>Resolved to files included in <code>zksync-error-codegen</code> crate.</li>
+<li>The default link <code>zksync-error://zksync-root.json</code> is resolved to the root of error hierarchy backed in currently used version of <code>zksync-error-codegen</code>.</li>
+</ul>
+</li>
+<li>URL links
+<ul>
+<li>Format: <code>https://&lt;URL&gt;</code> or <code>http://&lt;URL&gt;</code></li>
+<li>Use to refer to the parts of error hierarchy hosted in other repositories</li>
+</ul>
+</li>
+<li>File system links
+<ul>
+<li>Format: <code>file://&lt;local path&gt;</code> or simply <code>&lt;path&gt;</code></li>
+</ul>
+</li>
+<li>Cargo links (experimental):
+<ul>
+<li>Format: <code>cargo://&lt;package-name&gt;@</code>.</li>
+<li>Available only when <code>zksync-error-codegen</code> is used as a library from <code>build.rs</code> file.</li>
+<li>Require packages to provide manifests pointing at the corresponding files.</li>
+</ul>
+</li>
+</ul>
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<ol>
+<li>
+<p>The construction of hierarchy starts with the root JSON file; you should
+provide a link to it:</p>
+<ul>
+<li>when using CLI -- through option <code>--root-definitions</code></li>
+<li>when using <code>zksync-error-codegen</code> as a library -- through the field <code>root_link</code> of the structure <code>zksync_error_codegen::arguments::GenerationArguments</code>:</li>
+</ul>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct GenerationArguments {
+    pub verbose: bool,
+    pub root_link: String,
+    pub input_links: Vec&lt;String&gt;,
+    pub outputs: Vec&lt;BackendOutput&gt;,
+}
+<span class="boring">}</span></code></pre></pre>
+</li>
+<li>
+<p>Domains and components may refer to other files through <code>take_from</code> fields:</p>
+</li>
+</ol>
+<pre><code class="language-json">{
+      "domain_name": "AnvilZKsync",
+      "domain_code": 5,
+      "identifier_encoding": "anvil_zksync",
+      "description": "Errors originating in Anvil for ZKsync.",
+      "take_from": [ "https://&lt;url1&gt;", "https://&lt;url2&gt;" ]
+  }
+
+</code></pre>
+<p>In this case files are fetched, their contents are parsed, filtered and merged
+into the root model. The filtering selects only the domain/component with the
+same values of fields <code>name</code>, <code>code</code>, and <code>identifier_encoding</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="architecture"><a class="header" href="#architecture">Architecture</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="models"><a class="header" href="#models">Models</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="overview-1"><a class="header" href="#overview-1">Overview</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="types-of-errors"><a class="header" href="#types-of-errors">Types of errors</a></h1>
+<p>The root type of the error hierarchy is <code>ZksyncError</code>. For example, the error
+<code>GenericError</code> from the domain <code>Anvil</code> and its component <code>AnvilEnvironment</code>
+is instantiated as follows:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    ZksyncError::Anvil(// Domain
+        Anvil::AnvilEnvironment ( // Component
+            AnvilEnvironment::GenericError { // Error
+                message: "hello!".to_string()
+            })
+    );
+<span class="boring">}</span></code></pre></pre>
+<p>You don't need to construct this instance explicitly -- there are adapters
+implementing <code>Into</code> for every use case:</p>
+<ol>
+<li>from errors to domain errors types e.g. <code>Anvil</code>;</li>
+<li>from errors to component errors types e.g. <code>AnvilEnvironment</code>;</li>
+<li>from errors to the root type <code>ZksyncError</code>;</li>
+<li>from domain errors to <code>ZksyncError</code>;</li>
+<li>from <code>anyhow::Error</code> to component errors.</li>
+</ol>
+<p>See the examples below:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// This works:
+let err : ZksyncError = AnvilEnvironment::GenericError {
+                message: "hello!".to_string()
+            }.into();
+
+
+// instead of passing type to `into` where type derivation does not work
+let err_same = AnvilEnvironment::GenericError {
+                message: "hello!".to_string()
+            }.to_unified();
+            
+// Also works:
+fn test() -&gt; Result&lt;(), ZksyncError&gt; {
+    Err(AnvilEnvironmentError::GenericError {
+        message: "Oops".to_string(),
+    })?;
+    Ok(())
+}
+
+// Also works:
+fn test_domain() -&gt; Result&lt;(), AnvilError&gt; {
+    Err(AnvilEnvironmentError::GenericError {
+        message: "Oops".to_string(),
+    })?;
+    Ok(())
+}
+
+// anyhow -&gt; component, produces the default GenericError belonging to this component
+fn test_anyhow() -&gt; Result&lt;(), AnvilEnvironmentError&gt; {
+    Err(anyhow::anyhow!("Oops"))?;
+    Ok(())
+}
+
+// 
+fn test_domain() -&gt; Result&lt;(), AnvilError&gt; {
+    Err(AnvilEnvironmentError::GenericError {
+        message: "Oops".to_string(),
+    })?;
+    Ok(())
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="accessing-errors"><a class="header" href="#accessing-errors">Accessing errors</a></h2>
+<p>Use the path `zksync_error::&lt;domain_identifier&gt;::&lt;component_identifier&gt;::&lt;error_name&gt;.</p>
+<p>For example, suppose we have defined a domain <code>Anvil</code> with two components
+<code>Environment</code> and <code>Generic</code>. Their identifiers The following example outlines
+the structure of the interface, in Rust pseudocode:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub mod anvil {
+    type AnvilError;
+    pub mod env {
+        type AnvilEnvironmentError;
+        type GenericError;
+        type FirstCustomError;
+        macro generic_error;
+        // converts anything that implements `to_string` into a generic error inside this component.
+        fn to_generic&lt;E: Display&gt;(error); 
+    }
+    pub mod gen {
+    ...
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="marshaling"><a class="header" href="#marshaling">Marshaling</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="debugging"><a class="header" href="#debugging">Debugging</a></h1>
+<p>You may use <code>cargo build -vv</code> to see the debug output of the code generator.
+New errors will appearing in
+<a href="backend/rust/crates/zksync_error/src/error/definitions.rs">definitions.rs</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="overview-2"><a class="header" href="#overview-2">Overview</a></h1>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="js/version-box.js"></script>
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>
