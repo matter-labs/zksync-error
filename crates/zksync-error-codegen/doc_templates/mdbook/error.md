@@ -1,10 +1,10 @@
 # Error {{error.identifier }} {{ error.name }} 
 
 
-- Domain: {{ error.domain }}
-- Component: {{ error.component }}
-- Error Code: {{ error.code }}
-- Message: `{{ error.identifier }} {{ error.message }}`
+- **Domain**: {{ error.domain }}
+- **Component**: {{ error.component }}
+- **Error Code**: {{ error.code }}
+- **Message**: `{{ error.identifier }} {{ error.message }}`
 
 {% if error.documentation.short_description %}
 ## Short description 
@@ -32,21 +32,21 @@
     {% for cause in error.documentation.likely_causes %}
 - {{ cause.cause }}
 {% if cause.owner %}
-   - Owner: {{ cause.owner.name }} (Version {{ cause.owner.version }})
+   - **Owner**: {{ cause.owner.name }} (Version {{ cause.owner.version }})
 {% endif %}
 
 {% if cause.report %}
-   - Report to: {{ cause.report }}
+   - **Report to**: {{ cause.report }}
 {% endif %}
 
 {% if cause.references | length > 0 %}
-   - References:
+   - **References**
 {% for reference in cause.references %}
      -{{ reference }}
 {% endfor %}
 
 {% for fix in cause.fixes %}
-  - Possible fix: {{ fix }}
+  - **Possible fix**: {{ fix }}
 {% endfor %}
 
 {% endif %}
