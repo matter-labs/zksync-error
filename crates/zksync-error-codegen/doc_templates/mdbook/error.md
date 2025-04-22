@@ -1,10 +1,10 @@
-# Error {{error.identifier }} {{ error.name }} 
+# {{error.identifier }} {{ error.name }} 
 
 
-- Domain: {{ error.domain }}
-- Component: {{ error.component }}
-- Error Code: {{ error.code }}
-- Message: `{{ error.identifier }} {{ error.message }}`
+- **Domain**: {{ error.domain }}
+- **Component**: {{ error.component }}
+- **Error Code**: {{ error.code }}
+- **Message**: `{{ error.identifier }} {{ error.message }}`
 
 {% if error.documentation.short_description %}
 ## Short description 
@@ -30,24 +30,23 @@
 {% if error.documentation.likely_causes | length > 0 %}
 ##    Likely Causes
     {% for cause in error.documentation.likely_causes %}
-###     {{ cause.cause }}
-
+- {{ cause.cause }}
 {% if cause.owner %}
-- Owner: {{ cause.owner.name }} (Version {{ cause.owner.version }})
+   - **Owner**: {{ cause.owner.name }} (Version {{ cause.owner.version }})
 {% endif %}
 
-- Report to: {{ cause.report }}
+{% if cause.report %}
+   - **Report to**: {{ cause.report }}
+{% endif %}
 
 {% if cause.references | length > 0 %}
-- References:
-        {% for reference in cause.references %}
-   -{{ reference }}
-        {% endfor %}
+   - **References**
+{% for reference in cause.references %}
+     -{{ reference }}
+{% endfor %}
 
 {% for fix in cause.fixes %}
-#### Possible fix
-    {{ fix }}
-
+  - **Possible fix**: {{ fix }}
 {% endfor %}
 
 {% endif %}
@@ -62,6 +61,4 @@
 
 | Language   | Type                            |
 |:----------:|:-------------------------------:|
-| Rust       | {{ error.bindings.rust.name }} |
-| Typescript | {{ error.bindings.typescript.name }} |
-
+{% for name, binding in error.bindings %} | {{ name }} | {{ binding.expression }} | {% endfor %}
