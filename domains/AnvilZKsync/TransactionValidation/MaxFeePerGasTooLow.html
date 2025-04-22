@@ -201,9 +201,17 @@ To be considered valid, transactions must specify a maxFeePerGas that is greater
 <p>Even though anvil-zksync is a testing environment, it enforces these gas price validations to ensure that your tests accurately reflect how transactions would behave on the actual ZKSync network.
 Note: When anvil-zksync is in forking mode, it lock-in and uses gas price at the forked block</p>
 <h2 id="likely-causes"><a class="header" href="#likely-causes">Likely Causes</a></h2>
-<h3 id="the-transactions-maxfeepergas-is-set-too-low-compared-to-the-current-gas-price-in-the-anvil-zksync-node"><a class="header" href="#the-transactions-maxfeepergas-is-set-too-low-compared-to-the-current-gas-price-in-the-anvil-zksync-node">The transaction's maxFeePerGas is set too low compared to the current gas price in the anvil-zksync node.</a></h3>
-<h3 id="gas-price-has-changed-in-the-anvil-zksync-node-since-the-transaction-was-created"><a class="header" href="#gas-price-has-changed-in-the-anvil-zksync-node-since-the-transaction-was-created">Gas price has changed in the anvil-zksync node since the transaction was created.</a></h3>
-<h3 id="using-hardcoded-gas-prices-in-test-scripts-instead-of-querying-the-actual-price"><a class="header" href="#using-hardcoded-gas-prices-in-test-scripts-instead-of-querying-the-actual-price">Using hardcoded gas prices in test scripts instead of querying the actual price.</a></h3>
+<ul>
+<li>
+<p>The transaction's maxFeePerGas is set too low compared to the current gas price in the anvil-zksync node.</p>
+</li>
+<li>
+<p>Gas price has changed in the anvil-zksync node since the transaction was created.</p>
+</li>
+<li>
+<p>Using hardcoded gas prices in test scripts instead of querying the actual price.</p>
+</li>
+</ul>
 <h2 id="language-bindings"><a class="header" href="#language-bindings">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">MaxFeePerGasTooLow</td></tr>

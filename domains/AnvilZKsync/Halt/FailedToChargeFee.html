@@ -193,8 +193,14 @@
 <h2 id="description"><a class="header" href="#description">Description</a></h2>
 <p>This error is raised when the funds transferred to the bootloader are insufficient compared to the required fee (calculated as gasLimit * gasPrice). This may occur when the payer (account or paymaster) does not send enough ETH or when fee parameters are misconfigured.</p>
 <h2 id="likely-causes"><a class="header" href="#likely-causes">Likely Causes</a></h2>
-<h3 id="insufficient-funds-in-the-payers-account"><a class="header" href="#insufficient-funds-in-the-payers-account">Insufficient funds in the payer's account.</a></h3>
-<h3 id="incorrect-fee-parameters-gaslimit-or-gasprice"><a class="header" href="#incorrect-fee-parameters-gaslimit-or-gasprice">Incorrect fee parameters (gasLimit or gasPrice).</a></h3>
+<ul>
+<li>
+<p>Insufficient funds in the payer's account.</p>
+</li>
+<li>
+<p>Incorrect fee parameters (gasLimit or gasPrice).</p>
+</li>
+</ul>
 <h2 id="language-bindings"><a class="header" href="#language-bindings">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">FailedToChargeFee</td></tr>

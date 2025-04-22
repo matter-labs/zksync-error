@@ -188,7 +188,9 @@
 <h2 id="description"><a class="header" href="#description">Description</a></h2>
 <p>This error can be triggered by various bootloader anomalies such as mismatched fee parameters (e.g., baseFee greater than maxFeePerGas), unaccepted pubdata price, failed system calls (like L1 messenger or System Context), or internal assertion failures.</p>
 <h2 id="likely-causes"><a class="header" href="#likely-causes">Likely Causes</a></h2>
-<h3 id="fee-misconfiguration-failing-l1-messengersystem-calls-or-assertion-errors-leading-to-a-situation-the-vm-could-not-handle"><a class="header" href="#fee-misconfiguration-failing-l1-messengersystem-calls-or-assertion-errors-leading-to-a-situation-the-vm-could-not-handle">Fee misconfiguration, failing L1 messenger/system calls, or assertion errors leading to a situation the VM could not handle.</a></h3>
+<ul>
+<li>Fee misconfiguration, failing L1 messenger/system calls, or assertion errors leading to a situation the VM could not handle.</li>
+</ul>
 <h2 id="language-bindings"><a class="header" href="#language-bindings">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">UnexpectedVMBehavior</td></tr>

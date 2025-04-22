@@ -463,7 +463,9 @@
 <h2 id="description-6"><a class="header" href="#description-6">Description</a></h2>
 <p>There are missing or invalid command line arguments, or an invalid combination of arguments is provided.</p>
 <h2 id="likely-causes"><a class="header" href="#likely-causes">Likely Causes</a></h2>
-<h3 id="missing-an-essential-argument-or-an-incorrect-value-is-provided"><a class="header" href="#missing-an-essential-argument-or-an-incorrect-value-is-provided">Missing an essential argument or an incorrect value is provided.</a></h3>
+<ul>
+<li>Missing an essential argument or an incorrect value is provided.</li>
+</ul>
 <h2 id="language-bindings-1"><a class="header" href="#language-bindings-1">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">InvalidArguments</td></tr>
@@ -496,8 +498,14 @@ Listening on 0.0.0.0:8011
 </code></pre>
 <p>This error indicates that listening on the specified host and port failed.</p>
 <h2 id="likely-causes-1"><a class="header" href="#likely-causes-1">Likely Causes</a></h2>
-<h3 id="you-dont-have-permission-to-use-specified-host-and-port"><a class="header" href="#you-dont-have-permission-to-use-specified-host-and-port">You don't have permission to use specified host and port</a></h3>
-<h3 id="the-selected-port-is-in-use"><a class="header" href="#the-selected-port-is-in-use">The selected port is in use</a></h3>
+<ul>
+<li>
+<p>You don't have permission to use specified host and port</p>
+</li>
+<li>
+<p>The selected port is in use</p>
+</li>
+</ul>
 <h2 id="language-bindings-2"><a class="header" href="#language-bindings-2">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">ServerStartupFailed</td></tr>
@@ -523,9 +531,17 @@ Listening on 0.0.0.0:8011
 By default, the log file is searched for at <code>./anvil-zksync.log</code>.
 You may provide this path explicitly through the CLI argument <code>--log-file-path</code>.</p>
 <h2 id="likely-causes-2"><a class="header" href="#likely-causes-2">Likely Causes</a></h2>
-<h3 id="wrong-path-to-log-file"><a class="header" href="#wrong-path-to-log-file">Wrong path to log file.</a></h3>
-<h3 id="not-enough-space-in-the-storage"><a class="header" href="#not-enough-space-in-the-storage">Not enough space in the storage.</a></h3>
-<h3 id="insufficient-permissions"><a class="header" href="#insufficient-permissions">Insufficient permissions.</a></h3>
+<ul>
+<li>
+<p>Wrong path to log file.</p>
+</li>
+<li>
+<p>Not enough space in the storage.</p>
+</li>
+<li>
+<p>Insufficient permissions.</p>
+</li>
+</ul>
 <h2 id="language-bindings-3"><a class="header" href="#language-bindings-3">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">LogFileAccessFailed</td></tr>
@@ -551,9 +567,17 @@ You may provide this path explicitly through the CLI argument <code>--log-file-p
 By default, the log file is searched for at <code>./anvil-zksync.log</code>.
 You may provide this path explicitly through the CLI argument <code>--log-file-path</code>.</p>
 <h2 id="likely-causes-3"><a class="header" href="#likely-causes-3">Likely Causes</a></h2>
-<h3 id="wrong-path-to-log-file-1"><a class="header" href="#wrong-path-to-log-file-1">Wrong path to log file</a></h3>
-<h3 id="not-enough-space-in-the-storage-1"><a class="header" href="#not-enough-space-in-the-storage-1">Not enough space in the storage.</a></h3>
-<h3 id="insufficient-permissions-1"><a class="header" href="#insufficient-permissions-1">Insufficient permissions.</a></h3>
+<ul>
+<li>
+<p>Wrong path to log file</p>
+</li>
+<li>
+<p>Not enough space in the storage.</p>
+</li>
+<li>
+<p>Insufficient permissions.</p>
+</li>
+</ul>
 <h2 id="language-bindings-4"><a class="header" href="#language-bindings-4">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">LogFileWriteFailed</td></tr>
@@ -708,10 +732,20 @@ This is a wrapper error that contains a more specific halt error inside it, whic
 </ul>
 <p>When using anvil-zksync for testing, these halts are valuable signals that help you identify issues with your contracts or transactions before deploying to the real ZKSync network.</p>
 <h2 id="likely-causes-4"><a class="header" href="#likely-causes-4">Likely Causes</a></h2>
-<h3 id="transaction-execution-in-your-test-encountered-a-condition-that-forced-it-to-halt-prematurely"><a class="header" href="#transaction-execution-in-your-test-encountered-a-condition-that-forced-it-to-halt-prematurely">Transaction execution in your test encountered a condition that forced it to halt prematurely.</a></h3>
-<h3 id="test-transaction-interacts-with-zksync-specific-components-like-paymasters-or-account-abstraction-features-incorrectly"><a class="header" href="#test-transaction-interacts-with-zksync-specific-components-like-paymasters-or-account-abstraction-features-incorrectly">Test transaction interacts with ZKSync-specific components like paymasters or account abstraction features incorrectly.</a></h3>
-<h3 id="test-involves-operations-that-behave-differently-in-zksync-compared-to-standard-ethereum"><a class="header" href="#test-involves-operations-that-behave-differently-in-zksync-compared-to-standard-ethereum">Test involves operations that behave differently in ZKSync compared to standard Ethereum.</a></h3>
-<h3 id="test-environment-setup-issue-in-anvil-zksync"><a class="header" href="#test-environment-setup-issue-in-anvil-zksync">Test environment setup issue in anvil-zksync.</a></h3>
+<ul>
+<li>
+<p>Transaction execution in your test encountered a condition that forced it to halt prematurely.</p>
+</li>
+<li>
+<p>Test transaction interacts with ZKSync-specific components like paymasters or account abstraction features incorrectly.</p>
+</li>
+<li>
+<p>Test involves operations that behave differently in ZKSync compared to standard Ethereum.</p>
+</li>
+<li>
+<p>Test environment setup issue in anvil-zksync.</p>
+</li>
+</ul>
 <h2 id="language-bindings-7"><a class="header" href="#language-bindings-7">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">TransactionHalt</td></tr>
@@ -774,9 +808,17 @@ This is a wrapper error that contains a more specific validation error inside it
 </ul>
 <p>When testing contracts that have time-dependent logic, it's important to ensure that any manipulated timestamps move forward in time, not backward.</p>
 <h2 id="likely-causes-5"><a class="header" href="#likely-causes-5">Likely Causes</a></h2>
-<h3 id="test-code-attempts-to-set-a-block-timestamp-that-is-earlier-than-the-current-timestamp"><a class="header" href="#test-code-attempts-to-set-a-block-timestamp-that-is-earlier-than-the-current-timestamp">Test code attempts to set a block timestamp that is earlier than the current timestamp.</a></h3>
-<h3 id="tests-manipulating-time-incorrectly-by-trying-to-go-back-to-an-earlier-point-in-time"><a class="header" href="#tests-manipulating-time-incorrectly-by-trying-to-go-back-to-an-earlier-point-in-time">Tests manipulating time incorrectly by trying to go back to an earlier point in time.</a></h3>
-<h3 id="attempting-to-reset-time-to-an-earlier-point-after-advancing-it-in-a-previous-test"><a class="header" href="#attempting-to-reset-time-to-an-earlier-point-after-advancing-it-in-a-previous-test">Attempting to reset time to an earlier point after advancing it in a previous test.</a></h3>
+<ul>
+<li>
+<p>Test code attempts to set a block timestamp that is earlier than the current timestamp.</p>
+</li>
+<li>
+<p>Tests manipulating time incorrectly by trying to go back to an earlier point in time.</p>
+</li>
+<li>
+<p>Attempting to reset time to an earlier point after advancing it in a previous test.</p>
+</li>
+</ul>
 <h2 id="language-bindings-9"><a class="header" href="#language-bindings-9">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">TimestampBackwardsError</td></tr>
@@ -1081,8 +1123,14 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-13"><a class="header" href="#description-13">Description</a></h2>
 <p>This error occurs when the account validation step fails during the verification and execution of a transaction.</p>
 <h2 id="likely-causes-6"><a class="header" href="#likely-causes-6">Likely Causes</a></h2>
-<h3 id="insufficient-funds-to-cover-transaction-costs"><a class="header" href="#insufficient-funds-to-cover-transaction-costs">Insufficient funds to cover transaction costs.</a></h3>
-<h3 id="invalid-account-state-or-credentials"><a class="header" href="#invalid-account-state-or-credentials">Invalid account state or credentials.</a></h3>
+<ul>
+<li>
+<p>Insufficient funds to cover transaction costs.</p>
+</li>
+<li>
+<p>Invalid account state or credentials.</p>
+</li>
+</ul>
 <h2 id="language-bindings-11"><a class="header" href="#language-bindings-11">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">ValidationFailed</td></tr>
@@ -1106,7 +1154,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-14"><a class="header" href="#description-14">Description</a></h2>
 <p>This error is emitted when the paymaster validation process fails during transaction execution.</p>
 <h2 id="likely-causes-7"><a class="header" href="#likely-causes-7">Likely Causes</a></h2>
-<h3 id="invalid-paymaster-parameters-insufficient-funds-or-unmet-validation-conditions"><a class="header" href="#invalid-paymaster-parameters-insufficient-funds-or-unmet-validation-conditions">Invalid paymaster parameters, insufficient funds or unmet validation conditions.</a></h3>
+<ul>
+<li>Invalid paymaster parameters, insufficient funds or unmet validation conditions.</li>
+</ul>
 <h2 id="language-bindings-12"><a class="header" href="#language-bindings-12">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">PaymasterValidationFailed</td></tr>
@@ -1130,7 +1180,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-15"><a class="header" href="#description-15">Description</a></h2>
 <p>This error occurs during pre-transaction paymaster preparation if the paymaster input is too short (less than 4 bytes) or its selector is unsupported.</p>
 <h2 id="likely-causes-8"><a class="header" href="#likely-causes-8">Likely Causes</a></h2>
-<h3 id="invalid-or-improperly-formatted-paymaster-input"><a class="header" href="#invalid-or-improperly-formatted-paymaster-input">Invalid or improperly formatted paymaster input.</a></h3>
+<ul>
+<li>Invalid or improperly formatted paymaster input.</li>
+</ul>
 <h2 id="language-bindings-13"><a class="header" href="#language-bindings-13">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">PrePaymasterPreparationFailed</td></tr>
@@ -1154,8 +1206,14 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-16"><a class="header" href="#description-16">Description</a></h2>
 <p>This error is emitted when the system fails to deduct the required fees for executing the transaction.</p>
 <h2 id="likely-causes-9"><a class="header" href="#likely-causes-9">Likely Causes</a></h2>
-<h3 id="insufficient-funds-to-cover-the-transaction-fee"><a class="header" href="#insufficient-funds-to-cover-the-transaction-fee">Insufficient funds to cover the transaction fee.</a></h3>
-<h3 id="incorrect-transaction-fee-configuration-maxfeepergas-or-gaslimit"><a class="header" href="#incorrect-transaction-fee-configuration-maxfeepergas-or-gaslimit">Incorrect transaction fee configuration (maxFeePerGas or gasLimit).</a></h3>
+<ul>
+<li>
+<p>Insufficient funds to cover the transaction fee.</p>
+</li>
+<li>
+<p>Incorrect transaction fee configuration (maxFeePerGas or gasLimit).</p>
+</li>
+</ul>
 <h2 id="language-bindings-14"><a class="header" href="#language-bindings-14">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">PayForTxFailed</td></tr>
@@ -1179,7 +1237,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-17"><a class="header" href="#description-17">Description</a></h2>
 <p>This error occurs when the system is unable to mark the factory dependencies for an L1 transaction in the known code storage. For L1 transactions, factory dependencies must be recorded as known to ensure that all required code components are available. A failure here may indicate that the dependency data is missing or malformed.</p>
 <h2 id="likely-causes-10"><a class="header" href="#likely-causes-10">Likely Causes</a></h2>
-<h3 id="missing-or-incorrectly-formatted-factory-dependencies"><a class="header" href="#missing-or-incorrectly-formatted-factory-dependencies">Missing or incorrectly formatted factory dependencies.</a></h3>
+<ul>
+<li>Missing or incorrectly formatted factory dependencies.</li>
+</ul>
 <h2 id="language-bindings-15"><a class="header" href="#language-bindings-15">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">FailedToMarkFactoryDependencies</td></tr>
@@ -1203,8 +1263,14 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-18"><a class="header" href="#description-18">Description</a></h2>
 <p>This error is raised when the funds transferred to the bootloader are insufficient compared to the required fee (calculated as gasLimit * gasPrice). This may occur when the payer (account or paymaster) does not send enough ETH or when fee parameters are misconfigured.</p>
 <h2 id="likely-causes-11"><a class="header" href="#likely-causes-11">Likely Causes</a></h2>
-<h3 id="insufficient-funds-in-the-payers-account"><a class="header" href="#insufficient-funds-in-the-payers-account">Insufficient funds in the payer's account.</a></h3>
-<h3 id="incorrect-fee-parameters-gaslimit-or-gasprice"><a class="header" href="#incorrect-fee-parameters-gaslimit-or-gasprice">Incorrect fee parameters (gasLimit or gasPrice).</a></h3>
+<ul>
+<li>
+<p>Insufficient funds in the payer's account.</p>
+</li>
+<li>
+<p>Incorrect fee parameters (gasLimit or gasPrice).</p>
+</li>
+</ul>
 <h2 id="language-bindings-16"><a class="header" href="#language-bindings-16">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">FailedToChargeFee</td></tr>
@@ -1219,7 +1285,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-19"><a class="header" href="#description-19">Description</a></h2>
 <p>This error occurs when a transaction is attempted from an address that has not been deployed as an account, meaning the <code>from</code> address is just a contract.</p>
 <h2 id="likely-causes-12"><a class="header" href="#likely-causes-12">Likely Causes</a></h2>
-<h3 id="account-not-deployed-with-createaccount-or-create2account"><a class="header" href="#account-not-deployed-with-createaccount-or-create2account">Account not deployed with <code>createAccount</code> or <code>create2Account</code></a></h3>
+<ul>
+<li>Account not deployed with <code>createAccount</code> or <code>create2Account</code></li>
+</ul>
 <h2 id="language-bindings-17"><a class="header" href="#language-bindings-17">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">FromIsNotAnAccount</td></tr>
@@ -1234,7 +1302,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-20"><a class="header" href="#description-20">Description</a></h2>
 <p>Transaction reverted due to a contract call that failed during execution.</p>
 <h2 id="likely-causes-13"><a class="header" href="#likely-causes-13">Likely Causes</a></h2>
-<h3 id="contract-function-call-failed"><a class="header" href="#contract-function-call-failed">Contract function call failed.</a></h3>
+<ul>
+<li>Contract function call failed.</li>
+</ul>
 <h2 id="language-bindings-18"><a class="header" href="#language-bindings-18">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">InnerTxError</td></tr>
@@ -1258,7 +1328,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-21"><a class="header" href="#description-21">Description</a></h2>
 <p>This error is emitted when the system encounters an unspecified reason for halting.</p>
 <h2 id="likely-causes-14"><a class="header" href="#likely-causes-14">Likely Causes</a></h2>
-<h3 id="unexpected-or-unhandled-vm-state-or-insufficient-gas"><a class="header" href="#unexpected-or-unhandled-vm-state-or-insufficient-gas">Unexpected or unhandled VM state, or insufficient gas.</a></h3>
+<ul>
+<li>Unexpected or unhandled VM state, or insufficient gas.</li>
+</ul>
 <h2 id="language-bindings-19"><a class="header" href="#language-bindings-19">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">Unknown</td></tr>
@@ -1277,7 +1349,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-22"><a class="header" href="#description-22">Description</a></h2>
 <p>This error can be triggered by various bootloader anomalies such as mismatched fee parameters (e.g., baseFee greater than maxFeePerGas), unaccepted pubdata price, failed system calls (like L1 messenger or System Context), or internal assertion failures.</p>
 <h2 id="likely-causes-15"><a class="header" href="#likely-causes-15">Likely Causes</a></h2>
-<h3 id="fee-misconfiguration-failing-l1-messengersystem-calls-or-assertion-errors-leading-to-a-situation-the-vm-could-not-handle"><a class="header" href="#fee-misconfiguration-failing-l1-messengersystem-calls-or-assertion-errors-leading-to-a-situation-the-vm-could-not-handle">Fee misconfiguration, failing L1 messenger/system calls, or assertion errors leading to a situation the VM could not handle.</a></h3>
+<ul>
+<li>Fee misconfiguration, failing L1 messenger/system calls, or assertion errors leading to a situation the VM could not handle.</li>
+</ul>
 <h2 id="language-bindings-20"><a class="header" href="#language-bindings-20">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">UnexpectedVMBehavior</td></tr>
@@ -1292,7 +1366,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-23"><a class="header" href="#description-23">Description</a></h2>
 <p>This error occurs when the bootloader does not have enough gas to continue executing the transaction.</p>
 <h2 id="likely-causes-16"><a class="header" href="#likely-causes-16">Likely Causes</a></h2>
-<h3 id="insufficient-gas-limit-set-for-the-transaction"><a class="header" href="#insufficient-gas-limit-set-for-the-transaction">Insufficient gas limit set for the transaction.</a></h3>
+<ul>
+<li>Insufficient gas limit set for the transaction.</li>
+</ul>
 <h2 id="language-bindings-21"><a class="header" href="#language-bindings-21">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">BootloaderOutOfGas</td></tr>
@@ -1307,7 +1383,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-24"><a class="header" href="#description-24">Description</a></h2>
 <p>Validation step of transaction execution exceeds the allocated gas limit.</p>
 <h2 id="likely-causes-17"><a class="header" href="#likely-causes-17">Likely Causes</a></h2>
-<h3 id="insufficient-gas-limit-set-for-the-transaction-1"><a class="header" href="#insufficient-gas-limit-set-for-the-transaction-1">Insufficient gas limit set for the transaction.</a></h3>
+<ul>
+<li>Insufficient gas limit set for the transaction.</li>
+</ul>
 <h2 id="language-bindings-22"><a class="header" href="#language-bindings-22">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">ValidationOutOfGas</td></tr>
@@ -1322,7 +1400,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-25"><a class="header" href="#description-25">Description</a></h2>
 <p>This error occurs when the gas limit set for the transaction is too large for the server to handle.</p>
 <h2 id="likely-causes-18"><a class="header" href="#likely-causes-18">Likely Causes</a></h2>
-<h3 id="setting-an-unrealistically-high-gas-limit-for-the-transaction"><a class="header" href="#setting-an-unrealistically-high-gas-limit-for-the-transaction">Setting an unrealistically high gas limit for the transaction.</a></h3>
+<ul>
+<li>Setting an unrealistically high gas limit for the transaction.</li>
+</ul>
 <h2 id="language-bindings-23"><a class="header" href="#language-bindings-23">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">TooBigGasLimit</td></tr>
@@ -1337,7 +1417,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-26"><a class="header" href="#description-26">Description</a></h2>
 <p>The bootloader checks if it can supply the requested gas plus overhead. If the remaining gas is below this threshold, it reverts.</p>
 <h2 id="likely-causes-19"><a class="header" href="#likely-causes-19">Likely Causes</a></h2>
-<h3 id="user-specified-gas-limit-is-lower-than-the-combined-operational-and-overhead-needs"><a class="header" href="#user-specified-gas-limit-is-lower-than-the-combined-operational-and-overhead-needs">User-specified gas limit is lower than the combined operational and overhead needs.</a></h3>
+<ul>
+<li>User-specified gas limit is lower than the combined operational and overhead needs.</li>
+</ul>
 <h2 id="language-bindings-24"><a class="header" href="#language-bindings-24">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">NotEnoughGasProvided</td></tr>
@@ -1352,7 +1434,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-27"><a class="header" href="#description-27">Description</a></h2>
 <p>This error occurs when the transaction makes too many missing invocations to memory, surpassing the allowed limit.</p>
 <h2 id="likely-causes-20"><a class="header" href="#likely-causes-20">Likely Causes</a></h2>
-<h3 id="highly-complex-transaction-with-excessive-memory-accesses"><a class="header" href="#highly-complex-transaction-with-excessive-memory-accesses">Highly complex transaction with excessive memory accesses.</a></h3>
+<ul>
+<li>Highly complex transaction with excessive memory accesses.</li>
+</ul>
 <h2 id="language-bindings-25"><a class="header" href="#language-bindings-25">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">MissingInvocationLimitReached</td></tr>
@@ -1371,7 +1455,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-28"><a class="header" href="#description-28">Description</a></h2>
 <p>System failed to set the necessary information for the L2 block during execution.</p>
 <h2 id="likely-causes-21"><a class="header" href="#likely-causes-21">Likely Causes</a></h2>
-<h3 id="invalid-l2-block-data-or-internal-processing-error"><a class="header" href="#invalid-l2-block-data-or-internal-processing-error">Invalid L2 block data or internal processing error.</a></h3>
+<ul>
+<li>Invalid L2 block data or internal processing error.</li>
+</ul>
 <h2 id="language-bindings-26"><a class="header" href="#language-bindings-26">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">FailedToSetL2Block</td></tr>
@@ -1390,7 +1476,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-29"><a class="header" href="#description-29">Description</a></h2>
 <p>The system context call to record this transaction in the current L2 block failed. Common causes include invalid or corrupted L2 block data, insufficient gas, or unforeseen internal errors in the system context.</p>
 <h2 id="likely-causes-22"><a class="header" href="#likely-causes-22">Likely Causes</a></h2>
-<h3 id="system-context-call-failure-or-an-invalid-l2-block-state-eg-corrupted-data-insufficient-resources"><a class="header" href="#system-context-call-failure-or-an-invalid-l2-block-state-eg-corrupted-data-insufficient-resources">System context call failure or an invalid L2 block state (e.g., corrupted data, insufficient resources).</a></h3>
+<ul>
+<li>System context call failure or an invalid L2 block state (e.g., corrupted data, insufficient resources).</li>
+</ul>
 <h2 id="language-bindings-27"><a class="header" href="#language-bindings-27">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">FailedToAppendTransactionToL2Block</td></tr>
@@ -1405,7 +1493,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-30"><a class="header" href="#description-30">Description</a></h2>
 <p>VM experiences a critical failure and panic during transaction execution.</p>
 <h2 id="likely-causes-23"><a class="header" href="#likely-causes-23">Likely Causes</a></h2>
-<h3 id="uncaught-exception-or-critical-internal-error-within-the-vm"><a class="header" href="#uncaught-exception-or-critical-internal-error-within-the-vm">Uncaught exception or critical internal error within the VM.</a></h3>
+<ul>
+<li>Uncaught exception or critical internal error within the VM.</li>
+</ul>
 <h2 id="language-bindings-28"><a class="header" href="#language-bindings-28">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">VMPanic</td></tr>
@@ -1424,7 +1514,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-31"><a class="header" href="#description-31">Description</a></h2>
 <p>Custom tracer used during transaction execution decides to abort the process, typically due to specific conditions being met.</p>
 <h2 id="likely-causes-24"><a class="header" href="#likely-causes-24">Likely Causes</a></h2>
-<h3 id="custom-tracer-conditions-not-met-or-detected-an-issue"><a class="header" href="#custom-tracer-conditions-not-met-or-detected-an-issue">Custom tracer conditions not met or detected an issue.</a></h3>
+<ul>
+<li>Custom tracer conditions not met or detected an issue.</li>
+</ul>
 <h2 id="language-bindings-29"><a class="header" href="#language-bindings-29">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">TracerCustom</td></tr>
@@ -1439,7 +1531,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-32"><a class="header" href="#description-32">Description</a></h2>
 <p>Emitted when the system fails to publish the compressed bytecodes during execution.</p>
 <h2 id="likely-causes-25"><a class="header" href="#likely-causes-25">Likely Causes</a></h2>
-<h3 id="compression-failure-or-network-issues-during-publishing"><a class="header" href="#compression-failure-or-network-issues-during-publishing">Compression failure or network issues during publishing.</a></h3>
+<ul>
+<li>Compression failure or network issues during publishing.</li>
+</ul>
 <h2 id="language-bindings-30"><a class="header" href="#language-bindings-30">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">FailedToPublishCompressedBytecodes</td></tr>
@@ -1454,7 +1548,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-33"><a class="header" href="#description-33">Description</a></h2>
 <p>This error often occurs if the transaction's timestamp is behind the last known block or conflicts with expected chronological order.</p>
 <h2 id="likely-causes-26"><a class="header" href="#likely-causes-26">Likely Causes</a></h2>
-<h3 id="transaction-timestamp-is-out-of-sync-with-the-previously-produced-blocks-timestamp-possible-backward-time-travel"><a class="header" href="#transaction-timestamp-is-out-of-sync-with-the-previously-produced-blocks-timestamp-possible-backward-time-travel">Transaction timestamp is out of sync with the previously produced block's timestamp (possible backward time travel).</a></h3>
+<ul>
+<li>Transaction timestamp is out of sync with the previously produced block's timestamp (possible backward time travel).</li>
+</ul>
 <h2 id="language-bindings-31"><a class="header" href="#language-bindings-31">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">FailedBlockTimestampAssertion</td></tr>
@@ -1560,7 +1656,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-34"><a class="header" href="#description-34">Description</a></h2>
 <p>This error indicates that the transaction execution was reverted.</p>
 <h2 id="likely-causes-27"><a class="header" href="#likely-causes-27">Likely Causes</a></h2>
-<h3 id="the-smart-contract-encountered-a-condition-that-triggered-a-revert-common-reasons-include"><a class="header" href="#the-smart-contract-encountered-a-condition-that-triggered-a-revert-common-reasons-include">The smart contract encountered a condition that triggered a revert. Common reasons include:</a></h3>
+<ul>
+<li>The smart contract encountered a condition that triggered a revert. Common reasons include:</li>
+</ul>
 <h2 id="language-bindings-33"><a class="header" href="#language-bindings-33">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">General</td></tr>
@@ -1575,7 +1673,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-35"><a class="header" href="#description-35">Description</a></h2>
 <p>This error is emitted when an inner transaction within the VM fails, typically related to bootloader execution.</p>
 <h2 id="likely-causes-28"><a class="header" href="#likely-causes-28">Likely Causes</a></h2>
-<h3 id="failure-in-executing-a-nested-transaction-within-the-vm"><a class="header" href="#failure-in-executing-a-nested-transaction-within-the-vm">Failure in executing a nested transaction within the VM.</a></h3>
+<ul>
+<li>Failure in executing a nested transaction within the VM.</li>
+</ul>
 <h2 id="language-bindings-34"><a class="header" href="#language-bindings-34">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">InnerTxError</td></tr>
@@ -1590,7 +1690,9 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-36"><a class="header" href="#description-36">Description</a></h2>
 <p>This error indicates a generic failure within the VM, without specific details.</p>
 <h2 id="likely-causes-29"><a class="header" href="#likely-causes-29">Likely Causes</a></h2>
-<h3 id="a-non-specific-internal-error-within-the-vm"><a class="header" href="#a-non-specific-internal-error-within-the-vm">A non-specific internal error within the VM.</a></h3>
+<ul>
+<li>A non-specific internal error within the VM.</li>
+</ul>
 <h2 id="language-bindings-35"><a class="header" href="#language-bindings-35">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">VmError</td></tr>
@@ -1614,8 +1716,14 @@ This is a wrapper error that contains a more specific validation error inside it
 <h2 id="description-37"><a class="header" href="#description-37">Description</a></h2>
 <p>This error is emitted when the VM encounters a revert reason that is not recognized. In most cases, this error may also indicate that the transaction exhausted all the gas allocated for its execution.</p>
 <h2 id="likely-causes-30"><a class="header" href="#likely-causes-30">Likely Causes</a></h2>
-<h3 id="the-transaction-exhausted-all-the-gas-allocated-for-execution"><a class="header" href="#the-transaction-exhausted-all-the-gas-allocated-for-execution">The transaction exhausted all the gas allocated for execution.</a></h3>
-<h3 id="reverting-due-unknown-reason"><a class="header" href="#reverting-due-unknown-reason">Reverting due unknown reason.</a></h3>
+<ul>
+<li>
+<p>The transaction exhausted all the gas allocated for execution.</p>
+</li>
+<li>
+<p>Reverting due unknown reason.</p>
+</li>
+</ul>
 <h2 id="language-bindings-36"><a class="header" href="#language-bindings-36">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">Unknown</td></tr>
@@ -1749,7 +1857,9 @@ This is a wrapper error that contains a more specific validation error inside it
 As of protocol version 27, the gas is limited to 2^50
 Note: When anvil-zksync is in forking mode, it lock-in and uses gas price at the forked block</p>
 <h2 id="likely-causes-31"><a class="header" href="#likely-causes-31">Likely Causes</a></h2>
-<h3 id="the-transactions-gas-limit-is-set-too-high-relative-to-the-maximum-gas-limit"><a class="header" href="#the-transactions-gas-limit-is-set-too-high-relative-to-the-maximum-gas-limit">The transaction's gas limit is set too high relative to the maximum gas limit.</a></h3>
+<ul>
+<li>The transaction's gas limit is set too high relative to the maximum gas limit.</li>
+</ul>
 <h2 id="language-bindings-38"><a class="header" href="#language-bindings-38">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">InvalidGasLimit</td></tr>
@@ -1775,7 +1885,9 @@ Note: When anvil-zksync is in forking mode, it lock-in and uses gas price at the
 As of protocol version 27, the gas is limited to 2^50
 Note: When anvil-zksync is in forking mode, it lock-in and uses gas price at the forked block</p>
 <h2 id="likely-causes-32"><a class="header" href="#likely-causes-32">Likely Causes</a></h2>
-<h3 id="the-transactions-gas-per-pubdata-limit-is-set-too-high"><a class="header" href="#the-transactions-gas-per-pubdata-limit-is-set-too-high">The transaction's gas per pubdata limit is set too high.</a></h3>
+<ul>
+<li>The transaction's gas per pubdata limit is set too high.</li>
+</ul>
 <h2 id="language-bindings-39"><a class="header" href="#language-bindings-39">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">GasPerPubdataLimit</td></tr>
@@ -1807,9 +1919,17 @@ To be considered valid, transactions must specify a maxFeePerGas that is greater
 <p>Even though anvil-zksync is a testing environment, it enforces these gas price validations to ensure that your tests accurately reflect how transactions would behave on the actual ZKSync network.
 Note: When anvil-zksync is in forking mode, it lock-in and uses gas price at the forked block</p>
 <h2 id="likely-causes-33"><a class="header" href="#likely-causes-33">Likely Causes</a></h2>
-<h3 id="the-transactions-maxfeepergas-is-set-too-low-compared-to-the-current-gas-price-in-the-anvil-zksync-node"><a class="header" href="#the-transactions-maxfeepergas-is-set-too-low-compared-to-the-current-gas-price-in-the-anvil-zksync-node">The transaction's maxFeePerGas is set too low compared to the current gas price in the anvil-zksync node.</a></h3>
-<h3 id="gas-price-has-changed-in-the-anvil-zksync-node-since-the-transaction-was-created"><a class="header" href="#gas-price-has-changed-in-the-anvil-zksync-node-since-the-transaction-was-created">Gas price has changed in the anvil-zksync node since the transaction was created.</a></h3>
-<h3 id="using-hardcoded-gas-prices-in-test-scripts-instead-of-querying-the-actual-price"><a class="header" href="#using-hardcoded-gas-prices-in-test-scripts-instead-of-querying-the-actual-price">Using hardcoded gas prices in test scripts instead of querying the actual price.</a></h3>
+<ul>
+<li>
+<p>The transaction's maxFeePerGas is set too low compared to the current gas price in the anvil-zksync node.</p>
+</li>
+<li>
+<p>Gas price has changed in the anvil-zksync node since the transaction was created.</p>
+</li>
+<li>
+<p>Using hardcoded gas prices in test scripts instead of querying the actual price.</p>
+</li>
+</ul>
 <h2 id="language-bindings-40"><a class="header" href="#language-bindings-40">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">MaxFeePerGasTooLow</td></tr>
@@ -1836,9 +1956,17 @@ In ZKSync, the field <code>maxPriorityFeePerGas</code> is ignored, as ZKsync doe
 Instead, <code>maxFeePerGas</code> is utilized and includes the base fees.
 However, certain transaction types like EIP-1559 or EIP-712 may contain field <code>maxPriorityFeePerGas</code>, which should be less or equal to the field <code>maxFeePerGas</code>.</p>
 <h2 id="likely-causes-34"><a class="header" href="#likely-causes-34">Likely Causes</a></h2>
-<h3 id="incorrect-transaction-parameter-values-in-your-test-where-maxpriorityfeepergas--maxfeepergas"><a class="header" href="#incorrect-transaction-parameter-values-in-your-test-where-maxpriorityfeepergas--maxfeepergas">Incorrect transaction parameter values in your test where <code>maxPriorityFeePerGas</code> &gt; <code>maxFeePerGas</code>.</a></h3>
-<h3 id="test-automation-that-generates-random-or-incorrect-fee-values"><a class="header" href="#test-automation-that-generates-random-or-incorrect-fee-values">Test automation that generates random or incorrect fee values.</a></h3>
-<h3 id="when-migrating-tests-from-non-eip-1559-environments-to-anvil-zksync"><a class="header" href="#when-migrating-tests-from-non-eip-1559-environments-to-anvil-zksync">When migrating tests from non-EIP-1559 environments to anvil-zksync.</a></h3>
+<ul>
+<li>
+<p>Incorrect transaction parameter values in your test where <code>maxPriorityFeePerGas</code> &gt; <code>maxFeePerGas</code>.</p>
+</li>
+<li>
+<p>Test automation that generates random or incorrect fee values.</p>
+</li>
+<li>
+<p>When migrating tests from non-EIP-1559 environments to anvil-zksync.</p>
+</li>
+</ul>
 <h2 id="language-bindings-41"><a class="header" href="#language-bindings-41">Language Bindings</a></h2>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
 <tr><td style="text-align: center">rust</td><td style="text-align: center">MaxPriorityFeeGreaterThanMaxFee</td></tr>
