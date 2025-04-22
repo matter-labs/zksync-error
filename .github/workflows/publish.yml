@@ -27,8 +27,8 @@ jobs:
           mdbook-version: '0.4.40'
 
       - run: |
-          cargo run -- --root-definitions zksync-error://zksync-root.json --additional-definitions https://raw.githubusercontent.com/matter-labs/anvil-zksync/refs/heads/main/etc/errors/anvil.json --backend doc-mdbook --verbose --output book
-          cd book
+          cargo run -- --root-definitions zksync-error://zksync-root.json --additional-definitions https://raw.githubusercontent.com/matter-labs/anvil-zksync/refs/heads/main/etc/errors/anvil.json --backend doc-mdbook --verbose --output errors-mdbook
+          cd errors-mdbook
           mdbook build
 
       - name: Deploy
@@ -36,4 +36,4 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./book
+          publish_dir: ./errors-mdbook/book
