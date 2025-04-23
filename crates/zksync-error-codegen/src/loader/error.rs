@@ -3,8 +3,8 @@ use std::path::PathBuf;
 use super::builder::error::ModelBuildingError;
 use super::resolution::error::ResolutionError;
 use crate::description::error::FileFormatError;
-use zksync_error_model::link::error::LinkError;
 use zksync_error_model::link::Link;
+use zksync_error_model::link::error::LinkError;
 
 #[derive(Debug, thiserror::Error)]
 pub enum TakeFromError {
@@ -14,7 +14,9 @@ pub enum TakeFromError {
     #[error("Error while building model following a `take_from` link: {0}")]
     LinkError(#[from] LinkError),
 
-    #[error("Circular dependency detected: file {trigger} attempted to reference {visited} which was already visited.")]
+    #[error(
+        "Circular dependency detected: file {trigger} attempted to reference {visited} which was already visited."
+    )]
     CircularDependency { trigger: Link, visited: Link },
 }
 

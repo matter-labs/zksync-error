@@ -17,10 +17,10 @@ use loader::builder::build_model;
 use zksync_error_model::inner::Model;
 use zksync_error_model::link::Link;
 
+use crate::backend::Backend as CodegenBackend;
 use crate::backend::file::File;
 use crate::backend::mdbook::MDBookBackend;
 use crate::backend::rust::RustBackend;
-use crate::backend::Backend as CodegenBackend;
 
 pub fn default_load_and_generate(root_link: &str, input_links: Vec<&str>) {
     if let Err(e) = load_and_generate(GenerationArguments {

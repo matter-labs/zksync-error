@@ -1,5 +1,5 @@
-use crate::backend::arguments::ArgumentError;
 use crate::backend::IBackendConfig;
+use crate::backend::arguments::ArgumentError;
 
 #[derive(Default)]
 pub struct MDBookBackendConfig;

@@ -1,9 +1,9 @@
 use zksync_error_model::inner::{component, domain};
 
-use crate::description::error::FileFormatError;
 use crate::description::Component;
 use crate::description::Domain;
 use crate::description::Root;
+use crate::description::error::FileFormatError;
 use crate::util::LooseEq;
 
 pub fn annotate_origins(root: &mut Root, origin: &str) {

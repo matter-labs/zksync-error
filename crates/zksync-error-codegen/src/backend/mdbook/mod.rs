@@ -13,8 +13,8 @@ use super::File;
 
 use include_dir::include_dir;
 use zksync_error_model::inner::Model;
-use zksync_error_model::unpacked::flatten;
 use zksync_error_model::unpacked::UnpackedModel;
+use zksync_error_model::unpacked::flatten;
 
 pub struct MDBookBackend {
     _config: MDBookBackendConfig,

@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
+use crate::backend::File;
 use crate::backend::rust::error::GenerationError;
 use crate::backend::rust::{RustBackend, RustBackendConfig};
-use crate::backend::File;
 
 impl RustBackend {
     pub fn generate_file_cargo(&mut self) -> Result<Option<File>, GenerationError> {

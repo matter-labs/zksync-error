@@ -8,9 +8,9 @@ use zksync_error_model::inner::domain;
 
 use crate::description::Root;
 
-use super::error::FileFormatError;
 use super::HierarchyFragment;
 use super::HierarchyFragmentKind;
+use super::error::FileFormatError;
 
 ///
 /// Takes a hierarchy fragment and a path where it has to be merged and produces a root hierarchy ready to be merged.

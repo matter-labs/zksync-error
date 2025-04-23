@@ -5,12 +5,12 @@ use error::TakeFromError;
 use fetch::load_text;
 use zksync_error_model::link::Link;
 
+use crate::description::HierarchyFragment;
+use crate::description::Root;
 use crate::description::accessors::annotate_origins;
 use crate::description::error::FileFormatError;
 use crate::description::normalization::binding::BindingPoint;
 use crate::description::normalization::produce_root;
-use crate::description::HierarchyFragment;
-use crate::description::Root;
 
 pub mod builder;
 pub mod cargo;

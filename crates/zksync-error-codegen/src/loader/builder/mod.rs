@@ -33,8 +33,8 @@ use zksync_error_model::inner::TypeMetadata;
 use zksync_error_model::inner::VersionedOwner;
 use zksync_error_model::validator::validate;
 
-use crate::description::merge::Mergeable as _;
 use crate::description::Root;
+use crate::description::merge::Mergeable as _;
 
 fn add_missing<U, S>(map: &mut BTreeMap<String, U>, default: U, keys: impl Iterator<Item = S>)
 where
