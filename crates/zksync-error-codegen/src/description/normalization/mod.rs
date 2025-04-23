@@ -23,7 +23,6 @@ pub fn produce_root(
     fragment: &HierarchyFragment,
     context: &BindingPoint,
 ) -> Result<Root, FileFormatError> {
-    println!("{fragment:?} and context: {context:?}");
     match (fragment, context) {
         (HierarchyFragment::Root(root), BindingPoint::Root) => Ok(root.clone()),
         (
