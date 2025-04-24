@@ -1,24 +1,9 @@
 use std::path::PathBuf;
 
-use super::builder::error::ModelBuildingError;
 use super::resolution::error::ResolutionError;
 use crate::description::error::FileFormatError;
 use zksync_error_model::link::Link;
 use zksync_error_model::link::error::LinkError;
-
-#[derive(Debug, thiserror::Error)]
-pub enum TakeFromError {
-    #[error("Error while building model following a `take_from` link: {0}")]
-    LoadError(#[from] LoadError),
-
-    #[error("Error while building model following a `take_from` link: {0}")]
-    LinkError(#[from] LinkError),
-
-    #[error(
-        "Circular dependency detected: file {trigger} attempted to reference {visited} which was already visited."
-    )]
-    CircularDependency { trigger: Link, visited: Link },
-}
 
 #[derive(Debug, thiserror::Error)]
 pub enum LoadError {
@@ -46,12 +31,15 @@ pub enum LoadError {
     #[error("Missing file {0}")]
     MissingFileError(String),
 
-    #[error(transparent)]
-    ModelBuildingError(/* from */ Box<ModelBuildingError>), // Can not derive `From` here because of the `Box`
-}
+    #[error(
+        "Circular dependency detected: file {trigger} attempted to reference {visited} which was already visited."
+    )]
+    CircularDependency { trigger: Link, visited: Link },
 
-impl From<ModelBuildingError> for LoadError {
-    fn from(v: ModelBuildingError) -> Self {
-        Self::ModelBuildingError(Box::new(v))
-    }
+    #[error("Failed to import a file {address}: {inner}")]
+    TakeFrom {
+        address: Link,
+        #[source]
+        inner: Box<LoadError>,
+    },
 }

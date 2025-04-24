@@ -61,7 +61,9 @@ impl std::fmt::Display for Link {
             )),
             Link::URL { url } => f.write_str(url),
             Link::FileLink { path } => f.write_str(path),
-            Link::DefaultLink => f.write_fmt(format_args!("<default {}>", Self::DEFAULT_ROOT_FILE_NAME)),
+            Link::DefaultLink => {
+                f.write_fmt(format_args!("<default {}>", Self::DEFAULT_ROOT_FILE_NAME))
+            }
         }
     }
 }

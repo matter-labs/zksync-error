@@ -18,13 +18,9 @@ pub use backend::Backend;
     long_about = "Generator of the error handling code in ZKsync components."
 )]
 pub struct Arguments {
-    /// Link to the master JSON file.
-    #[arg(long = "root-definitions")]
-    pub root: String,
-
-    /// Links to additional JSON file.
-    #[arg(long = "additional-definitions")]
-    pub additional_definition_files: Vec<String>,
+    /// Source JSON file. Should be repeated for every file.
+    #[arg(long = "source")]
+    pub sources: Vec<String>,
 
     /// Selected backend.
     #[arg(short = 'b',
@@ -48,6 +44,10 @@ pub struct Arguments {
         value_parser(parse_key_val)
     )]
     pub backend_args: Vec<(String, String)>,
+
+    /// Remap links. Accepts a JSON.
+    #[arg(long = "remap")]
+    pub remap: Option<String>,
 }
 
 ///

@@ -104,7 +104,6 @@ impl Mergeable for Root {
         })
     }
 }
-
 impl Mergeable for Domain {
     fn merge(self, other: Self) -> Result<Self, MergeError>
     where

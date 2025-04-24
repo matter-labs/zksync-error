@@ -1,14 +1,15 @@
 pub mod arguments;
+pub mod error;
 
 use clap::Parser;
 
 use arguments::Arguments;
 
-use zksync_error_codegen::error::ProgramError;
+use error::ApplicationError;
 use zksync_error_codegen::load_and_generate;
 
-fn main_inner(arguments: Arguments) -> Result<(), ProgramError> {
-    load_and_generate(arguments.into())
+fn main_inner(arguments: Arguments) -> Result<(), ApplicationError> {
+    Ok(load_and_generate(arguments.try_into()?)?)
 }
 
 fn main() {

@@ -5,9 +5,10 @@ use reqwest;
 
 use zksync_error_model::link::Link;
 
-use crate::loader::cargo::get_resolution_context;
 use crate::loader::error::LoadError;
 use crate::loader::resolution::{ResolvedLink, resolve};
+
+use super::resolution::ResolutionContext;
 
 fn from_fs(path: &PathBuf) -> Result<String, LoadError> {
     eprintln!(
@@ -27,9 +28,8 @@ fn from_network(url: &str) -> Result<String, reqwest::Error> {
     Ok(content)
 }
 
-pub fn load_text(link: &Link) -> Result<String, LoadError> {
-    let context = get_resolution_context();
-    Ok(match resolve(link, &context)? {
+pub fn load_text(link: &Link, context: &ResolutionContext) -> Result<String, LoadError> {
+    Ok(match resolve(link, context)? {
         ResolvedLink::DescriptionFile(description_file) => {
             from_fs(&description_file.absolute_path)?
         }
