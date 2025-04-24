@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
 use error::LoadError;
+use fetch::LoadResult;
 use fetch::load_text;
 use resolution::ResolutionContext;
 use zksync_error_model::link::Link;
@@ -39,10 +40,10 @@ fn load_single_fragment(
     context: &ResolutionContext,
 ) -> Result<NormalizedDescriptionFragment, LoadError> {
     let origin = link.clone();
-    let contents = load_text(link, context)?;
-    match root_from_text(&contents, binding) {
+    let LoadResult { text, actual } = load_text(link, context)?;
+    match root_from_text(&text, binding) {
         Ok(mut root) => {
-            annotate_origins(&mut root, &origin.to_string());
+            annotate_origins(&mut root, &actual.to_string());
             Ok(NormalizedDescriptionFragment { origin, root })
         }
         Err(inner) => Err(LoadError::FileFormatError { origin, inner }),

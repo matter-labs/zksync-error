@@ -8,7 +8,7 @@ use zksync_error_model::link::Link;
 use crate::loader::error::LoadError;
 use crate::loader::resolution::{ResolvedLink, resolve};
 
-use super::resolution::ResolutionContext;
+use super::resolution::{ResolutionContext, ResolutionResult};
 
 fn from_fs(path: &PathBuf) -> Result<String, LoadError> {
     eprintln!(
@@ -28,13 +28,21 @@ fn from_network(url: &str) -> Result<String, reqwest::Error> {
     Ok(content)
 }
 
-pub fn load_text(link: &Link, context: &ResolutionContext) -> Result<String, LoadError> {
-    Ok(match resolve(link, context)? {
+pub struct LoadResult {
+    pub text: String,
+    pub actual: Link,
+}
+
+pub fn load_text(link: &Link, context: &ResolutionContext) -> Result<LoadResult, LoadError> {
+    let ResolutionResult { actual, resolved } = resolve(link, context)?;
+    let text = match resolved {
         ResolvedLink::DescriptionFile(description_file) => {
             from_fs(&description_file.absolute_path)?
         }
         ResolvedLink::LocalPath(path) => from_fs(&path)?,
         ResolvedLink::Url(url) => from_network(&url)?,
         ResolvedLink::Immediate(immediate) => immediate,
-    })
+    };
+
+    Ok(LoadResult { text, actual })
 }
