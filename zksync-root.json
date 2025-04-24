@@ -236,6 +236,9 @@
             "bindings": {
                 "rust": "AnvilZksync"
             },
+            "take_from" : [
+                "https://raw.githubusercontent.com/matter-labs/anvil-zksync/refs/heads/main/etc/errors/anvil.json"
+            ],
             "components" : []
         },
         {
