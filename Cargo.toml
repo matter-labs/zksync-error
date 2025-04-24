@@ -43,7 +43,7 @@ serde_json_path_to_error = "0.1.4"
 strum = "0.27.1"
 strum_macros = "0.27.1"
 tera = "1.20.0"
-thiserror = "2.0.12"
+thiserror = "2"
 
 #########################
 # Local dependencies    #
