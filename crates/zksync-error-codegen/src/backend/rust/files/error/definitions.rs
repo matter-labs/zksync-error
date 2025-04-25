@@ -3,12 +3,12 @@ use quote::quote;
 use std::path::PathBuf;
 use zksync_error_model::inner::ComponentDescription;
 
+use crate::backend::File;
+use crate::backend::rust::RustBackend;
 use crate::backend::rust::error::GenerationError;
 use crate::backend::rust::util::codegen::doc_tokens;
 use crate::backend::rust::util::codegen::ident;
 use crate::backend::rust::util::codegen::type_ident;
-use crate::backend::rust::RustBackend;
-use crate::backend::File;
 use zksync_error_model::inner::ErrorDescription;
 use zksync_error_model::inner::ErrorDocumentation;
 use zksync_error_model::inner::FieldDescription;

@@ -1,6 +1,6 @@
-use crate::backend::arguments::parse_bool;
-use crate::backend::arguments::ArgumentError;
 use crate::backend::IBackendConfig;
+use crate::backend::arguments::ArgumentError;
+use crate::backend::arguments::parse_bool;
 
 pub struct Config {
     pub use_anyhow: bool,

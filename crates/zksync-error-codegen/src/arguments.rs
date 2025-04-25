@@ -8,8 +8,8 @@ pub struct BackendOutput {
 
 pub struct GenerationArguments {
     pub verbose: bool,
-    pub root_link: String,
     pub input_links: Vec<String>,
+    pub override_links: Vec<(String, String)>,
     pub outputs: Vec<BackendOutput>,
 }
 

@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use cargo_metadata::MetadataCommand;
 use zksync_error_model::link::Link;
 
-use super::resolution::ResolutionContext;
+use super::resolution::{ResolutionContext, overrides::Remapping};
 
 const METADATA_CATEGORY: &str = "zksync_error_codegen";
 
@@ -13,12 +13,15 @@ pub struct CollectionFile {
     pub absolute_path: PathBuf,
 }
 
-pub fn get_resolution_context() -> ResolutionContext {
+pub fn get_resolution_context(overrides: Remapping) -> ResolutionContext {
     let metadata = MetadataCommand::new()
         .exec()
         .expect("Failed to fetch cargo metadata");
 
-    let mut context = ResolutionContext::default();
+    let mut context = ResolutionContext {
+        files: vec![],
+        overrides,
+    };
 
     for pkg in &metadata.packages {
         if let Some(codegen_meta) = pkg.metadata.get(METADATA_CATEGORY) {

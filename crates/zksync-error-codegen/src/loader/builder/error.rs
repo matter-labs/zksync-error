@@ -1,11 +1,8 @@
 use zksync_error_model::error::ModelValidationError;
-use zksync_error_model::link::error::LinkError;
 use zksync_error_model::link::Link;
+use zksync_error_model::link::error::LinkError;
 
-use crate::{
-    description::merge::error::MergeError,
-    loader::error::{LoadError, TakeFromError},
-};
+use crate::{description::merge::error::MergeError, loader::error::LoadError};
 
 #[derive(Debug, thiserror::Error)]
 #[error("Missing component {component_name} in the domain {domain_name}")]
@@ -22,13 +19,6 @@ pub struct MissingDomain {
 
 #[derive(Debug, thiserror::Error)]
 pub enum ModelBuildingError {
-    #[error("Failed to import a file {address}: {inner}")]
-    TakeFrom {
-        address: Link,
-        #[source]
-        inner: TakeFromError,
-    },
-
     #[error("Error merging description {origin}: {inner}")]
     MergeError {
         inner: Box<MergeError>,

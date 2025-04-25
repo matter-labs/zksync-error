@@ -2,10 +2,10 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use std::path::PathBuf;
 
+use crate::backend::File;
+use crate::backend::rust::RustBackend;
 use crate::backend::rust::error::GenerationError;
 use crate::backend::rust::util::codegen::ident;
-use crate::backend::rust::RustBackend;
-use crate::backend::File;
 
 impl RustBackend {
     pub fn generate_file_lib(&mut self) -> Result<File, GenerationError> {

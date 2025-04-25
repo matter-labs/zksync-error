@@ -8,9 +8,9 @@ use zksync_error_model::inner::domain;
 
 use crate::description::Root;
 
-use super::error::FileFormatError;
 use super::HierarchyFragment;
 use super::HierarchyFragmentKind;
+use super::error::FileFormatError;
 
 ///
 /// Takes a hierarchy fragment and a path where it has to be merged and produces a root hierarchy ready to be merged.
@@ -23,7 +23,6 @@ pub fn produce_root(
     fragment: &HierarchyFragment,
     context: &BindingPoint,
 ) -> Result<Root, FileFormatError> {
-    println!("{fragment:?} and context: {context:?}");
     match (fragment, context) {
         (HierarchyFragment::Root(root), BindingPoint::Root) => Ok(root.clone()),
         (

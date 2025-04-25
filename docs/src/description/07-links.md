@@ -22,18 +22,18 @@ There are three types of links:
 
 ## Usage
 
-1. The construction of hierarchy starts with the root JSON file; you should
-   provide a link to it:
-
-    - when using CLI -- through option `--root-definitions` 
-    - when using `zksync-error-codegen` as a library -- through the field `root_link` of the structure `zksync_error_codegen::arguments::GenerationArguments`:
+1. Links identify the starting JSON files:
+    - when using CLI -- through option `--source` 
+    - when using `zksync-error-codegen` as a library -- through the field
+      `input_links` of the structure
+      `zksync_error_codegen::arguments::GenerationArguments`:
 
     ```rust
-    pub struct GenerationArguments {
-        pub verbose: bool,
-        pub root_link: String,
-        pub input_links: Vec<String>,
-        pub outputs: Vec<BackendOutput>,
+pub struct GenerationArguments {
+    pub verbose: bool,
+    pub input_links: Vec<String>,
+    pub override_links: Vec<(String, String)>,
+    pub outputs: Vec<BackendOutput>,
     }
     ```
 
@@ -53,3 +53,4 @@ There are three types of links:
   In this case files are fetched, their contents are parsed, filtered and merged
   into the root model. The filtering selects only the domain/component with the
   same values of fields `name`, `code`, and `identifier_encoding`.
+  Instead of URLs you may, of course, use any type of links.

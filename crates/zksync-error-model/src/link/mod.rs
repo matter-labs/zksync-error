@@ -1,3 +1,5 @@
+use const_format::concatcp;
+
 use error::LinkError;
 
 pub mod error;
@@ -15,6 +17,9 @@ impl Link {
     pub const CARGO_FORMAT_PREFIX: &str = "cargo";
     pub const FILE_FORMAT_PREFIX: &str = "file";
     pub const DEFAULT_FORMAT_PREFIX: &str = "zksync-error";
+    pub const DEFAULT_ROOT_FILE_NAME_NO_EXTENSION: &str = "zksync-root";
+    pub const DEFAULT_ROOT_FILE_NAME: &str =
+        concatcp!(Link::DEFAULT_ROOT_FILE_NAME_NO_EXTENSION, ".json");
     pub const NETWORK_FORMAT_PREFIXES: [&str; 2] = ["https", "http"];
     pub const PACKAGE_SEPARATOR: &str = "@@";
 
@@ -34,7 +39,9 @@ impl Link {
             Some((Link::FILE_FORMAT_PREFIX, path)) => Ok(Link::FileLink {
                 path: path.to_owned(),
             }),
-            Some((Link::DEFAULT_FORMAT_PREFIX, "zksync-root.json")) => Ok(Link::DefaultLink),
+            Some((Link::DEFAULT_FORMAT_PREFIX, Self::DEFAULT_ROOT_FILE_NAME)) => {
+                Ok(Link::DefaultLink)
+            }
             Some((prefix, _)) if Link::NETWORK_FORMAT_PREFIXES.contains(&prefix) => {
                 Ok(Link::URL { url: string })
             }
@@ -54,7 +61,9 @@ impl std::fmt::Display for Link {
             )),
             Link::URL { url } => f.write_str(url),
             Link::FileLink { path } => f.write_str(path),
-            Link::DefaultLink => f.write_str("<default zksync-root.json>"),
+            Link::DefaultLink => {
+                f.write_fmt(format_args!("<default {}>", Self::DEFAULT_ROOT_FILE_NAME))
+            }
         }
     }
 }

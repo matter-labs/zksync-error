@@ -104,7 +104,6 @@ impl Mergeable for Root {
         })
     }
 }
-
 impl Mergeable for Domain {
     fn merge(self, other: Self) -> Result<Self, MergeError>
     where
@@ -243,7 +242,7 @@ impl Mergeable for super::FullyQualifiedType {
 mod tests {
     use maplit::btreemap;
 
-    use crate::description::merge::{error::MergeError, Mergeable as _};
+    use crate::description::merge::{Mergeable as _, error::MergeError};
 
     #[test]
     fn btreemap_merge_success() {

@@ -1,16 +1,17 @@
 use std::collections::BTreeSet;
 
 use error::LoadError;
-use error::TakeFromError;
+use fetch::LoadResult;
 use fetch::load_text;
+use resolution::ResolutionContext;
 use zksync_error_model::link::Link;
 
+use crate::description::HierarchyFragment;
+use crate::description::Root;
 use crate::description::accessors::annotate_origins;
 use crate::description::error::FileFormatError;
 use crate::description::normalization::binding::BindingPoint;
 use crate::description::normalization::produce_root;
-use crate::description::HierarchyFragment;
-use crate::description::Root;
 
 pub mod builder;
 pub mod cargo;
@@ -36,13 +37,13 @@ fn root_from_text(contents: &str, context: &BindingPoint) -> Result<Root, FileFo
 fn load_single_fragment(
     link: &Link,
     binding: &BindingPoint,
+    context: &ResolutionContext,
 ) -> Result<NormalizedDescriptionFragment, LoadError> {
     let origin = link.clone();
-    let contents = load_text(link)?;
-    match root_from_text(&contents, binding) {
+    let LoadResult { text, actual } = load_text(link, context)?;
+    match root_from_text(&text, binding) {
         Ok(mut root) => {
-            annotate_origins(&mut root, &origin.to_string());
-
+            annotate_origins(&mut root, &actual.to_string());
             Ok(NormalizedDescriptionFragment { origin, root })
         }
         Err(inner) => Err(LoadError::FileFormatError { origin, inner }),
@@ -52,14 +53,15 @@ fn load_single_fragment(
 fn fetch_connected_fragments_aux(
     fragment: NormalizedDescriptionFragment,
     visited: &mut BTreeSet<Link>,
-) -> Result<Vec<NormalizedDescriptionFragment>, TakeFromError> {
+    context: &ResolutionContext,
+) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
     let mut results = vec![];
     let NormalizedDescriptionFragment { origin, root } = &fragment;
 
     let visit =
-        |link, binding: &BindingPoint, visited: &mut BTreeSet<Link>| -> Result<_, TakeFromError> {
-            let new_fragment = load_single_fragment(&link, binding)?;
-            let addend = fetch_connected_fragments_aux(new_fragment, visited)?;
+        |link, binding: &BindingPoint, visited: &mut BTreeSet<Link>| -> Result<_, LoadError> {
+            let new_fragment = load_single_fragment(&link, binding, context)?;
+            let addend = fetch_connected_fragments_aux(new_fragment, visited, context)?;
             visited.insert(link.clone());
             Ok(addend)
         };
@@ -72,7 +74,7 @@ fn fetch_connected_fragments_aux(
         for raw_link in &domain.take_from {
             let link = Link::parse(raw_link)?;
             if visited.contains(&link) {
-                return Err(TakeFromError::CircularDependency {
+                return Err(LoadError::CircularDependency {
                     trigger: origin.clone(),
                     visited: link.clone(),
                 });
@@ -86,7 +88,7 @@ fn fetch_connected_fragments_aux(
             for raw_link in &component.take_from {
                 let link = Link::parse(raw_link)?;
                 if visited.contains(&link) {
-                    return Err(TakeFromError::CircularDependency {
+                    return Err(LoadError::CircularDependency {
                         trigger: origin.clone(),
                         visited: link.clone(),
                     });
@@ -102,14 +104,32 @@ fn fetch_connected_fragments_aux(
 
 pub fn load_connected_fragments(
     fragment: NormalizedDescriptionFragment,
-) -> Result<Vec<NormalizedDescriptionFragment>, TakeFromError> {
-    let result = fetch_connected_fragments_aux(fragment, &mut BTreeSet::new())?;
+    context: &ResolutionContext,
+) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
+    let result = fetch_connected_fragments_aux(fragment, &mut BTreeSet::new(), context)?;
     Ok(result)
 }
 
-pub fn load_fragments(link: Link) -> Result<Vec<NormalizedDescriptionFragment>, TakeFromError> {
-    let root_fragment = load_single_fragment(&link, &BindingPoint::Root)?;
-    load_connected_fragments(root_fragment)
+pub fn load_fragments(
+    link: Link,
+    context: &ResolutionContext,
+) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
+    let root_fragment = load_single_fragment(&link, &BindingPoint::Root, context)?;
+    load_connected_fragments(root_fragment, context).map_err(|inner| LoadError::TakeFrom {
+        address: link.clone(),
+        inner: Box::new(inner),
+    })
+}
+
+pub fn load_fragments_multiple_sources(
+    links: impl Iterator<Item = Link>,
+    context: &ResolutionContext,
+) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
+    let mut collection = vec![];
+    for fragment in links.map(|link| load_fragments(link, context)) {
+        collection.extend(fragment?);
+    }
+    Ok(collection)
 }
 
 pub(crate) static ZKSYNC_ROOT_CONTENTS: &str = include_str!(concat!(

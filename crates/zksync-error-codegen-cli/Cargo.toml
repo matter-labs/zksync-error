@@ -12,6 +12,8 @@ edition.workspace = true
 # External dependencies #
 #########################
 
+serde_json.workspace = true
+thiserror.workspace = true
 clap.workspace = true
 
 #########################

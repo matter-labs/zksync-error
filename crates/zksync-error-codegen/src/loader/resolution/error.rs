@@ -10,5 +10,8 @@ pub enum ResolutionError {
         context: ResolutionContext,
     },
     #[error("Failed to resolve `{link}`.")]
-    GenericLinkResolutionError { link: Link },
+    GenericLinkResolutionError {
+        link: Link,
+        context: ResolutionContext,
+    },
 }

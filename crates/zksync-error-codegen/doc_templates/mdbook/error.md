@@ -62,3 +62,9 @@
 | Language   | Type                            |
 |:----------:|:-------------------------------:|
 {% for name, binding in error.bindings %} | {{ name }} | {{ binding.expression }} | {% endfor %}
+
+
+{% if error.origins | length > 0 %}
+## Origins
+{% for link in error.origins %} - [{{link}}]({{link}}) {% endfor %}
+{% endif %}

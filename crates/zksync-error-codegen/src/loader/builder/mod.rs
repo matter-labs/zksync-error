@@ -4,6 +4,7 @@ pub mod context;
 pub mod error;
 
 use std::collections::BTreeMap;
+use std::iter;
 use std::rc::Rc;
 
 use context::ComponentTranslationContext;
@@ -33,8 +34,14 @@ use zksync_error_model::inner::TypeMetadata;
 use zksync_error_model::inner::VersionedOwner;
 use zksync_error_model::validator::validate;
 
-use crate::description::merge::Mergeable as _;
 use crate::description::Root;
+use crate::description::merge::Mergeable as _;
+
+use super::NormalizedDescriptionFragment;
+use super::cargo::get_resolution_context;
+use super::error::LoadError;
+use super::load_fragments_multiple_sources;
+use super::resolution::overrides::Remapping;
 
 fn add_missing<U, S>(map: &mut BTreeMap<String, U>, default: U, keys: impl Iterator<Item = S>)
 where
@@ -421,51 +428,32 @@ fn bind_error_types(model: &mut Model) {
 }
 
 pub fn build_model(
-    root_link: &Link,
-    additions: &Vec<Link>,
+    sources: Vec<Link>,
+    overrides: Remapping,
     diagnostic: bool,
 ) -> Result<Model, ModelBuildingError> {
-    let root_fragment = super::load_single_fragment(root_link, &super::BindingPoint::Root)?;
+    let resolution_context = get_resolution_context(overrides);
+    let collection = load_fragments_multiple_sources(sources.into_iter(), &resolution_context)?;
 
-    let mut collection = super::load_connected_fragments(root_fragment).map_err(|inner| {
-        ModelBuildingError::TakeFrom {
-            address: root_link.clone(),
-            inner,
+    let acc = {
+        let mut acc = Root::default();
+
+        for fragment in collection {
+            acc = acc
+                .merge(fragment.root)
+                .map_err(|inner| ModelBuildingError::MergeError {
+                    inner: Box::new(inner),
+                    origin: fragment.origin,
+                })?;
         }
-    })?;
-
-    for input_link in additions {
-        let part = super::load_single_fragment(input_link, &super::BindingPoint::Root)?;
-        let connected_component = super::load_connected_fragments(part).map_err(|inner| {
-            ModelBuildingError::TakeFrom {
-                address: input_link.clone(),
-                inner,
-            }
-        })?;
-        collection.extend(connected_component);
-    }
-
-    let mut acc = Root::default();
-
-    for element in collection {
-        acc = acc
-            .merge(element.root)
-            .map_err(|inner| ModelBuildingError::MergeError {
-                inner: Box::new(inner),
-                origin: element.origin,
-            })?;
-    }
+        acc
+    };
 
     if diagnostic {
         eprintln!("\n --- Combined description ---\n{acc}")
     }
 
-    let mut root_model = translate_model(
-        &acc,
-        ModelTranslationContext {
-            origin: root_link.clone(),
-        },
-    )?;
+    let mut root_model = translate_model(&acc, ModelTranslationContext)?;
 
     add_default_error(&mut root_model);
     bind_error_types(&mut root_model);

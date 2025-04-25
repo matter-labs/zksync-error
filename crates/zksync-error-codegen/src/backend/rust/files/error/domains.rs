@@ -1,13 +1,13 @@
 use quote::quote;
 use std::path::PathBuf;
 
+use crate::backend::File;
+use crate::backend::rust::RustBackend;
 use crate::backend::rust::error::GenerationError;
-use crate::backend::rust::util::codegen::map_components;
-use crate::backend::rust::util::codegen::map_domains;
 use crate::backend::rust::util::codegen::ComponentContext;
 use crate::backend::rust::util::codegen::DomainContext;
-use crate::backend::rust::RustBackend;
-use crate::backend::File;
+use crate::backend::rust::util::codegen::map_components;
+use crate::backend::rust::util::codegen::map_domains;
 
 impl RustBackend {
     pub fn generate_file_error_domains(&mut self) -> Result<File, GenerationError> {
