@@ -12,6 +12,8 @@ pub enum MergeError {
     ConflictingDomainDefinitions(Box<Domain>, Box<Domain>),
     #[error("Expected strings `{0}` and `{1}` to be equal`")]
     StringsDiffer(String, String),
+    #[error("Expected bools `{0}` and `{1}` to be equal`")]
+    BoolsDiffer(bool, bool),
     #[error("Conflicting descriptions for component `{0:?}`")]
     ConflictingComponentDefinitions(Box<Component>, Box<Component>),
     #[error("Conflicting error descriptions for errors `{0}` and `{1}`")]

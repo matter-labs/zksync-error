@@ -78,11 +78,20 @@ pub struct Component {
     pub origins: Origins,
 }
 
+#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
+pub struct WrappedField {
+    pub field_name: String,
+    pub transparent: bool,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Error {
     pub name: String,
     pub code: u32,
     pub message: String,
+
+    pub wraps: Option<WrappedField>,
+
     #[serde(default)]
     pub fields: Vec<Field>,
 

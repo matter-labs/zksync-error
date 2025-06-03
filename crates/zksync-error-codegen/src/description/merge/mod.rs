@@ -58,6 +58,18 @@ impl Mergeable for String {
     }
 }
 
+impl Mergeable for bool {
+    fn merge(self, other: Self) -> Result<Self, MergeError>
+    where
+        Self: Sized,
+    {
+        if self == other {
+            Ok(self)
+        } else {
+            Err(MergeError::BoolsDiffer(self, other))
+        }
+    }
+}
 impl Mergeable for ArrayMultilineString {
     fn merge(self, other: ArrayMultilineString) -> Result<Self, MergeError> {
         if self == other {
@@ -182,12 +194,28 @@ impl Mergeable for super::Error {
                 bindings: self.bindings.merge(other.bindings)?,
                 doc: self.doc.merge(other.doc)?,
                 origins: [self.origins, other.origins].concat(),
+                wraps: self.wraps.merge(other.wraps)?,
             })
         } else {
             Err(MergeError::ConflictingErrorDescriptions(self, other))
         }
     }
 }
+impl Mergeable for super::WrappedField {
+    fn merge(self, other: Self) -> Result<Self, MergeError>
+    where
+        Self: Sized,
+    {
+        let field_name = self.field_name.merge(other.field_name)?;
+        let transparent = self.transparent.merge(other.transparent)?;
+
+        Ok(Self {
+            field_name,
+            transparent,
+        })
+    }
+}
+
 impl Mergeable for super::ErrorDocumentation {
     fn merge(self, other: Self) -> Result<Self, MergeError>
     where

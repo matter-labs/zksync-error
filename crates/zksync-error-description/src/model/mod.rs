@@ -79,6 +79,14 @@ pub struct ErrorDescription {
     pub documentation: Option<ErrorDocumentation>,
     pub bindings: BTreeMap<LanguageName, TargetLanguageType>,
     pub origins: Origins,
+    pub wrapper: Option<WrappedField>,
+}
+
+#[non_exhaustive]
+#[derive(Clone, Debug, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct WrappedField {
+    pub field_name: String,
+    pub transparent: bool,
 }
 
 #[non_exhaustive]

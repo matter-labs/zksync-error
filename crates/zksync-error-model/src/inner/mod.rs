@@ -94,6 +94,12 @@ pub struct ComponentDescription {
     pub errors: Vec<ErrorDescription>,
 }
 
+#[derive(Clone, Debug, Default, Eq, PartialEq, serde::Serialize)]
+pub struct WrappedField {
+    pub field_name: String,
+    pub transparent: bool,
+}
+
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize)]
 pub struct ErrorDescription {
     pub domain: Rc<DomainMetadata>,
@@ -102,6 +108,7 @@ pub struct ErrorDescription {
     pub code: ErrorCode,
     pub message: ErrorMessageTemplate,
     pub fields: Vec<FieldDescription>,
+    pub wrapper: Option<WrappedField>,
     pub documentation: Option<ErrorDocumentation>,
     pub bindings: BTreeMap<LanguageName, TargetLanguageType>,
     pub origins: Origins,

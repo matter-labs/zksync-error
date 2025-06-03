@@ -65,6 +65,13 @@ pub struct ErrorDescription {
     pub documentation: Option<ErrorDocumentation>,
     pub bindings: BTreeMap<LanguageName, TargetLanguageType>,
     pub origins: Origins,
+    pub wrapper: Option<WrappedField>,
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct WrappedField {
+    pub field_name: String,
+    pub transparent: bool,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
@@ -145,6 +152,7 @@ fn translate_error(meta: &crate::inner::ErrorDescription) -> ErrorDescription {
         documentation,
         bindings,
         origins,
+        wrapper,
     } = meta;
     let new_bindings: BTreeMap<_, _> = bindings
         .iter()
@@ -174,6 +182,22 @@ fn translate_error(meta: &crate::inner::ErrorDescription) -> ErrorDescription {
         documentation: documentation.clone().map(|d| translate_documentation(&d)),
         bindings: new_bindings,
         origins: origins.clone(),
+        wrapper: translate_wrapper(wrapper),
+    }
+}
+
+fn translate_wrapper(wrapper: &Option<crate::inner::WrappedField>) -> Option<WrappedField> {
+    if let Some(crate::inner::WrappedField {
+        field_name,
+        transparent,
+    }) = wrapper.clone()
+    {
+        Some(WrappedField {
+            field_name,
+            transparent,
+        })
+    } else {
+        None
     }
 }
 

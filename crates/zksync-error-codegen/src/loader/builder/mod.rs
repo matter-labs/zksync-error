@@ -14,6 +14,7 @@ use context::ModelTranslationContext;
 use context::TypeTranslationContext;
 use error::ModelBuildingError;
 use maplit::btreemap;
+use zksync_error_model::inner::WrappedField;
 use zksync_error_model::inner::domain;
 use zksync_error_model::link::Link;
 
@@ -36,7 +37,6 @@ use zksync_error_model::validator::validate;
 
 use crate::description::Root;
 use crate::description::merge::Mergeable as _;
-
 use super::NormalizedDescriptionFragment;
 use super::cargo::get_resolution_context;
 use super::error::LoadError;
@@ -252,12 +252,19 @@ fn translate_error(
         fields,
         doc,
         origins,
+        wraps,
     } = error;
     let transformed_fields: Result<_, _> = fields.iter().map(translate_field).collect();
     let transformed_bindings = translate_type_bindings(bindings, &error.name)?;
 
     let documentation = if let Some(doc) = doc {
         Some(translate_error_documentation(doc)?)
+    } else {
+        None
+    };
+
+    let wrapper = if let Some(w) = wraps {
+        Some(translate_wrapper(w)?)
     } else {
         None
     };
@@ -271,9 +278,22 @@ fn translate_error(
         domain: ctx.parent.domain.clone(),
         component: ctx.component.clone(),
         origins: origins.clone(),
+        wrapper,
     })
 }
 
+fn translate_wrapper(
+    wrapper: &crate::description::WrappedField,
+) -> Result<WrappedField, ModelBuildingError> {
+    let crate::description::WrappedField {
+        field_name,
+        transparent,
+    } = wrapper.clone();
+    Ok(WrappedField {
+        field_name,
+        transparent,
+    })
+}
 fn translate_errors<'a>(
     errors: &Vec<crate::description::Error>,
     ctx: &'a ComponentTranslationContext<'a>,
@@ -395,6 +415,7 @@ fn add_default_error(model: &mut Model) {
                         "typescript".into() => TargetLanguageType { expression: "GenericError".into()} ,
                     },
                     origins: vec![],
+                    wrapper: None,
                 });
             }
         }

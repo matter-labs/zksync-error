@@ -6,6 +6,20 @@ use zksync_error_model::link::Link;
 use zksync_error_model::link::error::LinkError;
 
 #[derive(Debug, thiserror::Error)]
+pub enum TakeFromError {
+    #[error("Error while building model following a `take_from` link: {0}")]
+    LoadError(#[from] LoadError),
+
+    #[error("Error while building model following a `take_from` link: {0}")]
+    LinkError(#[from] LinkError),
+
+    #[error(
+        "Circular dependency detected: file {trigger} attempted to reference {visited} which was already visited."
+    )]
+    CircularDependency { trigger: Link, visited: Link },
+}
+
+#[derive(Debug, thiserror::Error)]
 pub enum LoadError {
     #[error("Error loading file from {path}: {inner}")]
     IOError {

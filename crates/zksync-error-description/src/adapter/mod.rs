@@ -113,6 +113,7 @@ impl From<inner::ErrorDescription> for model::ErrorDescription {
             documentation,
             bindings,
             origins,
+            wrapper,
         } = val;
         model::ErrorDescription {
             domain,
@@ -125,10 +126,23 @@ impl From<inner::ErrorDescription> for model::ErrorDescription {
             documentation: documentation.map(|d| d.into()),
             bindings: bindings.into_iter().map(|(k, v)| (k, v.into())).collect(),
             origins: origins.clone(),
+            wrapper: wrapper.clone().map(|w| w.into()),
         }
     }
 }
 
+impl From<inner::WrappedField> for model::WrappedField {
+    fn from(val: inner::WrappedField) -> Self {
+        let inner::WrappedField {
+            field_name,
+            transparent,
+        } = val;
+        model::WrappedField {
+            field_name,
+            transparent,
+        }
+    }
+}
 impl From<inner::FieldDescription> for model::FieldDescription {
     fn from(val: inner::FieldDescription) -> Self {
         let inner::FieldDescription { name, r#type } = val;
