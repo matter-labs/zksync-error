@@ -26,6 +26,11 @@ name = "zksync_error"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+runtime_documentation = []
+serialized_errors = []
+packed_errors = []
+
 [dependencies]
 lazy_static = "1.5.0"
 serde = {{ version = "1.0.210", features = [ "derive", "rc" ] }}
