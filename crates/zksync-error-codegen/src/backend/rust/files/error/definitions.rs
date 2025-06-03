@@ -150,6 +150,7 @@ impl RustBackend {
                         f.write_str(&self.get_message())
                     }
                 }
+                #[cfg(feature="runtime_documentation")]
                 impl Documented for #component_name {
                     type Documentation = &'static zksync_error_description::ErrorDocumentation;
 
@@ -160,12 +161,14 @@ impl RustBackend {
                 #from_anyhow
 
 
+                #[cfg(feature="packed_errors")]
                 impl From<#component_name> for crate::packed::PackedError<crate::error::domains::ZksyncError> {
                     fn from(value: #component_name) -> Self {
                         crate::packed::pack(value)
                     }
                 }
 
+                #[cfg(feature="serialized_errors")]
                 impl From<#component_name> for crate::serialized::SerializedError {
                     fn from(value: #component_name) -> Self {
                         let packed = crate::packed::pack(value);
@@ -183,6 +186,7 @@ impl RustBackend {
             #![allow(clippy::useless_format)]
             #![allow(non_camel_case_types)]
 
+            #[cfg(feature="runtime_documentation")]
             use crate::documentation::Documented;
             use crate::error::CustomErrorMessage;
             use crate::error::NamedError;

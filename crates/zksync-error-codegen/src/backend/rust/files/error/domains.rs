@@ -31,6 +31,7 @@ impl RustBackend {
                 });
 
             quote! {
+                #[cfg(feature="runtime_documentation")]
                 impl crate::documentation::Documented for ZksyncError {
                     type Documentation = &'static zksync_error_description::ErrorDocumentation;
 
@@ -166,6 +167,7 @@ impl RustBackend {
                         }
                     }
 
+                    #[cfg(feature="runtime_documentation")]
                     impl crate::documentation::Documented for #domain {
                         type Documentation = &'static zksync_error_description::ErrorDocumentation;
                         fn get_documentation(
