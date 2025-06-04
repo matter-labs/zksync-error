@@ -13,6 +13,7 @@ impl RustBackend {
 
             #![allow(unused)]
 
+            #[cfg(feature="runtime_documentation")]
             pub mod documentation;
             pub(crate) mod error;
             pub use error::IError;
@@ -28,8 +29,11 @@ impl RustBackend {
             pub(crate) mod kind;
             pub use kind::Kind;
 
+            #[cfg(feature="packed_errors")]
             pub mod packed;
+            #[cfg(feature="serialized_errors")]
             pub mod serialized;
+            #[cfg(feature="serialized_errors")]
             pub mod untyped;
 
             pub use crate::error::domains::ZksyncError;
