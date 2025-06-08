@@ -9,9 +9,18 @@ use crate::backend::rust::util::codegen::ident;
 
 impl RustBackend {
     pub fn generate_file_lib(&mut self) -> Result<File, GenerationError> {
-        let imports = quote! {
+        let no_std_attr = if self.config.no_std {
+            quote! {
+                #![no_std]
+                extern crate alloc;
+            }
+        } else {
+            quote! {}
+        };
 
-            #![allow(unused)]
+        let imports = quote! {
+            #no_std_attr
+
 
             #[cfg(feature="runtime_documentation")]
             pub mod documentation;
@@ -69,19 +78,19 @@ impl RustBackend {
                         #[macro_export]
                         macro_rules! #macro_name {
                             ($($arg:tt)*) => {
-                                zksync_error::#outer_module::#inner_module:: #alias_error::GenericError { message: format!($($arg)*) }
+                                zksync_error::#outer_module::#inner_module:: #alias_error::GenericError { message: alloc::format!($($arg)*) }
                             };
                         }
                         pub use crate:: #macro_name as generic_error;
 
-                        pub fn to_generic<T: std::fmt::Display>(err: T) -> #alias_error {
+                        pub fn to_generic<T: core::fmt::Display>(err: T) -> #alias_error {
                             GenericError {
-                                message: err.to_string(),
+                                message: alloc::format!("{}", err),
                             }
                         }
-                        pub fn to_domain<T: std::fmt::Display>(err: T) -> super::#domain_error_name {
+                        pub fn to_domain<T: core::fmt::Display>(err: T) -> super::#domain_error_name {
                             super::#domain_error_name::#enum_name( GenericError {
-                                message: err.to_string(),
+                                message: alloc::format!("{}", err),
                             })
                         }
                     }
@@ -101,6 +110,7 @@ impl RustBackend {
 
         let contents = quote! {
             #![allow(non_camel_case_types)]
+            #![allow(unused)]
 
             #imports
 

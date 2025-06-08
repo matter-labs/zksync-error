@@ -127,7 +127,7 @@ impl RustBackend {
                     #( #error_variants , )*
                 }
 
-                impl std::error::Error for #component_name {}
+                impl core::error::Error for #component_name {}
 
                 impl NamedError for #component_name {
                     fn get_error_name(&self) -> String {
@@ -145,8 +145,8 @@ impl RustBackend {
                         val.to_unified()
                     }
                 }
-                impl std::fmt::Display for #component_name {
-                    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                impl fmt::Display for #component_name {
+                    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                         f.write_str(&self.get_message())
                     }
                 }
@@ -185,6 +185,13 @@ impl RustBackend {
             #![allow(unused)]
             #![allow(clippy::useless_format)]
             #![allow(non_camel_case_types)]
+
+            use core::fmt;
+            use alloc::string::String;
+            use alloc::vec::Vec;
+            use alloc::boxed::Box;
+            use crate::alloc::borrow::ToOwned;
+            use alloc::format;
 
             #[cfg(feature="runtime_documentation")]
             use crate::documentation::Documented;

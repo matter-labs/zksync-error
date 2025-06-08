@@ -14,6 +14,9 @@ impl RustBackend {
 
             #(use crate::error::domains:: #domain_codes ;)*
 
+            use alloc::string::String;
+            use alloc::format;
+
             use crate::error::NamedError;
             use crate::kind::DomainCode;
             use crate::kind::Kind;

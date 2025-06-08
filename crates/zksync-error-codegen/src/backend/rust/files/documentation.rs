@@ -8,6 +8,7 @@ use crate::backend::rust::error::GenerationError;
 impl RustBackend {
     pub fn generate_file_documentation(&mut self) -> Result<File, GenerationError> {
         let contents = quote! {
+            use core::fmt;
             use lazy_static::lazy_static;
             use zksync_error_description::ErrorHierarchy;
 
@@ -26,12 +27,12 @@ impl RustBackend {
 
             }
 
-            impl std::fmt::Display for DocumentationError {
-                fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            impl fmt::Display for DocumentationError {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                     f.write_fmt(format_args!("{self:#?}"))
                 }
             }
-            impl std::error::Error for DocumentationError {}
+            impl core::error::Error for DocumentationError {}
 
             pub trait Documented {
                 type Documentation;

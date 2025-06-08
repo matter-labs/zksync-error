@@ -52,8 +52,8 @@ impl RustBackend {
             });
 
             quote! {
-            impl std::fmt::Display for ZksyncError {
-                fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            impl fmt::Display for ZksyncError {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                                     match self {
                                         #( #display_branches )*
                                     }
@@ -179,14 +179,14 @@ impl RustBackend {
                         }
                     }
 
-                    impl std::fmt::Display for #domain {
-                        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                    impl fmt::Display for #domain {
+                        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                             match self {
                                 #( #domain :: #components(component) => component.fmt(f), ) *
                             }
                         }
                     }
-                    impl std::error::Error for #domain {}
+                    impl core::error::Error for #domain {}
 
                 }
             },
@@ -195,6 +195,10 @@ impl RustBackend {
         let contents = quote! {
 
             #![allow(non_camel_case_types)]
+
+            use alloc::string::String;
+            use core::fmt;
+
             use crate::error::ICustomError;
             use crate::error::IUnifiedError;
             use crate::kind::Kind;
@@ -219,7 +223,7 @@ impl RustBackend {
             #impl_zksync_error
 
             impl IUnifiedError<ZksyncError> for ZksyncError {}
-            impl std::error::Error for ZksyncError {}
+            impl core::error::Error for ZksyncError {}
 
 
             #( #component_definitions )*
