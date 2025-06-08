@@ -401,17 +401,50 @@ fn add_default_error(model: &mut Model) {
     }
 }
 fn bind_error_types(model: &mut Model) {
-    fn error_name(component_name: &str) -> String {
-        format!("Box<{component_name}>")
+    fn error_name(
+        language: &str,
+        binding: &str,
+    ) -> Option<zksync_error_model::inner::FullyQualifiedTargetLanguageType> {
+        match language {
+            "rust" => Some(format!("Box<{binding}>").as_str().into()),
+            _ => None,
+        }
     }
+    fn error_kvp(
+        language: &str,
+        binding: &str,
+    ) -> Option<(
+        String,
+        zksync_error_model::inner::FullyQualifiedTargetLanguageType,
+    )> {
+        error_name(language, binding).map(|e| (language.to_owned(), e))
+    }
+
     for domain in model.domains.values() {
+        let bindings: BTreeMap<_, zksync_error_model::inner::FullyQualifiedTargetLanguageType> =
+            domain
+                .meta
+                .bindings
+                .iter()
+                .flat_map(|(k, v)| error_kvp(k, v))
+                .collect();
+
+        let value = TypeDescription {
+            name: domain.meta.identifier.name.clone(),
+            meta: TypeMetadata {
+                description: domain.meta.description.clone(),
+            },
+            bindings,
+        };
+        model.types.insert(value.name.clone(), value);
+
         for component in domain.components.values() {
             let bindings: BTreeMap<_, zksync_error_model::inner::FullyQualifiedTargetLanguageType> =
                 component
                     .meta
                     .bindings
                     .iter()
-                    .map(|(k, v)| (k.to_owned(), error_name(v).as_str().into()))
+                    .flat_map(|(k, v)| error_kvp(k, v))
                     .collect();
             let value = TypeDescription {
                 name: component.meta.identifier.name.clone(),
