@@ -1,0 +1,262 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>[anvil_zksync-gas_estim-10] TransactionHalt - ZKsync public errors documentation</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon.svg">
+        <link rel="shortcut icon" href="../../../favicon.png">
+        <link rel="stylesheet" href="../../../css/variables.css">
+        <link rel="stylesheet" href="../../../css/general.css">
+        <link rel="stylesheet" href="../../../css/chrome.css">
+        <link rel="stylesheet" href="../../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../../highlight.css">
+        <link rel="stylesheet" href="../../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../css/version-box.css">
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Errors reference</li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/index.html"><strong aria-hidden="true">1.</strong> AnvilZKsync</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilEnvironment/index.html"><strong aria-hidden="true">1.1.</strong> AnvilEnvironment</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilEnvironment/GenericError.html"><strong aria-hidden="true">1.1.1.</strong> [anvil_zksync-env-0] GenericError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilEnvironment/InvalidArguments.html"><strong aria-hidden="true">1.1.2.</strong> [anvil_zksync-env-1] InvalidArguments</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilEnvironment/ServerStartupFailed.html"><strong aria-hidden="true">1.1.3.</strong> [anvil_zksync-env-2] ServerStartupFailed</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilEnvironment/LogFileAccessFailed.html"><strong aria-hidden="true">1.1.4.</strong> [anvil_zksync-env-10] LogFileAccessFailed</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilEnvironment/LogFileWriteFailed.html"><strong aria-hidden="true">1.1.5.</strong> [anvil_zksync-env-11] LogFileWriteFailed</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilGeneric/index.html"><strong aria-hidden="true">1.2.</strong> AnvilGeneric</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilGeneric/GenericError.html"><strong aria-hidden="true">1.2.1.</strong> [anvil_zksync-gen-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilNode/index.html"><strong aria-hidden="true">1.3.</strong> AnvilNode</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilNode/GenericError.html"><strong aria-hidden="true">1.3.1.</strong> [anvil_zksync-node-0] GenericError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilNode/TransactionHalt.html"><strong aria-hidden="true">1.3.2.</strong> [anvil_zksync-node-1] TransactionHalt</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilNode/TransactionValidationFailed.html"><strong aria-hidden="true">1.3.3.</strong> [anvil_zksync-node-10] TransactionValidationFailed</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilNode/TransactionGasEstimationFailed.html"><strong aria-hidden="true">1.3.4.</strong> [anvil_zksync-node-11] TransactionGasEstimationFailed</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilNode/TimestampBackwardsError.html"><strong aria-hidden="true">1.3.5.</strong> [anvil_zksync-node-20] TimestampBackwardsError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/AnvilNode/SerializationError.html"><strong aria-hidden="true">1.3.6.</strong> [anvil_zksync-node-30] SerializationError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/GasEstimation/index.html"><strong aria-hidden="true">1.4.</strong> GasEstimation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/GasEstimation/GenericError.html"><strong aria-hidden="true">1.4.1.</strong> [anvil_zksync-gas_estim-0] GenericError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/GasEstimation/ExceedsLimitForPublishedPubdata.html"><strong aria-hidden="true">1.4.2.</strong> [anvil_zksync-gas_estim-1] ExceedsLimitForPublishedPubdata</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/GasEstimation/ExceedsBlockGasLimit.html"><strong aria-hidden="true">1.4.3.</strong> [anvil_zksync-gas_estim-2] ExceedsBlockGasLimit</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/GasEstimation/TransactionHalt.html" class="active"><strong aria-hidden="true">1.4.4.</strong> [anvil_zksync-gas_estim-10] TransactionHalt</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/GasEstimation/TransactionRevert.html"><strong aria-hidden="true">1.4.5.</strong> [anvil_zksync-gas_estim-11] TransactionRevert</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/GasEstimation/TransactionAlwaysHalts.html"><strong aria-hidden="true">1.4.6.</strong> [anvil_zksync-gas_estim-20] TransactionAlwaysHalts</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/GasEstimation/TransactionAlwaysReverts.html"><strong aria-hidden="true">1.4.7.</strong> [anvil_zksync-gas_estim-21] TransactionAlwaysReverts</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/index.html"><strong aria-hidden="true">1.5.</strong> Halt</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/GenericError.html"><strong aria-hidden="true">1.5.1.</strong> [anvil_zksync-halt-0] GenericError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/ValidationFailed.html"><strong aria-hidden="true">1.5.2.</strong> [anvil_zksync-halt-1] ValidationFailed</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/PaymasterValidationFailed.html"><strong aria-hidden="true">1.5.3.</strong> [anvil_zksync-halt-2] PaymasterValidationFailed</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/PrePaymasterPreparationFailed.html"><strong aria-hidden="true">1.5.4.</strong> [anvil_zksync-halt-3] PrePaymasterPreparationFailed</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/PayForTxFailed.html"><strong aria-hidden="true">1.5.5.</strong> [anvil_zksync-halt-4] PayForTxFailed</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/FailedToMarkFactoryDependencies.html"><strong aria-hidden="true">1.5.6.</strong> [anvil_zksync-halt-5] FailedToMarkFactoryDependencies</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/FailedToChargeFee.html"><strong aria-hidden="true">1.5.7.</strong> [anvil_zksync-halt-6] FailedToChargeFee</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/FromIsNotAnAccount.html"><strong aria-hidden="true">1.5.8.</strong> [anvil_zksync-halt-7] FromIsNotAnAccount</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/InnerTxError.html"><strong aria-hidden="true">1.5.9.</strong> [anvil_zksync-halt-8] InnerTxError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/Unknown.html"><strong aria-hidden="true">1.5.10.</strong> [anvil_zksync-halt-9] Unknown</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/UnexpectedVMBehavior.html"><strong aria-hidden="true">1.5.11.</strong> [anvil_zksync-halt-10] UnexpectedVMBehavior</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/BootloaderOutOfGas.html"><strong aria-hidden="true">1.5.12.</strong> [anvil_zksync-halt-11] BootloaderOutOfGas</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/ValidationOutOfGas.html"><strong aria-hidden="true">1.5.13.</strong> [anvil_zksync-halt-12] ValidationOutOfGas</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/TooBigGasLimit.html"><strong aria-hidden="true">1.5.14.</strong> [anvil_zksync-halt-13] TooBigGasLimit</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/NotEnoughGasProvided.html"><strong aria-hidden="true">1.5.15.</strong> [anvil_zksync-halt-14] NotEnoughGasProvided</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/MissingInvocationLimitReached.html"><strong aria-hidden="true">1.5.16.</strong> [anvil_zksync-halt-15] MissingInvocationLimitReached</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/FailedToSetL2Block.html"><strong aria-hidden="true">1.5.17.</strong> [anvil_zksync-halt-16] FailedToSetL2Block</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/FailedToAppendTransactionToL2Block.html"><strong aria-hidden="true">1.5.18.</strong> [anvil_zksync-halt-17] FailedToAppendTransactionToL2Block</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/VMPanic.html"><strong aria-hidden="true">1.5.19.</strong> [anvil_zksync-halt-18] VMPanic</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/TracerCustom.html"><strong aria-hidden="true">1.5.20.</strong> [anvil_zksync-halt-19] TracerCustom</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/FailedToPublishCompressedBytecodes.html"><strong aria-hidden="true">1.5.21.</strong> [anvil_zksync-halt-20] FailedToPublishCompressedBytecodes</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Halt/FailedBlockTimestampAssertion.html"><strong aria-hidden="true">1.5.22.</strong> [anvil_zksync-halt-21] FailedBlockTimestampAssertion</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Revert/index.html"><strong aria-hidden="true">1.6.</strong> Revert</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Revert/GenericError.html"><strong aria-hidden="true">1.6.1.</strong> [anvil_zksync-revert-0] GenericError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Revert/General.html"><strong aria-hidden="true">1.6.2.</strong> [anvil_zksync-revert-1] General</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Revert/InnerTxError.html"><strong aria-hidden="true">1.6.3.</strong> [anvil_zksync-revert-2] InnerTxError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Revert/VmError.html"><strong aria-hidden="true">1.6.4.</strong> [anvil_zksync-revert-3] VmError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/Revert/Unknown.html"><strong aria-hidden="true">1.6.5.</strong> [anvil_zksync-revert-4] Unknown</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/StateLoader/index.html"><strong aria-hidden="true">1.7.</strong> StateLoader</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/StateLoader/GenericError.html"><strong aria-hidden="true">1.7.1.</strong> [anvil_zksync-state-0] GenericError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/StateLoader/LoadingStateOverExistingState.html"><strong aria-hidden="true">1.7.2.</strong> [anvil_zksync-state-1] LoadingStateOverExistingState</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/StateLoader/LoadEmptyState.html"><strong aria-hidden="true">1.7.3.</strong> [anvil_zksync-state-2] LoadEmptyState</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/StateLoader/StateDecompression.html"><strong aria-hidden="true">1.7.4.</strong> [anvil_zksync-state-3] StateDecompression</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/StateLoader/StateDeserialization.html"><strong aria-hidden="true">1.7.5.</strong> [anvil_zksync-state-4] StateDeserialization</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/StateLoader/UnknownStateVersion.html"><strong aria-hidden="true">1.7.6.</strong> [anvil_zksync-state-5] UnknownStateVersion</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/StateLoader/StateFileAccess.html"><strong aria-hidden="true">1.7.7.</strong> [anvil_zksync-state-6] StateFileAccess</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/TransactionValidation/index.html"><strong aria-hidden="true">1.8.</strong> TransactionValidation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/TransactionValidation/GenericError.html"><strong aria-hidden="true">1.8.1.</strong> [anvil_zksync-tx_invalid-0] GenericError</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/TransactionValidation/InvalidGasLimit.html"><strong aria-hidden="true">1.8.2.</strong> [anvil_zksync-tx_invalid-1] InvalidGasLimit</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/TransactionValidation/GasPerPubdataLimit.html"><strong aria-hidden="true">1.8.3.</strong> [anvil_zksync-tx_invalid-2] GasPerPubdataLimit</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/TransactionValidation/MaxFeePerGasTooLow.html"><strong aria-hidden="true">1.8.4.</strong> [anvil_zksync-tx_invalid-3] MaxFeePerGasTooLow</a></li><li class="chapter-item expanded "><a href="../../../domains/AnvilZKsync/TransactionValidation/MaxPriorityFeeGreaterThanMaxFee.html"><strong aria-hidden="true">1.8.5.</strong> [anvil_zksync-tx_invalid-4] MaxPriorityFeeGreaterThanMaxFee</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Compiler/index.html"><strong aria-hidden="true">2.</strong> Compiler</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Compiler/LLVM_EVM/index.html"><strong aria-hidden="true">2.1.</strong> LLVM_EVM</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Compiler/LLVM_EVM/GenericError.html"><strong aria-hidden="true">2.1.1.</strong> [compiler-llvm+evm-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Compiler/LLVM_Era/index.html"><strong aria-hidden="true">2.2.</strong> LLVM_Era</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Compiler/LLVM_Era/GenericError.html"><strong aria-hidden="true">2.2.1.</strong> [compiler-llvm+era-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Compiler/Solc/index.html"><strong aria-hidden="true">2.3.</strong> Solc</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Compiler/Solc/GenericError.html"><strong aria-hidden="true">2.3.1.</strong> [compiler-solc-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Compiler/SolcFork/index.html"><strong aria-hidden="true">2.4.</strong> SolcFork</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Compiler/SolcFork/GenericError.html"><strong aria-hidden="true">2.4.1.</strong> [compiler-solc+fork-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Compiler/Zksolc/index.html"><strong aria-hidden="true">2.5.</strong> Zksolc</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Compiler/Zksolc/GenericError.html"><strong aria-hidden="true">2.5.1.</strong> [compiler-zksolc-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Compiler/Zkvyper/index.html"><strong aria-hidden="true">2.6.</strong> Zkvyper</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Compiler/Zkvyper/GenericError.html"><strong aria-hidden="true">2.6.1.</strong> [compiler-zkvyper-0] GenericError</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Core/index.html"><strong aria-hidden="true">3.</strong> Core</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Core/API/index.html"><strong aria-hidden="true">3.1.</strong> API</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Core/API/GenericError.html"><strong aria-hidden="true">3.1.1.</strong> [core-api-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Core/EraVM/index.html"><strong aria-hidden="true">3.2.</strong> EraVM</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Core/EraVM/GenericError.html"><strong aria-hidden="true">3.2.1.</strong> [core-eravm-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Core/ExecutionPlatform/index.html"><strong aria-hidden="true">3.3.</strong> ExecutionPlatform</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Core/ExecutionPlatform/GenericError.html"><strong aria-hidden="true">3.3.1.</strong> [core-exec-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Core/Sequencer/index.html"><strong aria-hidden="true">3.4.</strong> Sequencer</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Core/Sequencer/GenericError.html"><strong aria-hidden="true">3.4.1.</strong> [core-seq-0] GenericError</a></li><li class="chapter-item expanded "><a href="../../../domains/Core/Sequencer/GenericSequencerError.html"><strong aria-hidden="true">3.4.2.</strong> [core-seq-1] GenericSequencerError</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Foundry/index.html"><strong aria-hidden="true">4.</strong> Foundry</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Foundry/FoundryUpstream/index.html"><strong aria-hidden="true">4.1.</strong> FoundryUpstream</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Foundry/FoundryUpstream/GenericError.html"><strong aria-hidden="true">4.1.1.</strong> [foundry-upstream-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Foundry/FoundryZksync/index.html"><strong aria-hidden="true">4.2.</strong> FoundryZksync</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Foundry/FoundryZksync/GenericError.html"><strong aria-hidden="true">4.2.1.</strong> [foundry-zksync-0] GenericError</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Hardhat/index.html"><strong aria-hidden="true">5.</strong> Hardhat</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Hardhat/HardhatUpstream/index.html"><strong aria-hidden="true">5.1.</strong> HardhatUpstream</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Hardhat/HardhatUpstream/GenericError.html"><strong aria-hidden="true">5.1.1.</strong> [hardhat-upstream-0] GenericError</a></li></ol></li><li class="chapter-item expanded "><a href="../../../domains/Hardhat/HardhatZksync/index.html"><strong aria-hidden="true">5.2.</strong> HardhatZksync</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../domains/Hardhat/HardhatZksync/GenericError.html"><strong aria-hidden="true">5.2.1.</strong> [hardhat-zksync-0] GenericError</a></li></ol></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ZKsync public errors documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="anvil_zksync-gas_estim-10-transactionhalt"><a class="header" href="#anvil_zksync-gas_estim-10-transactionhalt">[anvil_zksync-gas_estim-10] TransactionHalt</a></h1>
+<ul>
+<li><strong>Domain</strong>: AnvilZKsync</li>
+<li><strong>Component</strong>: GasEstimation</li>
+<li><strong>Error Code</strong>: 10</li>
+<li><strong>Message</strong>: <code>[anvil_zksync-gas_estim-10] Gas estimation failed because the transaction exhibits exotic gas behavior and reverts, burning all gas: {inner}</code></li>
+</ul>
+<h2 id="fields"><a class="header" href="#fields">Fields</a></h2>
+<ul>
+<li><code>inner : Halt</code></li>
+</ul>
+<h2 id="description"><a class="header" href="#description">Description</a></h2>
+<p>This error occurs when anvil-zksync is trying to estimate gas required to run this transaction
+but the estimation fails because the transaction reverts and burns all gas.</p>
+<p>Before estimating gas, anvil-zksync first runs the transaction with maximum gas possible.
+If the first run was successful, anvil-zksync proceeds with the estimation
+The estimation algorithm looks for a minimum gas value that makes the transaction succeed.
+This works if the transaction fails for all lower gas values and succeeds for all higher gas values.
+Some valid, but exotic transactions, resist estimation.
+Typically they depend on specific gas values, for example, they fail if <code>gasleft()</code> returned a value in a specific range.</p>
+<h2 id="likely-causes"><a class="header" href="#likely-causes">Likely Causes</a></h2>
+<ul>
+<li>The transaction always reverts and burns all gas, so it can't be estimated.</li>
+</ul>
+<h2 id="language-bindings"><a class="header" href="#language-bindings">Language Bindings</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">Language</th><th style="text-align: center">Type</th></tr></thead><tbody>
+<tr><td style="text-align: center">rust</td><td style="text-align: center">TransactionHalt</td></tr>
+</tbody></table>
+</div>
+<h2 id="origins"><a class="header" href="#origins">Origins</a></h2>
+<ul>
+<li><a href="https://raw.githubusercontent.com/matter-labs/anvil-zksync/refs/heads/main/etc/errors/anvil.json">https://raw.githubusercontent.com/matter-labs/anvil-zksync/refs/heads/main/etc/errors/anvil.json</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../domains/AnvilZKsync/GasEstimation/ExceedsBlockGasLimit.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../domains/AnvilZKsync/GasEstimation/TransactionRevert.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../domains/AnvilZKsync/GasEstimation/ExceedsBlockGasLimit.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../domains/AnvilZKsync/GasEstimation/TransactionRevert.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr.min.js"></script>
+        <script src="../../../mark.min.js"></script>
+        <script src="../../../searcher.js"></script>
+
+        <script src="../../../clipboard.min.js"></script>
+        <script src="../../../highlight.js"></script>
+        <script src="../../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../js/version-box.js"></script>
+
+
+    </div>
+    </body>
+</html>
