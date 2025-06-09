@@ -401,61 +401,51 @@ fn add_default_error(model: &mut Model) {
     }
 }
 fn bind_error_types(model: &mut Model) {
-    fn error_name(
-        language: &str,
-        binding: &str,
-    ) -> Option<zksync_error_model::inner::FullyQualifiedTargetLanguageType> {
+    use zksync_error_model::inner::FullyQualifiedTargetLanguageType as TargetType;
+
+    fn error_binding(language: &str, binding: &str) -> Option<(String, TargetType)> {
         match language {
-            "rust" => Some(format!("Box<{binding}>").as_str().into()),
+            "rust" => Some((
+                language.to_owned(),
+                format!("Box<{binding}>").as_str().into(),
+            )),
             _ => None,
         }
     }
-    fn error_kvp(
-        language: &str,
-        binding: &str,
-    ) -> Option<(
-        String,
-        zksync_error_model::inner::FullyQualifiedTargetLanguageType,
-    )> {
-        error_name(language, binding).map(|e| (language.to_owned(), e))
+
+    fn create_type_description(
+        name: String,
+        description: String,
+        bindings: &BTreeMap<String, String>,
+    ) -> TypeDescription {
+        TypeDescription {
+            name,
+            meta: TypeMetadata { description },
+            bindings: bindings
+                .iter()
+                .filter_map(|(lang, binding)| error_binding(lang, binding))
+                .collect(),
+        }
     }
 
     for domain in model.domains.values() {
-        let bindings: BTreeMap<_, zksync_error_model::inner::FullyQualifiedTargetLanguageType> =
-            domain
-                .meta
-                .bindings
-                .iter()
-                .flat_map(|(k, v)| error_kvp(k, v))
-                .collect();
+        let domain_type = create_type_description(
+            domain.meta.identifier.name.clone(),
+            domain.meta.description.clone(),
+            &domain.meta.bindings,
+        );
 
-        let value = TypeDescription {
-            name: domain.meta.identifier.name.clone(),
-            meta: TypeMetadata {
-                description: domain.meta.description.clone(),
-            },
-            bindings,
-        };
-        model.types.insert(value.name.clone(), value);
+        model.types.insert(domain_type.name.clone(), domain_type);
 
         for component in domain.components.values() {
-            let bindings: BTreeMap<_, zksync_error_model::inner::FullyQualifiedTargetLanguageType> =
-                component
-                    .meta
-                    .bindings
-                    .iter()
-                    .flat_map(|(k, v)| error_kvp(k, v))
-                    .collect();
-            let value = TypeDescription {
-                name: component.meta.identifier.name.clone(),
-                meta: TypeMetadata {
-                    description: component.meta.description.clone(),
-                },
-                bindings,
-            };
+            let component_type = create_type_description(
+                component.meta.identifier.name.clone(),
+                component.meta.description.clone(),
+                &component.meta.bindings,
+            );
             model
                 .types
-                .insert(component.meta.identifier.name.clone(), value);
+                .insert(component_type.name.clone(), component_type);
         }
     }
 }
