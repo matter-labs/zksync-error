@@ -144,7 +144,5 @@ pub fn load_fragments_multiple_sources(
     Ok(collection)
 }
 
-pub(crate) static ZKSYNC_ROOT_CONTENTS: &str = include_str!(concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/../../zksync-root.json"
-));
+static EMBEDDED_DESCRIPTIONS_DIR: include_dir::Dir =
+    include_dir::include_dir!("$CARGO_MANIFEST_DIR/../../descriptions");
