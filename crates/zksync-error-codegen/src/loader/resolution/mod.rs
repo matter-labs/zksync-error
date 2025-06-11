@@ -57,7 +57,7 @@ pub fn resolve(
                 }
                 Link::FileLink { path } => Ok(ResolvedLink::LocalPath(path.into())),
                 Link::URL { url } => Ok(ResolvedLink::Url(url.to_owned())),
-                Link::Embedded { path } => Ok(ResolvedLink::EmbeddedPath(
+                Link::Bundled { path } => Ok(ResolvedLink::EmbeddedPath(
                     format!(
                         "{manifest}/../../descriptions/{path}",
                         manifest = env!("CARGO_MANIFEST_DIR")
