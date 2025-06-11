@@ -64,12 +64,12 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
     } = arguments;
 
     let model = {
-        let input_links: Vec<Link> = input_links
+        let input_links: Result<Vec<Link>,_> = input_links
             .iter()
-            .flat_map(|repr| Link::parse(repr))
+            .map(|repr| Link::parse(repr))
             .collect();
         let overrides = Remapping::try_from(&override_links)?;
-        build_model(input_links, overrides, verbose)?
+        build_model(input_links?, overrides, verbose)?
     };
 
     for arguments::BackendOutput {
