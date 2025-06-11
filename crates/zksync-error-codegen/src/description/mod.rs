@@ -25,6 +25,8 @@ pub struct Root {
     #[serde(default)]
     pub types: Vec<Type>,
     pub domains: Vec<Domain>,
+    #[serde(default)]
+    pub take_from: Vec<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
