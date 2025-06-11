@@ -401,28 +401,51 @@ fn add_default_error(model: &mut Model) {
     }
 }
 fn bind_error_types(model: &mut Model) {
-    fn error_name(component_name: &str) -> String {
-        format!("Box<{component_name}>")
+    use zksync_error_model::inner::FullyQualifiedTargetLanguageType as TargetType;
+
+    fn error_binding(language: &str, binding: &str) -> Option<(String, TargetType)> {
+        match language {
+            "rust" => Some((
+                language.to_owned(),
+                format!("Box<{binding}>").as_str().into(),
+            )),
+            _ => None,
+        }
     }
+
+    fn create_type_description(
+        name: String,
+        description: String,
+        bindings: &BTreeMap<String, String>,
+    ) -> TypeDescription {
+        TypeDescription {
+            name,
+            meta: TypeMetadata { description },
+            bindings: bindings
+                .iter()
+                .filter_map(|(lang, binding)| error_binding(lang, binding))
+                .collect(),
+        }
+    }
+
     for domain in model.domains.values() {
+        let domain_type = create_type_description(
+            domain.meta.identifier.name.clone(),
+            domain.meta.description.clone(),
+            &domain.meta.bindings,
+        );
+
+        model.types.insert(domain_type.name.clone(), domain_type);
+
         for component in domain.components.values() {
-            let bindings: BTreeMap<_, zksync_error_model::inner::FullyQualifiedTargetLanguageType> =
-                component
-                    .meta
-                    .bindings
-                    .iter()
-                    .map(|(k, v)| (k.to_owned(), error_name(v).as_str().into()))
-                    .collect();
-            let value = TypeDescription {
-                name: component.meta.identifier.name.clone(),
-                meta: TypeMetadata {
-                    description: component.meta.description.clone(),
-                },
-                bindings,
-            };
+            let component_type = create_type_description(
+                component.meta.identifier.name.clone(),
+                component.meta.description.clone(),
+                &component.meta.bindings,
+            );
             model
                 .types
-                .insert(component.meta.identifier.name.clone(), value);
+                .insert(component_type.name.clone(), component_type);
         }
     }
 }

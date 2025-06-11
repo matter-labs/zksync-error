@@ -191,6 +191,7 @@ impl RustBackend {
             use strum_macros::AsRefStr;
             use strum_macros::EnumDiscriminants;
             use strum_macros::FromRepr;
+            use crate::error::domains::*;
 
             #( #definitions )*
         };
