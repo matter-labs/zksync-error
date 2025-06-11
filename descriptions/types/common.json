@@ -1,0 +1,67 @@
+{
+  "types": [
+    {
+      "name": "uint",
+      "description": "Unsigned 32-bit integer",
+      "bindings": {
+        "rust": {
+          "expression": "u32"
+        }
+      }
+    },
+    {
+      "name": "int",
+      "description": "Signed 32-bit integer",
+      "bindings": {
+        "rust": {
+          "expression": "i32"
+        }
+      }
+    },
+    {
+      "name": "string",
+      "description": "Unicode zero-terminated string",
+      "bindings": {
+        "rust": {
+          "expression": "String"
+        }
+      }
+    },
+    {
+      "name": "u64",
+      "description": "64-bit unsigned integer",
+      "bindings": {
+        "rust": {
+          "expression": "zksync_basic_types::U64"
+        }
+      }
+    },
+    {
+      "name": "map",
+      "description": "String to string mapping.",
+      "bindings": {
+        "rust": {
+          "expression": "Vec<(String,String)>"
+        }
+      }
+    },
+    {
+      "name": "WrappedError",
+      "description": "Any wrapped error",
+      "bindings": {
+        "rust": {
+          "expression": "serde_json::Value"
+        }
+      }
+    },
+    {
+      "name": "bytes",
+      "description": "Sequence of bytes",
+      "bindings": {
+        "rust": {
+          "expression": "Vec<u8>"
+        }
+      }
+    }
+  ]
+}
