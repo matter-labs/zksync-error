@@ -77,13 +77,15 @@ impl Mergeable for Root {
         let Root {
             types: types1,
             domains: domains1,
-            take_from: _,
+            take_from: take_from1,
         } = self;
         let Root {
             types: types2,
             domains: domains2,
-            take_from: _,
+            take_from: take_from2,
         } = other;
+        assert!(take_from1.is_empty());
+        assert!(take_from2.is_empty());
         let domain_map1: BTreeMap<_, Domain> = domains1
             .into_iter()
             .map(|d| (d.get_partial_identifier(), d))
@@ -112,6 +114,8 @@ impl Mergeable for Domain {
     where
         Self: Sized,
     {
+        assert!(self.take_from.is_empty());
+        assert!(other.take_from.is_empty());
         if self.get_partial_identifier() == other.get_partial_identifier() {
             let component_map1: BTreeMap<_, Component> = self
                 .components
@@ -151,6 +155,8 @@ impl Mergeable for Component {
     where
         Self: Sized,
     {
+        assert!(self.take_from.is_empty());
+        assert!(other.take_from.is_empty());
         if self.get_partial_identifier() == other.get_partial_identifier() {
             Ok(Self {
                 origins: [self.origins, other.origins].concat(),
