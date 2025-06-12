@@ -77,10 +77,12 @@ impl Mergeable for Root {
         let Root {
             types: types1,
             domains: domains1,
+            take_from: _,
         } = self;
         let Root {
             types: types2,
             domains: domains2,
+            take_from: _,
         } = other;
         let domain_map1: BTreeMap<_, Domain> = domains1
             .into_iter()
@@ -101,6 +103,7 @@ impl Mergeable for Root {
         Ok(Root {
             types: merged_types,
             domains: merged_domains,
+            take_from: vec![],
         })
     }
 }

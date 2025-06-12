@@ -26,7 +26,7 @@ impl Normalizable for Component {
                 components: vec![self.clone()],
                 ..Default::default()
             }],
-            types: vec![],
+            ..Default::default()
         }
     }
 }
@@ -37,7 +37,7 @@ impl Normalizable for Domain {
     fn normalize(&self, _: &Self::Context) -> Root {
         Root {
             domains: vec![self.clone()],
-            types: vec![],
+            ..Default::default()
         }
     }
 }
@@ -61,7 +61,7 @@ impl Normalizable for Vec<crate::description::Error> {
                 }],
                 ..Default::default()
             }],
-            types: vec![],
+            ..Default::default()
         }
     }
 }

@@ -68,6 +68,18 @@ fn fetch_connected_fragments_aux(
 
     visited.insert(origin.clone());
 
+    for raw_link in &fragment.root.take_from {
+        let link = Link::parse(raw_link)?;
+        if visited.contains(&link) {
+            return Err(LoadError::CircularDependency {
+                trigger: origin.clone(),
+                visited: link.clone(),
+            });
+        } else {
+            results.extend(visit(link, &BindingPoint::Root, visited)?)
+        }
+    }
+
     for domain in &root.domains {
         let domain_binding = BindingPoint::for_domain(domain);
 

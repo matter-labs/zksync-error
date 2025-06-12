@@ -144,7 +144,11 @@ fn translate_model(
     ctx: ModelTranslationContext,
 ) -> Result<Model, ModelBuildingError> {
     let mut result = Model::default();
-    let crate::description::Root { types, domains } = model;
+    let crate::description::Root {
+        types,
+        domains,
+        take_from: _,
+    } = model;
     for t in types {
         let ctx = TypeTranslationContext {
             type_name: &t.name,
