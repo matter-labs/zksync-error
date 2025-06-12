@@ -32,7 +32,7 @@
       "description": "64-bit unsigned integer",
       "bindings": {
         "rust": {
-          "expression": "zksync_basic_types::U64"
+          "expression": "u64"
         }
       }
     },
