@@ -50,6 +50,17 @@ fn load_single_fragment(
     }
 }
 
+fn void_take_from(mut fragment: NormalizedDescriptionFragment) -> NormalizedDescriptionFragment {
+    fragment.root.take_from = vec![];
+    for domain in &mut fragment.root.domains {
+        domain.take_from = vec![];
+        for component in &mut domain.components {
+            component.take_from = vec![];
+        }
+    }
+    fragment
+}
+
 fn fetch_connected_fragments_aux(
     fragment: NormalizedDescriptionFragment,
     visited: &mut BTreeSet<Link>,
@@ -110,7 +121,8 @@ fn fetch_connected_fragments_aux(
             }
         }
     }
-    results.push(fragment);
+
+    results.push(void_take_from(fragment));
     Ok(results)
 }
 
@@ -144,7 +156,5 @@ pub fn load_fragments_multiple_sources(
     Ok(collection)
 }
 
-pub(crate) static ZKSYNC_ROOT_CONTENTS: &str = include_str!(concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/../../zksync-root.json"
-));
+static EMBEDDED_DESCRIPTIONS_DIR: include_dir::Dir =
+    include_dir::include_dir!("$CARGO_MANIFEST_DIR/../../descriptions");

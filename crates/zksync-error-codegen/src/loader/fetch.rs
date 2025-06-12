@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 
 use reqwest;
 
@@ -10,13 +10,13 @@ use crate::loader::resolution::{ResolvedLink, resolve};
 
 use super::resolution::{ResolutionContext, ResolutionResult};
 
-fn from_fs(path: &PathBuf) -> Result<String, LoadError> {
+fn from_fs(path: &Path) -> Result<String, LoadError> {
     eprintln!(
         "Reading local file: {}",
         path.to_str().expect("Incorrect path")
     );
     fs::read_to_string(path).map_err(|inner| LoadError::IOError {
-        path: path.clone(),
+        path: path.into(),
         inner,
     })
 }
@@ -26,6 +26,20 @@ fn from_network(url: &str) -> Result<String, reqwest::Error> {
     let response = reqwest::blocking::get(url)?;
     let content = response.text()?;
     Ok(content)
+}
+
+fn from_embedded(path: &Path) -> Result<String, LoadError> {
+    if let Some(path) = super::EMBEDDED_DESCRIPTIONS_DIR
+        .get_file(path)
+        .map(|f| f.path())
+    {
+        from_fs(&path.to_owned())
+    } else {
+        fs::read_to_string(path).map_err(|inner| LoadError::IOError {
+            path: path.into(),
+            inner,
+        })
+    }
 }
 
 pub struct LoadResult {
@@ -42,6 +56,7 @@ pub fn load_text(link: &Link, context: &ResolutionContext) -> Result<LoadResult,
         ResolvedLink::LocalPath(path) => from_fs(&path)?,
         ResolvedLink::Url(url) => from_network(&url)?,
         ResolvedLink::Immediate(immediate) => immediate,
+        ResolvedLink::EmbeddedPath(path_buf) => from_embedded(&path_buf)?,
     };
 
     Ok(LoadResult { text, actual })

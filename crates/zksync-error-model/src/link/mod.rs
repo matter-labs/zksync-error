@@ -6,7 +6,7 @@ pub mod error;
 
 #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq)]
 pub enum Link {
-    DefaultLink,
+    Bundled { path: String },
     PackageLink { package: String, filename: String },
     FileLink { path: String },
     URL { url: String },
@@ -16,10 +16,14 @@ impl Link {
     /// Part before "://"
     pub const CARGO_FORMAT_PREFIX: &str = "cargo";
     pub const FILE_FORMAT_PREFIX: &str = "file";
-    pub const DEFAULT_FORMAT_PREFIX: &str = "zksync-error";
+    pub const ZKSYNC_DESCRIPTIONS_LOCATION: &str = "descriptions/";
+    pub const EMBEDDED_FORMAT_PREFIX: &str = "zksync-error";
     pub const DEFAULT_ROOT_FILE_NAME_NO_EXTENSION: &str = "zksync-root";
-    pub const DEFAULT_ROOT_FILE_NAME: &str =
-        concatcp!(Link::DEFAULT_ROOT_FILE_NAME_NO_EXTENSION, ".json");
+    pub const DEFAULT_ROOT_FILE_PATH: &str = concatcp!(
+        Link::ZKSYNC_DESCRIPTIONS_LOCATION,
+        Link::DEFAULT_ROOT_FILE_NAME_NO_EXTENSION,
+        ".json"
+    );
     pub const NETWORK_FORMAT_PREFIXES: [&str; 2] = ["https", "http"];
     pub const PACKAGE_SEPARATOR: &str = "@@";
 
@@ -39,9 +43,9 @@ impl Link {
             Some((Link::FILE_FORMAT_PREFIX, path)) => Ok(Link::FileLink {
                 path: path.to_owned(),
             }),
-            Some((Link::DEFAULT_FORMAT_PREFIX, Self::DEFAULT_ROOT_FILE_NAME)) => {
-                Ok(Link::DefaultLink)
-            }
+            Some((Link::EMBEDDED_FORMAT_PREFIX, path)) => Ok(Link::Bundled {
+                path: path.to_owned(),
+            }),
             Some((prefix, _)) if Link::NETWORK_FORMAT_PREFIXES.contains(&prefix) => {
                 Ok(Link::URL { url: string })
             }
@@ -55,15 +59,13 @@ impl std::fmt::Display for Link {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Link::PackageLink { package, filename } => f.write_fmt(format_args!(
-                "{}://{package}{}{filename}",
-                Link::CARGO_FORMAT_PREFIX,
-                Link::PACKAGE_SEPARATOR
+                "{prefix}://{package}{sep}{filename}",
+                prefix = Link::CARGO_FORMAT_PREFIX,
+                sep = Link::PACKAGE_SEPARATOR
             )),
             Link::URL { url } => f.write_str(url),
             Link::FileLink { path } => f.write_str(path),
-            Link::DefaultLink => {
-                f.write_fmt(format_args!("<default {}>", Self::DEFAULT_ROOT_FILE_NAME))
-            }
+            Link::Bundled { path } => write!(f, "<embedded: {path}>"),
         }
     }
 }
