@@ -14,8 +14,8 @@ impl RustBackend {
 
             #(use crate::error::domains:: #domain_codes ;)*
 
-            use alloc::string::String;
-            use alloc::format;
+            #[cfg(not(feature = "std"))]
+            use alloc::{string::String, format};
 
             use crate::error::NamedError;
             use crate::kind::DomainCode;

@@ -3,17 +3,13 @@ use crate::backend::arguments::ArgumentError;
 use crate::backend::arguments::parse_bool;
 
 pub struct Config {
-    pub use_anyhow: bool,
     pub generate_cargo_toml: bool,
-    pub no_std: bool,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
-            use_anyhow: true,
             generate_cargo_toml: false,
-            no_std: false,
         }
     }
 }
@@ -25,9 +21,7 @@ impl IBackendConfig for Config {
         let mut config = Self::default();
         for (arg, val) in args {
             match arg.as_str() {
-                "use_anyhow" => parse_bool(&arg, &val, &mut config.use_anyhow)?,
                 "generate_cargo_toml" => parse_bool(&arg, &val, &mut config.generate_cargo_toml)?,
-                "no_std" => parse_bool(&arg, &val, &mut config.no_std)?,
                 _ => return Err(ArgumentError::UnsupportedArgument { argument: arg }),
             }
         }

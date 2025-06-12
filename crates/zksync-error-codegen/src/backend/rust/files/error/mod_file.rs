@@ -40,7 +40,11 @@ impl RustBackend {
             pub(crate) mod definitions;
             pub(crate) mod domains;
 
+
+            #[cfg(not(feature = "std"))]
             use alloc::string::String;
+
+
             use core::error::Error;
             use crate::identifier::Identifier;
             use crate::error::domains::ZksyncError;

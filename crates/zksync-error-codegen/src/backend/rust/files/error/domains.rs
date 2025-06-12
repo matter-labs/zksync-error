@@ -196,6 +196,7 @@ impl RustBackend {
 
             #![allow(non_camel_case_types)]
 
+            #[cfg(not(feature = "std"))]
             use alloc::string::String;
             use core::fmt;
 

@@ -9,18 +9,14 @@ use crate::backend::rust::util::codegen::ident;
 
 impl RustBackend {
     pub fn generate_file_lib(&mut self) -> Result<File, GenerationError> {
-        let no_std_attr = if self.config.no_std {
-            quote! {
-                #![no_std]
-                extern crate alloc;
-            }
-        } else {
-            quote! {}
-        };
-
         let imports = quote! {
-            #no_std_attr
+            #![cfg_attr(not(feature = "std"), no_std)]
 
+            #[cfg(not(feature = "std"))]
+            extern crate alloc;
+
+            #[cfg(not(feature = "std"))]
+            use alloc::format;
 
             #[cfg(feature="runtime_documentation")]
             pub mod documentation;
@@ -78,19 +74,19 @@ impl RustBackend {
                         #[macro_export]
                         macro_rules! #macro_name {
                             ($($arg:tt)*) => {
-                                zksync_error::#outer_module::#inner_module:: #alias_error::GenericError { message: alloc::format!($($arg)*) }
+                                zksync_error::#outer_module::#inner_module:: #alias_error::GenericError { message: format!($($arg)*) }
                             };
                         }
                         pub use crate:: #macro_name as generic_error;
 
                         pub fn to_generic<T: core::fmt::Display>(err: T) -> #alias_error {
                             GenericError {
-                                message: alloc::format!("{}", err),
+                                message: format!("{}", err),
                             }
                         }
                         pub fn to_domain<T: core::fmt::Display>(err: T) -> super::#domain_error_name {
                             super::#domain_error_name::#enum_name( GenericError {
-                                message: alloc::format!("{}", err),
+                                message: format!("{}", err),
                             })
                         }
                     }

@@ -77,15 +77,15 @@ impl RustBackend {
 
             let component_doc = component_doc(component);
             let from_anyhow =
-                self.config.use_anyhow.then_some(
                     quote! {
+                        #[cfg(feature = "use_anyhow")]
                         impl From<anyhow::Error> for #component_name {
                             fn from(value: anyhow::Error) -> Self {
                                 let message = format!("{value:#?}");
                                 #component_name::GenericError { message }
                             }
                         }
-                    });
+                    };
 
             let impl_custom_error_message = {
 
@@ -187,11 +187,8 @@ impl RustBackend {
             #![allow(non_camel_case_types)]
 
             use core::fmt;
-            use alloc::string::String;
-            use alloc::vec::Vec;
-            use alloc::boxed::Box;
-            use crate::alloc::borrow::ToOwned;
-            use alloc::format;
+            #[cfg(not(feature = "std"))]
+            use alloc::{vec::Vec,borrow::ToOwned,string::String,format,boxed::Box};
 
             #[cfg(feature="runtime_documentation")]
             use crate::documentation::Documented;
