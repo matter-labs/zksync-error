@@ -31,11 +31,11 @@ serialized_errors = ["dep:serde", "dep:serde_json"]
 packed_errors = ["use_serde"]
 
 [dependencies]
-lazy_static = { version = "1.5.0", default-features = false, optional = true }
-serde = { version = "1.0.210", features = [ "derive", "alloc" ], default-features = false, optional = true }
-serde_json = { version = "1.0.128", optional = true }
-strum = { version = "0.26.3", default-features = false, features = ["derive"] }
-strum_macros = { version = "0.26.4", default-features = false }
+lazy_static = {{ version = "1.5.0", default-features = false, optional = true }}
+serde = {{ version = "1.0.210", features = [ "derive", "alloc" ], default-features = false, optional = true }}
+serde_json = {{ version = "1.0.128", optional = true }}
+strum = {{ version = "0.26.3", default-features = false, features = ["derive"] }}
+strum_macros = {{ version = "0.26.4", default-features = false }}
 zksync-error-description = {{ git = "{}", branch = "main", default-features = false }}
 
 [dependencies.anyhow]
@@ -47,7 +47,7 @@ default-features = false
 doctest = false
 
 [build-dependencies]
-zksync-error-codegen = { git = "https://github.com/matter-labs/zksync-error", branch = "main", default-features = true }
+zksync-error-codegen = {{ git = "https://github.com/matter-labs/zksync-error", branch = "main", default-features = true }}
 
 
 "#,
@@ -56,7 +56,7 @@ zksync-error-codegen = { git = "https://github.com/matter-labs/zksync-error", br
 
         Ok(Some(File {
             content,
-            relative_path: PathBuf::from("Cargo.toml"),
+            relative_path: PathBuf::from("Cargo.example.toml"),
         }))
     }
 }
