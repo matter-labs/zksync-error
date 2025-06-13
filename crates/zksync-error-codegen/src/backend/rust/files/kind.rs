@@ -18,7 +18,8 @@ impl RustBackend {
 
             #(use crate::error::domains:: #domain_codes ;)*
 
-            #[derive(Clone, Debug, EnumDiscriminants, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+            #[derive(Clone, Debug, EnumDiscriminants, Eq, PartialEq)]
+            #[cfg_attr(feature = "use_serde", derive(serde::Serialize, serde::Deserialize))]
             #[strum_discriminants(name(DomainCode))]
             #[strum_discriminants(derive(FromRepr))]
             #[strum_discriminants(vis(pub))]

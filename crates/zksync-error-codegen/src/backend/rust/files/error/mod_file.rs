@@ -60,6 +60,14 @@ impl RustBackend {
                 fn get_data(&self) -> ContainedType;
             }
 
+            #[cfg(not(feature = "use_serde"))]
+            pub trait IUnifiedError<ContainedType>:
+            IError<ContainedType>
+            where
+                ContainedType: Clone,
+            {
+            }
+            #[cfg(feature = "use_serde")]
             pub trait IUnifiedError<ContainedType>:
             serde::Serialize + for<'de> serde::Deserialize<'de> + IError<ContainedType>
             where
