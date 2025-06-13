@@ -117,7 +117,9 @@ impl RustBackend {
 
                 #component_doc
                 #[repr(u32)]
-                #[derive(AsRefStr, Clone, Debug, Eq, EnumDiscriminants, PartialEq, serde::Serialize, serde::Deserialize)]
+                #[derive(AsRefStr, Clone, Debug, Eq, EnumDiscriminants, PartialEq)]
+                #[cfg_attr(feature = "use_serde", derive(serde::Serialize))]
+                #[cfg_attr(feature = "use_serde", derive(serde::Deserialize))]
                 #[strum_discriminants(name(#component_code))]
                 #[strum_discriminants(vis(pub))]
                 #[strum_discriminants(derive(AsRefStr, FromRepr))]

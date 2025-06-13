@@ -23,7 +23,8 @@ impl RustBackend {
         };
         let def_structured_error_code = quote! {
 
-            #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+            #[cfg_attr(feature = "use_serde", derive(serde::Serialize, serde::Deserialize))]
+            #[derive(Clone, Debug, Eq, PartialEq)]
             pub struct StructuredErrorCode {
                 pub domain_code: u32,
                 pub component_code: u32,
@@ -52,7 +53,8 @@ impl RustBackend {
             }
         };
         let def_identifier = quote! {
-            #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+            #[derive(Clone, Debug, Eq, PartialEq)]
+            #[cfg_attr(feature = "use_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct Identifier {
                 pub kind: Kind,
                 pub code: u32,

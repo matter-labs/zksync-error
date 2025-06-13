@@ -127,9 +127,12 @@ impl RustBackend {
                 quote! {
 
                     #[repr(u32)]
-                    #[derive(AsRefStr, Clone, Debug, EnumDiscriminants, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+                    #[derive(AsRefStr, Clone, Debug, EnumDiscriminants, Eq, PartialEq)]
+                    #[strum_discriminants(derive(FromRepr))]
+                    #[cfg_attr(feature = "use_serde", derive(serde::Serialize))]
+                    #[cfg_attr(feature = "use_serde", derive(serde::Deserialize))]
                     #[strum_discriminants(name(#domain_code))]
-                    #[strum_discriminants(derive(serde::Serialize, serde::Deserialize, FromRepr))]
+                    #[cfg_attr(feature = "use_serde", strum_discriminants(derive(serde::Serialize, serde::Deserialize)))]
                     #[strum_discriminants(vis(pub))]
                     pub enum #domain {
                         #( #components( #components ),)*
@@ -212,7 +215,8 @@ impl RustBackend {
             )*
 
             #[repr(u32)]
-            #[derive(AsRefStr, Clone, Debug, EnumDiscriminants, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+            #[derive(AsRefStr, Clone, Debug, EnumDiscriminants, Eq, PartialEq)]
+            #[cfg_attr(feature = "use_serde", derive(serde::Serialize, serde::Deserialize))]
             pub enum ZksyncError {
                 #( #all_domains( #all_domains ),)*
             }
