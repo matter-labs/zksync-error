@@ -14,6 +14,9 @@ impl RustBackend {
 
             #(use crate::error::domains:: #domain_codes ;)*
 
+            #[cfg(not(feature = "std"))]
+            use alloc::{string::String, format};
+
             use crate::error::NamedError;
             use crate::kind::DomainCode;
             use crate::kind::Kind;
@@ -157,6 +160,7 @@ impl RustBackend {
             }
         };
         let impl_documented = quote! {
+                #[cfg(feature="runtime_documentation")]
                 impl crate::documentation::Documented for Identifier {
                     type Documentation = &'static zksync_error_description::ErrorDocumentation;
                     fn get_documentation(&self) -> Result<Option<Self::Documentation>, crate::documentation::DocumentationError> {

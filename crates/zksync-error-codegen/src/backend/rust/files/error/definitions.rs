@@ -77,15 +77,15 @@ impl RustBackend {
 
             let component_doc = component_doc(component);
             let from_anyhow =
-                self.config.use_anyhow.then_some(
                     quote! {
+                        #[cfg(feature = "use_anyhow")]
                         impl From<anyhow::Error> for #component_name {
                             fn from(value: anyhow::Error) -> Self {
                                 let message = format!("{value:#?}");
                                 #component_name::GenericError { message }
                             }
                         }
-                    });
+                    };
 
             let impl_custom_error_message = {
 
@@ -127,7 +127,7 @@ impl RustBackend {
                     #( #error_variants , )*
                 }
 
-                impl std::error::Error for #component_name {}
+                impl core::error::Error for #component_name {}
 
                 impl NamedError for #component_name {
                     fn get_error_name(&self) -> String {
@@ -145,11 +145,12 @@ impl RustBackend {
                         val.to_unified()
                     }
                 }
-                impl std::fmt::Display for #component_name {
-                    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                impl fmt::Display for #component_name {
+                    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                         f.write_str(&self.get_message())
                     }
                 }
+                #[cfg(feature="runtime_documentation")]
                 impl Documented for #component_name {
                     type Documentation = &'static zksync_error_description::ErrorDocumentation;
 
@@ -160,12 +161,14 @@ impl RustBackend {
                 #from_anyhow
 
 
+                #[cfg(feature="packed_errors")]
                 impl From<#component_name> for crate::packed::PackedError<crate::error::domains::ZksyncError> {
                     fn from(value: #component_name) -> Self {
                         crate::packed::pack(value)
                     }
                 }
 
+                #[cfg(feature="serialized_errors")]
                 impl From<#component_name> for crate::serialized::SerializedError {
                     fn from(value: #component_name) -> Self {
                         let packed = crate::packed::pack(value);
@@ -183,6 +186,11 @@ impl RustBackend {
             #![allow(clippy::useless_format)]
             #![allow(non_camel_case_types)]
 
+            use core::fmt;
+            #[cfg(not(feature = "std"))]
+            use alloc::{vec::Vec,borrow::ToOwned,string::String,format,boxed::Box};
+
+            #[cfg(feature="runtime_documentation")]
             use crate::documentation::Documented;
             use crate::error::CustomErrorMessage;
             use crate::error::NamedError;
