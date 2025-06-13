@@ -71,6 +71,9 @@ impl RustBackend {
                             pub use crate::error::definitions:: #enum_name :: #errors ;
                         )*
 
+                        #[cfg(not(feature = "std"))]
+                        use alloc::format;
+
                         #[macro_export]
                         macro_rules! #macro_name {
                             ($($arg:tt)*) => {
