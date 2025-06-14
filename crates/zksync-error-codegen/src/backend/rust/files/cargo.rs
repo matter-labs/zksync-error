@@ -22,20 +22,20 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["std", "use_anyhow"]
-std = ["serde_json", "serde/std", "lazy_static/spin_no_std", "anyhow?/std", "strum/std", "strum_macros/std"]
+default = ["std", "use_anyhow", "use_serde"]
+std = [ "serde/std", "lazy_static/spin_no_std", "anyhow?/std", "strum/std"]
 use_anyhow = ["dep:anyhow"]
-runtime_documentation = []
-serialized_errors = []
-packed_errors = []
+use_serde = ["dep:serde"]
+runtime_documentation = ["dep:serde", "dep:serde_json"]
+serialized_errors = ["dep:serde", "dep:serde_json"]
+packed_errors = ["use_serde"]
 
 [dependencies]
-lazy_static = {{ version = "1.5.0", default-features = false }}
-serde = {{ version = "1.0.210", features = [ "derive", "rc" ], default-features = false }}
+lazy_static = {{ version = "1.5.0", default-features = false, optional = true }}
+serde = {{ version = "1.0.210", features = [ "derive", "alloc" ], default-features = false, optional = true }}
 serde_json = {{ version = "1.0.128", optional = true }}
 strum = {{ version = "0.26.3", default-features = false, features = ["derive"] }}
 strum_macros = {{ version = "0.26.4", default-features = false }}
-
 zksync-error-description = {{ git = "{}", branch = "main", default-features = false }}
 
 [dependencies.anyhow]
@@ -45,13 +45,18 @@ default-features = false
 
 [lib]
 doctest = false
+
+[build-dependencies]
+zksync-error-codegen = {{ git = "https://github.com/matter-labs/zksync-error", branch = "main", default-features = true }}
+
+
 "#,
             RustBackendConfig::SHARED_MODEL_CRATE_URL,
         );
 
         Ok(Some(File {
             content,
-            relative_path: PathBuf::from("Cargo.toml"),
+            relative_path: PathBuf::from("Cargo.example.toml"),
         }))
     }
 }
