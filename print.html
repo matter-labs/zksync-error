@@ -1114,7 +1114,12 @@ This typically happens during transaction creation or gas estimation when the re
 <li>
 <p>Fields:</p>
 <ul>
-<li><code>inner : Revert</code></li>
+<li>
+<p><code>inner : Revert</code></p>
+</li>
+<li>
+<p><code>data : bytes</code></p>
+</li>
 </ul>
 </li>
 </ul>
@@ -1142,7 +1147,12 @@ This typically happens during transaction creation or gas estimation when the re
 <li>
 <p>Fields:</p>
 <ul>
-<li><code>inner : Revert</code></li>
+<li>
+<p><code>inner : Revert</code></p>
+</li>
+<li>
+<p><code>data : bytes</code></p>
+</li>
 </ul>
 </li>
 </ul>
@@ -1282,7 +1292,12 @@ Typically they depend on specific gas values, for example, they fail if <code>ga
 </ul>
 <h2 id="fields-16"><a class="header" href="#fields-16">Fields</a></h2>
 <ul>
-<li><code>inner : Revert</code></li>
+<li>
+<p><code>inner : Revert</code></p>
+</li>
+<li>
+<p><code>data : bytes</code></p>
+</li>
 </ul>
 <h2 id="description-20"><a class="header" href="#description-20">Description</a></h2>
 <p>This error occurs when anvil-zksync is trying to estimate gas required to run this transaction
@@ -1351,7 +1366,12 @@ Usually, this error indicates either an unconditional revert or excessive gas co
 </ul>
 <h2 id="fields-18"><a class="header" href="#fields-18">Fields</a></h2>
 <ul>
-<li><code>inner : Revert</code></li>
+<li>
+<p><code>inner : Revert</code></p>
+</li>
+<li>
+<p><code>data : bytes</code></p>
+</li>
 </ul>
 <h2 id="description-22"><a class="header" href="#description-22">Description</a></h2>
 <p>Before estimating gas, anvil-zksync first runs the transaction with maximum gas possible.
