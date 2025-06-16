@@ -50,9 +50,6 @@ pub struct LoadResult {
 pub fn load_text(link: &Link, context: &ResolutionContext) -> Result<LoadResult, LoadError> {
     let ResolutionResult { actual, resolved } = resolve(link, context)?;
     let text = match resolved {
-        ResolvedLink::DescriptionFile(description_file) => {
-            from_fs(&description_file.absolute_path)?
-        }
         ResolvedLink::LocalPath(path) => from_fs(&path)?,
         ResolvedLink::Url(url) => from_network(&url)?,
         ResolvedLink::Immediate(immediate) => immediate,
