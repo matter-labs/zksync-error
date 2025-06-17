@@ -3,6 +3,7 @@ use std::collections::BTreeSet;
 use error::LoadError;
 use fetch::LoadResult;
 use fetch::load_text;
+use resolution::overrides::Remapping;
 use resolution::ResolutionContext;
 use zksync_error_model::link::Link;
 
@@ -14,7 +15,6 @@ use crate::description::normalization::binding::BindingPoint;
 use crate::description::normalization::produce_root;
 
 pub mod builder;
-pub mod cargo;
 pub mod error;
 pub mod fetch;
 pub mod resolution;
@@ -27,6 +27,12 @@ pub mod resolution;
 pub struct NormalizedDescriptionFragment {
     pub origin: Link,
     pub root: Root,
+}
+
+pub fn get_resolution_context(overrides: Remapping) -> ResolutionContext {
+    ResolutionContext {
+        overrides,
+    }
 }
 
 fn root_from_text(contents: &str, context: &BindingPoint) -> Result<Root, FileFormatError> {

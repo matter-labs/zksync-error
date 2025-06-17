@@ -7,18 +7,9 @@ use error::ResolutionError;
 use overrides::Remapping;
 use zksync_error_model::link::Link;
 
-use super::cargo::{CollectionFile, link_matches};
-
 #[derive(Clone, Debug)]
 pub struct ResolutionContext {
-    pub files: Vec<CollectionFile>,
     pub overrides: Remapping,
-}
-
-impl ResolutionContext {
-    pub fn find_package(&self, package: &str) -> Option<&CollectionFile> {
-        self.files.iter().find(|df| df.package == package)
-    }
 }
 
 pub struct ResolutionResult {
@@ -26,7 +17,6 @@ pub struct ResolutionResult {
     pub resolved: ResolvedLink,
 }
 pub enum ResolvedLink {
-    DescriptionFile(CollectionFile),
     LocalPath(PathBuf),
     EmbeddedPath(PathBuf),
     Url(String),
@@ -45,16 +35,6 @@ pub fn resolve(
         }
         None => {
             let resolved = match query_link {
-                link @ Link::PackageLink { .. } => {
-                    if let Some(df) = context.files.iter().find(|file| link_matches(link, file)) {
-                        Ok(ResolvedLink::DescriptionFile(df.clone()))
-                    } else {
-                        Err(ResolutionError::CargoLinkResolutionError {
-                            link: link.clone(),
-                            context: context.clone(),
-                        })
-                    }
-                }
                 Link::FileLink { path } => Ok(ResolvedLink::LocalPath(path.into())),
                 Link::URL { url } => Ok(ResolvedLink::Url(url.to_owned())),
                 Link::Bundled { path } => Ok(ResolvedLink::EmbeddedPath(

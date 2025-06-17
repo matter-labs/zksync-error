@@ -12,7 +12,6 @@ edition.workspace = true
 # External dependencies #
 #########################
 
-cargo_metadata.workspace = true
 include_dir.workspace = true
 maplit.workspace = true
 proc-macro2.workspace = true
