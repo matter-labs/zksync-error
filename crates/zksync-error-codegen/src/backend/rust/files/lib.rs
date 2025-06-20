@@ -1,5 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
+use std::fmt::Write as _;
 use std::path::PathBuf;
 
 use crate::backend::File;
@@ -45,24 +46,53 @@ impl RustBackend {
 
         };
 
+        let top_level_doc = {
+            let hierarchy = self.model.domains.values().map(|domain| -> TokenStream {
+                let domain_encoding =
+                    format_item(0, &ident(&domain.meta.identifier.encoding).to_string());
+                let components_encoding = domain.components.values().map(|component| {
+                    format_item(1, &ident(&component.meta.identifier.encoding).to_string())
+                });
+
+                quote! {
+                    #![doc = #domain_encoding ]
+                    #(
+                        #![doc = #components_encoding]
+                    )*
+                }
+            });
+            quote! {
+                #![doc = r"# Domains"]
+                #( #hierarchy )*
+            }
+        };
+
         let interface_modules = self.model.domains.values().map( |domain| ->TokenStream{
             let outer_module = ident(&domain.meta.identifier.encoding);
 
             let domain_name = RustBackend::domain_ident(&domain.meta);
-            let domain_error_name = ident(&format!("{domain_name}Error"));
+            let domain_error_name = format!("{domain_name}Error");
+            let domain_error_ident = ident(&domain_error_name);
             let domain_code_name = RustBackend::domain_code_ident(&domain.meta);
             let component_modules = domain.components.values().flat_map( |component| ->TokenStream {
 
 
                 let inner_module = ident(&component.meta.identifier.encoding);
                 let enum_name = Self::component_ident(&component.meta);
+                let inner_module_doc_name = format!("# {enum_name}");
                 let enum_code_name = Self::component_code_ident(&component.meta);
                 let alias_error = Self::component_error_alias_ident(&component.meta);
                 let alias_result = Self::component_result_alias_ident(&component.meta);
-                let errors = component.errors.iter().map(Self::error_ident);
+                let errors : Vec<_> = component.errors.iter().map(Self::error_ident).collect();
                 let macro_name = ident(&format!("{outer_module}_{inner_module}_generic_error"));
 
+                let errors_encoding = component.errors.iter().map(|e| {
+                    format_item(1, &ident(&e.name).to_string())
+                });
+
                 quote! {
+                    #[doc = #inner_module_doc_name ]
+                    #( #[doc = #errors_encoding ] )*
                     pub mod #inner_module {
                         pub use crate::error::definitions:: #enum_name  as #alias_error ;
                         pub type #alias_result<T> = core::result::Result<T,#alias_error>;
@@ -87,8 +117,8 @@ impl RustBackend {
                                 message: format!("{}", err),
                             }
                         }
-                        pub fn to_domain<T: core::fmt::Display>(err: T) -> super::#domain_error_name {
-                            super::#domain_error_name::#enum_name( GenericError {
+                        pub fn to_domain<T: core::fmt::Display>(err: T) -> super::#domain_error_ident {
+                            super::#domain_error_ident::#enum_name( GenericError {
                                 message: format!("{}", err),
                             })
                         }
@@ -96,10 +126,15 @@ impl RustBackend {
                 }
             });
 
+            let components_encoding = domain.components.values().map(|e| {
+                format_item(1, &ident(&e.meta.identifier.encoding).to_string())
+            });
             quote!{
+                #[doc = #domain_error_name ]
+                #( #[doc = #components_encoding ] )*
                 pub mod #outer_module {
 
-                   pub use crate::error::domains::#domain_name as #domain_error_name;
+                   pub use crate::error::domains::#domain_name as #domain_error_ident;
                    pub use crate::error::domains::#domain_code_name;
                    #( #component_modules )*
                 }
@@ -110,6 +145,7 @@ impl RustBackend {
         let contents = quote! {
             #![allow(non_camel_case_types)]
             #![allow(unused)]
+            #top_level_doc
 
             #imports
 
@@ -121,4 +157,14 @@ impl RustBackend {
             relative_path: PathBuf::from("src/lib.rs"),
         })
     }
+}
+
+fn format_item(indent_level: u32, item: &str) -> String {
+    let spaces_in_tab = 3;
+    let mut out = String::new();
+    for _ in 0..(spaces_in_tab * indent_level) {
+        write!(&mut out, " ").unwrap();
+    }
+    write!(&mut out, "- {}", item).unwrap();
+    out
 }

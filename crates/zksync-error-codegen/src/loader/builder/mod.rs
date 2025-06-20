@@ -38,8 +38,8 @@ use crate::description::Root;
 use crate::description::merge::Mergeable as _;
 
 use super::NormalizedDescriptionFragment;
-use super::get_resolution_context;
 use super::error::LoadError;
+use super::get_resolution_context;
 use super::load_fragments_multiple_sources;
 use super::resolution::overrides::Remapping;
 
