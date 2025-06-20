@@ -36,10 +36,11 @@ use zksync_error_model::validator::validate;
 
 use crate::description::Root;
 use crate::description::merge::Mergeable as _;
+use crate::logging::log_file;
 
 use super::NormalizedDescriptionFragment;
-use super::get_resolution_context;
 use super::error::LoadError;
+use super::get_resolution_context;
 use super::load_fragments_multiple_sources;
 use super::resolution::overrides::Remapping;
 
@@ -477,7 +478,7 @@ pub fn build_model(
     };
 
     if diagnostic {
-        eprintln!("\n --- Combined description ---\n{acc}")
+        log_file("merged-description.txt", &acc);
     }
 
     let mut root_model = translate_model(&acc, ModelTranslationContext)?;
@@ -487,7 +488,7 @@ pub fn build_model(
     validate(&root_model)?;
 
     if diagnostic {
-        eprintln!("Model: {root_model:#?}");
+        log_file("root_model.txt", format!("{root_model:#?}"));
     }
 
     Ok(root_model)

@@ -3,6 +3,7 @@ pub mod backend;
 pub mod description;
 pub mod error;
 pub mod loader;
+pub(crate) mod logging;
 pub(crate) mod util;
 
 use arguments::Backend;
@@ -11,6 +12,8 @@ use backend::IBackendConfig as _;
 use error::ProgramError;
 use loader::builder::build_model;
 use loader::resolution::overrides::Remapping;
+use logging::log;
+use logging::log_file;
 use zksync_error_model::inner::Model;
 use zksync_error_model::link::Link;
 
@@ -30,7 +33,8 @@ pub fn default_load_and_generate(input_links: Vec<&str>) {
         input_links: input_links.into_iter().map(Into::into).collect(),
         override_links: vec![],
     }) {
-        eprintln!("{e:#?}")
+        log(format!("Error: {e}"));
+        log_file("error-output.txt", format!("{e:#?}"))
     };
 }
 
@@ -77,7 +81,9 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
     } in outputs
     {
         if verbose {
-            eprintln!("Selected backend: {backend:?}, \nGenerating files...");
+            log(format!(
+                "Selected backend: {backend:?}, \nGenerating files..."
+            ));
         }
 
         let result: Vec<File> = match backend {
@@ -88,16 +94,16 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
         };
 
         if verbose {
-            eprintln!("Generation successful. Files: ");
+            log("Generation successful. Files: ");
             for file in &result {
-                eprintln!("- {}", file.relative_path.to_str().unwrap());
+                log(format!("- {}", file.relative_path.to_str().unwrap()));
             }
-            eprintln!("Writing files to disk...");
+            log("Writing files to disk...");
         }
 
         crate::util::io::create_files_in_result_directory(&output_path, result)?;
         if verbose {
-            eprintln!("Writing successful.");
+            log("Writing successful.");
         }
     }
     Ok(())
