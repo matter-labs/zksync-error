@@ -3,8 +3,8 @@ use std::collections::BTreeSet;
 use error::LoadError;
 use fetch::LoadResult;
 use fetch::load_text;
-use resolution::overrides::Remapping;
 use resolution::ResolutionContext;
+use resolution::overrides::Remapping;
 use zksync_error_model::link::Link;
 
 use crate::description::HierarchyFragment;
@@ -30,9 +30,7 @@ pub struct NormalizedDescriptionFragment {
 }
 
 pub fn get_resolution_context(overrides: Remapping) -> ResolutionContext {
-    ResolutionContext {
-        overrides,
-    }
+    ResolutionContext { overrides }
 }
 
 fn root_from_text(contents: &str, context: &BindingPoint) -> Result<Root, FileFormatError> {
