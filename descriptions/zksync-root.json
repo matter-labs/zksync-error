@@ -148,7 +148,11 @@
                 "rust": "AnvilZksync"
             },
             "take_from" : [
-                "https://raw.githubusercontent.com/matter-labs/anvil-zksync/refs/heads/main/etc/errors/anvil.json"
+                {
+                    "repo": "matter-labs/anvil-zksync",
+                    "branch" : "main",
+                    "path" : "etc/errors/anvil.json"
+                }
             ],
             "components" : []
         },
