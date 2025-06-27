@@ -1,6 +1,6 @@
 pub(crate) fn pretty_print_fragment(text: &str, line: usize, column: usize) -> String {
     let half_window = 3;
-    let first_line = (line - half_window).max(0);
+    let first_line = line.saturating_sub(half_window).max(0);
     let last_line_excl = (line + half_window).min(text.lines().count());
 
     let mut result = String::with_capacity(1024);
