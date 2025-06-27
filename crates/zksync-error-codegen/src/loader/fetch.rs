@@ -21,10 +21,16 @@ fn from_fs(path: &Path) -> Result<String, LoadError> {
     })
 }
 
-fn from_network(url: &str) -> Result<String, reqwest::Error> {
+fn from_network(url: &str) -> Result<String, LoadError> {
     eprintln!("Fetching file from network: {url}");
-    let response = reqwest::blocking::get(url)?;
-    let content = response.text()?;
+    let response = reqwest::blocking::get(url).map_err(|inner| LoadError::NetworkError {
+        url: url.to_string(),
+        inner,
+    })?;
+    let content = response.text().map_err(|inner| LoadError::NetworkError {
+        url: url.to_string(),
+        inner,
+    })?;
     Ok(content)
 }
 
