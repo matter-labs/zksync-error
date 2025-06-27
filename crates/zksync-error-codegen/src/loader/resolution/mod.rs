@@ -44,6 +44,7 @@ pub fn resolve(
                     )
                     .into(),
                 )),
+                Link::Github(github_link) => Ok(ResolvedLink::Url(github_link.to_url())),
             }?;
             Ok(ResolutionResult {
                 actual: query_link.clone(),

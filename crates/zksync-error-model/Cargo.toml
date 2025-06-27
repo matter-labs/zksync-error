@@ -8,7 +8,6 @@ version.workspace = true
 
 [dependencies]
 
-const_format.workspace = true
 derive_more.workspace = true
 serde.workspace = true
 thiserror.workspace = true

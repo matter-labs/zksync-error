@@ -1,55 +1,41 @@
-use const_format::concatcp;
+use github::GithubLink;
+use serde::{Deserialize, Serialize};
+use std::fmt::Display;
 
-use error::LinkError;
+pub mod github;
 
-pub mod error;
-
-#[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq)]
+/// Represents different types of links to JSON files.
+#[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Deserialize, Serialize)]
 pub enum Link {
+    /// A link to a bundled resource embedded within the application.
+    /// The path is relative to the embedded resources root.
     Bundled { path: String },
+
+    /// A link to a file on the local filesystem.
+    /// The path can be absolute or relative.
     FileLink { path: String },
+
+    /// A link to a GitHub resource.
+    /// See `GithubLink` for more details on the structure.
+    Github(GithubLink),
+
+    /// A generic URL link.
+    /// Typically used for HTTP/HTTPS resources.
     URL { url: String },
 }
 
-impl Link {
-    /// Part before "://"
-    pub const FILE_FORMAT_PREFIX: &str = "file";
-    pub const ZKSYNC_DESCRIPTIONS_LOCATION: &str = "descriptions/";
-    pub const EMBEDDED_FORMAT_PREFIX: &str = "zksync-error";
-    pub const DEFAULT_ROOT_FILE_NAME_NO_EXTENSION: &str = "zksync-root";
-    pub const DEFAULT_ROOT_FILE_PATH: &str = concatcp!(
-        Link::ZKSYNC_DESCRIPTIONS_LOCATION,
-        Link::DEFAULT_ROOT_FILE_NAME_NO_EXTENSION,
-        ".json"
-    );
-    pub const NETWORK_FORMAT_PREFIXES: [&str; 2] = ["https", "http"];
-    pub const PACKAGE_SEPARATOR: &str = "@@";
-
-    pub fn parse(link: &str) -> Result<Link, LinkError> {
-        let string: String = link.into();
-
-        match string.split_once("://") {
-            Some((Link::FILE_FORMAT_PREFIX, path)) => Ok(Link::FileLink {
-                path: path.to_owned(),
-            }),
-            Some((Link::EMBEDDED_FORMAT_PREFIX, path)) => Ok(Link::Bundled {
-                path: path.to_owned(),
-            }),
-            Some((prefix, _)) if Link::NETWORK_FORMAT_PREFIXES.contains(&prefix) => {
-                Ok(Link::URL { url: string })
-            }
-            None => Ok(Link::FileLink { path: string }),
-            Some(_) => Err(LinkError::InvalidLinkFormat(string)),
-        }
-    }
-}
-
-impl std::fmt::Display for Link {
+impl Display for Link {
+    /// Formats the link for display purposes.
+    ///
+    /// - URLs and file links are displayed as-is
+    /// - Bundled links are wrapped in angle brackets with "embedded:" prefix
+    /// - GitHub links use their own Display implementation
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Link::URL { url } => f.write_str(url),
             Link::FileLink { path } => f.write_str(path),
             Link::Bundled { path } => write!(f, "<embedded: {path}>"),
+            Link::Github(github_link) => github_link.fmt(f),
         }
     }
 }

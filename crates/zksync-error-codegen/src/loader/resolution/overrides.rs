@@ -1,6 +1,8 @@
 use std::collections::BTreeMap;
 
-use zksync_error_model::link::{Link, error::LinkError};
+use zksync_error_model::link::Link;
+
+use crate::description::parsers::link::{self, LinkError};
 
 #[derive(Clone, Debug)]
 pub struct Remapping {
@@ -14,7 +16,7 @@ impl TryFrom<&Vec<(String, String)>> for Remapping {
         let mut map: BTreeMap<Link, Link> = Default::default();
 
         for (fst, snd) in value {
-            map.insert(Link::parse(fst)?, Link::parse(snd)?);
+            map.insert(link::parse_str(fst)?, link::parse_str(snd)?);
         }
 
         Ok(Remapping { map })
