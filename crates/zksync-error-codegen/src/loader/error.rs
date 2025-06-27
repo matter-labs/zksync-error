@@ -1,9 +1,8 @@
 use std::path::PathBuf;
 
 use super::resolution::error::ResolutionError;
-use crate::description::error::FileFormatError;
+use crate::description::{error::FileFormatError, parsers::link::LinkError};
 use zksync_error_model::link::Link;
-use zksync_error_model::link::error::LinkError;
 
 #[derive(Debug, thiserror::Error)]
 pub enum LoadError {

@@ -8,6 +8,7 @@ pub(crate) mod util;
 use arguments::Backend;
 use arguments::GenerationArguments;
 use backend::IBackendConfig as _;
+use description::parsers::link;
 use error::ProgramError;
 use loader::builder::build_model;
 use loader::resolution::overrides::Remapping;
@@ -64,8 +65,10 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
     } = arguments;
 
     let model = {
-        let input_links: Result<Vec<Link>, _> =
-            input_links.iter().map(|repr| Link::parse(repr)).collect();
+        let input_links: Result<Vec<Link>, _> = input_links
+            .iter()
+            .map(|repr| link::parse_str(repr))
+            .collect();
         let overrides = Remapping::try_from(&override_links)?;
         build_model(input_links?, overrides, verbose)?
     };
