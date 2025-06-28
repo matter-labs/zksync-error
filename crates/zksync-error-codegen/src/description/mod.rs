@@ -4,6 +4,7 @@
 
 pub mod accessors;
 pub mod adapters;
+pub mod binding;
 pub mod display;
 pub mod error;
 pub mod merge;
@@ -211,5 +212,35 @@ impl ArrayMultilineString {
             ArrayMultilineString::SingleLine(s) => s.is_empty(),
             ArrayMultilineString::Multiline(vec) => vec.is_empty(),
         }
+    }
+}
+
+impl Component {
+    pub fn void_dependencies(mut self) -> Self {
+        self.take_from = vec![];
+        self
+    }
+}
+impl Domain {
+    pub fn void_dependencies(mut self) -> Self {
+        self.take_from = vec![];
+        self.components = self
+            .components
+            .into_iter()
+            .map(|c| c.void_dependencies())
+            .collect();
+        self
+    }
+}
+
+impl Root {
+    pub fn void_dependencies(mut self) -> Self {
+        self.take_from = vec![];
+        self.domains = self
+            .domains
+            .into_iter()
+            .map(Domain::void_dependencies)
+            .collect();
+        self
     }
 }

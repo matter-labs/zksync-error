@@ -10,8 +10,8 @@ use zksync_error_model::link::Link;
 use crate::description::HierarchyFragment;
 use crate::description::Root;
 use crate::description::accessors::annotate_origins;
+use crate::description::binding::BindingPoint;
 use crate::description::error::FileFormatError;
-use crate::description::normalization::binding::BindingPoint;
 use crate::description::normalization::produce_root;
 use crate::description::parsers::link;
 
@@ -30,6 +30,13 @@ pub struct NormalizedDescriptionFragment {
     pub root: Root,
 }
 
+impl NormalizedDescriptionFragment {
+    fn void_dependencies(mut self) -> NormalizedDescriptionFragment {
+        self.root = self.root.void_dependencies();
+        self
+    }
+}
+
 pub fn get_resolution_context(overrides: Remapping) -> ResolutionContext {
     ResolutionContext { overrides }
 }
@@ -42,7 +49,7 @@ fn root_from_text(contents: &str, context: &BindingPoint) -> Result<Root, FileFo
 fn load_single_fragment(
     link: &Link,
     binding: &BindingPoint,
-    context: &ResolutionContext,
+    context: &mut ResolutionContext,
 ) -> Result<NormalizedDescriptionFragment, LoadError> {
     let origin = link.clone();
     let LoadResult { text, actual } = load_text(link, context)?;
@@ -55,108 +62,55 @@ fn load_single_fragment(
     }
 }
 
-fn void_take_from(mut fragment: NormalizedDescriptionFragment) -> NormalizedDescriptionFragment {
-    fragment.root.take_from = vec![];
-    for domain in &mut fragment.root.domains {
-        domain.take_from = vec![];
-        for component in &mut domain.components {
-            component.take_from = vec![];
-        }
-    }
-    fragment
-}
-
-fn fetch_connected_fragments_aux(
-    fragment: NormalizedDescriptionFragment,
-    visited: &mut BTreeSet<Link>,
-    context: &ResolutionContext,
+pub fn load_dependent_component(
+    link: Link,
+    context: &mut ResolutionContext,
 ) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
-    let mut results = vec![];
-    let NormalizedDescriptionFragment { origin, root } = &fragment;
+    fn load_connected_fragments_aux(
+        fragment: NormalizedDescriptionFragment,
+        visited: &mut BTreeSet<Link>,
+        context: &mut ResolutionContext,
+    ) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
+        let mut results = vec![];
+        let NormalizedDescriptionFragment { origin, root } = &fragment;
 
-    let visit =
-        |link, binding: &BindingPoint, visited: &mut BTreeSet<Link>| -> Result<_, LoadError> {
-            let new_fragment = load_single_fragment(&link, binding, context)?;
-            let addend = fetch_connected_fragments_aux(new_fragment, visited, context)?;
-            visited.insert(link.clone());
-            Ok(addend)
-        };
+        visited.insert(origin.clone());
 
-    visited.insert(origin.clone());
-
-    for raw_link in &fragment.root.take_from {
-        let link = link::parse(raw_link)?;
-        if visited.contains(&link) {
-            return Err(LoadError::CircularDependency {
-                trigger: origin.clone(),
-                visited: link.clone(),
-            });
-        } else {
-            results.extend(visit(link, &BindingPoint::Root, visited)?)
-        }
-    }
-
-    for domain in &root.domains {
-        let domain_binding = BindingPoint::for_domain(domain);
-
-        for raw_link in &domain.take_from {
-            let link = link::parse(raw_link)?;
-            if visited.contains(&link) {
+        for (dependency, binding) in &root.dependencies() {
+            let dependency = link::parse(dependency)?;
+            if !visited.insert(dependency.clone()) {
                 return Err(LoadError::CircularDependency {
                     trigger: origin.clone(),
-                    visited: link.clone(),
+                    visited: dependency,
                 });
             } else {
-                results.extend(visit(link, &domain_binding, visited)?)
+                let new_fragment = load_single_fragment(&dependency, &binding, context)?;
+                let addend = load_connected_fragments_aux(new_fragment, visited, context)?;
+                results.extend(addend);
             }
         }
-        for component in &domain.components {
-            let component_binding = BindingPoint::for_component(domain, component);
 
-            for raw_link in &component.take_from {
-                let link = link::parse(raw_link)?;
-                if visited.contains(&link) {
-                    return Err(LoadError::CircularDependency {
-                        trigger: origin.clone(),
-                        visited: link.clone(),
-                    });
-                } else {
-                    results.extend(visit(link, &component_binding, visited)?)
-                }
-            }
-        }
+        results.push(fragment.void_dependencies());
+        Ok(results)
     }
 
-    results.push(void_take_from(fragment));
-    Ok(results)
-}
-
-pub fn load_connected_fragments(
-    fragment: NormalizedDescriptionFragment,
-    context: &ResolutionContext,
-) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
-    let result = fetch_connected_fragments_aux(fragment, &mut BTreeSet::new(), context)?;
-    Ok(result)
-}
-
-pub fn load_fragments(
-    link: Link,
-    context: &ResolutionContext,
-) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
     let root_fragment = load_single_fragment(&link, &BindingPoint::Root, context)?;
-    load_connected_fragments(root_fragment, context).map_err(|inner| LoadError::TakeFrom {
-        address: link.clone(),
-        inner: Box::new(inner),
-    })
+
+    Ok(load_connected_fragments_aux(
+        root_fragment,
+        &mut BTreeSet::new(),
+        context,
+    )?)
 }
 
 pub fn load_fragments_multiple_sources(
     links: impl Iterator<Item = Link>,
-    context: &ResolutionContext,
+    context: &mut ResolutionContext,
 ) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
     let mut collection = vec![];
-    for fragment in links.map(|link| load_fragments(link, context)) {
-        collection.extend(fragment?);
+    for link in links {
+        let fragments = load_dependent_component(link, context)?;
+        collection.extend(fragments);
     }
     Ok(collection)
 }
