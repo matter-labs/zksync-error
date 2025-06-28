@@ -96,7 +96,11 @@ pub fn load_dependent_component(
 
     let root_fragment = load_single_fragment(&link, &BindingPoint::Root, context)?;
 
-    load_connected_fragments_aux(root_fragment, &mut BTreeSet::new(), context)
+    Ok(load_connected_fragments_aux(
+        root_fragment,
+        &mut BTreeSet::new(),
+        context,
+    )?)
 }
 
 pub fn load_fragments_multiple_sources(
