@@ -2509,6 +2509,7 @@ dependencies = [
  "serde_json_path_to_error",
  "strum",
  "strum_macros",
+ "tempfile",
  "tera",
  "thiserror 2.0.12",
  "zksync-error-description",

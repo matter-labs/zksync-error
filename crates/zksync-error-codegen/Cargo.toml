@@ -36,6 +36,9 @@ thiserror.workspace = true
 zksync-error-model.workspace = true
 zksync-error-description.workspace = true
 
+[dev-dependencies]
+tempfile = "3.8"
+
 [features]
 default = ["reqwest-default-tls"]
 reqwest-default-tls = ["reqwest/default-tls"]

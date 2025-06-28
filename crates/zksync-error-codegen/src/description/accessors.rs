@@ -1,5 +1,7 @@
 use zksync_error_model::inner::{component, domain};
 
+use super::TakeFromLink;
+use super::binding::BindingPoint;
 use crate::description::Component;
 use crate::description::Domain;
 use crate::description::Root;
@@ -48,6 +50,30 @@ impl Root {
                 Err(FileFormatError::MultipleDomains { expected, domains })
             }
         }
+    }
+
+    pub fn dependencies(&self) -> Vec<(TakeFromLink, BindingPoint)> {
+        let mut dependencies = vec![];
+
+        for raw_link in &self.take_from {
+            dependencies.push((raw_link.clone(), BindingPoint::Root))
+        }
+
+        for domain in &self.domains {
+            let domain_binding = BindingPoint::for_domain(domain);
+
+            for raw_link in &domain.take_from {
+                dependencies.push((raw_link.clone(), domain_binding.clone()))
+            }
+
+            for component in &domain.components {
+                let component_binding = BindingPoint::for_component(domain, component);
+                for raw_link in &component.take_from {
+                    dependencies.push((raw_link.clone(), component_binding.clone()));
+                }
+            }
+        }
+        dependencies
     }
 }
 

@@ -466,8 +466,8 @@ pub fn build_model(
     overrides: Remapping,
     diagnostic: bool,
 ) -> Result<Model, ModelBuildingError> {
-    let resolution_context = get_resolution_context(overrides);
-    let collection = load_fragments_multiple_sources(sources.into_iter(), &resolution_context)?;
+    let mut resolution_context = get_resolution_context(overrides);
+    let collection = load_fragments_multiple_sources(sources.into_iter(), &mut resolution_context)?;
 
     let acc = {
         let mut acc = Root::default();

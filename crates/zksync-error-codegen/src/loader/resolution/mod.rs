@@ -25,7 +25,7 @@ pub enum ResolvedLink {
 
 pub fn resolve(
     query_link: &Link,
-    context: &ResolutionContext,
+    context: &mut ResolutionContext,
 ) -> Result<ResolutionResult, ResolutionError> {
     match context.overrides.map.get(query_link).cloned() {
         Some(overridden) => {

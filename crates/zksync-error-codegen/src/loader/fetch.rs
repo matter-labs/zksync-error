@@ -53,7 +53,7 @@ pub struct LoadResult {
     pub actual: Link,
 }
 
-pub fn load_text(link: &Link, context: &ResolutionContext) -> Result<LoadResult, LoadError> {
+pub fn load_text(link: &Link, context: &mut ResolutionContext) -> Result<LoadResult, LoadError> {
     let ResolutionResult { actual, resolved } = resolve(link, context)?;
     let text = match resolved {
         ResolvedLink::LocalPath(path) => from_fs(&path)?,
