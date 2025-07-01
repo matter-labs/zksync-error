@@ -145,6 +145,7 @@ impl RustBackend {
         let contents = quote! {
             #![allow(non_camel_case_types)]
             #![allow(unused)]
+            #![allow(clippy::uninlined_format_args)]
             #top_level_doc
 
             #imports
