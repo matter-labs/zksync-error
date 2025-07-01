@@ -174,7 +174,11 @@ fn translate_model(
 fn translate_field(
     value: &crate::description::Field,
 ) -> Result<FieldDescription, ModelBuildingError> {
-    let crate::description::Field { name, r#type } = value;
+    let crate::description::Field {
+        name,
+        r#type,
+        comment: _,
+    } = value;
     Ok(FieldDescription {
         name: name.clone(),
         r#type: r#type.clone(),

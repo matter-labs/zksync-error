@@ -112,6 +112,9 @@ pub struct Error {
 pub struct Field {
     pub name: String,
     pub r#type: String,
+
+    #[serde(skip_serializing)]
+    pub comment: Option<String>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
