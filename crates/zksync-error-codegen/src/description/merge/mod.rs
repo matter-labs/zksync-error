@@ -141,6 +141,7 @@ impl Mergeable for Domain {
                 bindings: self.bindings.merge(other.bindings)?,
                 take_from: vec![],
                 origins: [self.origins, other.origins].concat(),
+                comment: Default::default(),
             })
         } else {
             Err(MergeError::ConflictingDomainDefinitions(
@@ -167,6 +168,7 @@ impl Mergeable for Component {
                 bindings: self.bindings.merge(other.bindings)?,
                 take_from: vec![],
                 errors: [self.errors, other.errors].concat(),
+                comment: Default::default(),
             })
         } else {
             Err(MergeError::ConflictingComponentDefinitions(
@@ -191,6 +193,7 @@ impl Mergeable for super::Error {
                 bindings: self.bindings.merge(other.bindings)?,
                 doc: self.doc.merge(other.doc)?,
                 origins: [self.origins, other.origins].concat(),
+                comment: Default::default(),
             })
         } else {
             Err(MergeError::ConflictingErrorDescriptions(self, other))
