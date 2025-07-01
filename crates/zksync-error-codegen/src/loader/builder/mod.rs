@@ -256,6 +256,7 @@ fn translate_error(
         fields,
         doc,
         origins,
+        comment: _,
     } = error;
     let transformed_fields: Result<_, _> = fields.iter().map(translate_field).collect();
     let transformed_bindings = translate_type_bindings(bindings, &error.name)?;
@@ -307,6 +308,7 @@ fn translate_component<'a>(
         errors,
         bindings,
         origins,
+        comment: _,
     } = component;
 
     let new_bindings = translate_and_populate_bindings(bindings, component_name);
@@ -344,6 +346,7 @@ fn translate_domain<'a>(
         bindings,
         take_from,
         origins,
+        comment: _,
     } = value;
     let mut new_components: BTreeMap<_, _> = BTreeMap::default();
     let metadata = Rc::new(DomainMetadata {

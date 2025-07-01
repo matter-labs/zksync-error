@@ -54,6 +54,10 @@ pub struct Domain {
     pub identifier_encoding: Option<String>,
     pub description: Option<ArrayMultilineString>,
     pub components: Vec<Component>,
+
+    #[serde(skip_serializing)]
+    pub comment: Option<String>,
+
     #[serde(default)]
     pub bindings: BTreeMap<String, String>,
     #[serde(default)]
@@ -69,6 +73,9 @@ pub struct Component {
 
     pub identifier_encoding: Option<String>,
     pub description: Option<ArrayMultilineString>,
+
+    #[serde(skip_serializing)]
+    pub comment: Option<String>,
 
     #[serde(default)]
     pub bindings: BTreeMap<String, String>,
@@ -88,6 +95,9 @@ pub struct Error {
     pub message: String,
     #[serde(default)]
     pub fields: Vec<Field>,
+
+    #[serde(skip_serializing)]
+    pub comment: Option<String>,
 
     #[serde(default)]
     pub bindings: ErrorNameMapping,
