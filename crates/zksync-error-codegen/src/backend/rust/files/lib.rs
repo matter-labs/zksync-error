@@ -166,6 +166,6 @@ fn format_item(indent_level: u32, item: &str) -> String {
     for _ in 0..(spaces_in_tab * indent_level) {
         write!(&mut out, " ").unwrap();
     }
-    write!(&mut out, "- {}", item).unwrap();
+    write!(&mut out, "- {item}").unwrap();
     out
 }

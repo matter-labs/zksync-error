@@ -26,10 +26,10 @@ static TEMPLATES_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/doc_templates/mdbo
 fn initialize_tera() -> Result<Tera, <MDBookBackend as Backend>::GenerationError> {
     let mut tera = Tera::default();
     for file in TEMPLATES_DIR.files() {
-        if let Some(path) = file.path().to_str() {
-            if let Ok(contents) = std::str::from_utf8(file.contents()) {
-                tera.add_raw_template(path, contents)?;
-            }
+        if let Some(path) = file.path().to_str()
+            && let Ok(contents) = std::str::from_utf8(file.contents())
+        {
+            tera.add_raw_template(path, contents)?;
         }
     }
     Ok(tera)
