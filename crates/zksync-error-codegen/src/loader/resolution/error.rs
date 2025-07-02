@@ -1,17 +1,14 @@
-use zksync_error_model::link::Link;
-
-use super::ResolutionContext;
+use zksync_error_model::link::{Link, github::GithubLink};
 
 #[derive(Debug, thiserror::Error)]
 pub enum ResolutionError {
-    #[error("Failed to resolve `{link}` in context {context:?}.")]
-    CargoLinkResolutionError {
-        link: Link,
-        context: ResolutionContext,
-    },
-    #[error("Failed to resolve `{link}`.")]
-    GenericLinkResolutionError {
-        link: Link,
-        context: ResolutionContext,
+    #[error("Missing dependency in lock file: {link}")]
+    MissingDependencyInLockFile { link: Link },
+    #[error("Can't fetch the SHA hash of the latest commit for the link {link} ")]
+    MissingShaField { link: GithubLink },
+    #[error("Can't access Github: {inner}")]
+    GithubAccessError {
+        #[from]
+        inner: reqwest::Error,
     },
 }

@@ -1,9 +1,27 @@
+//! Link parsing functionality.
+//!
+//! This module provides functionality to parse various types of links used in
+//! error descriptions, including GitHub links, file links, embedded resources,
+//! and HTTP/HTTPS URLs. It handles the conversion from the serialized
+//! `TakeFromLink` format to the internal `Link` representation.
+//!
+//! # Supported Link Formats
+//!
+//! - **GitHub links**: JSON objects with repo, path, and reference information
+//! - **File links**: `file://path/to/file` or bare paths
+//! - **Embedded links**: `zksync-error://resource/path`. Gives access to files
+//!    that are placed in the directory `/description` in the root of this
+//!    repository.
+//! - **HTTP/HTTPS URLs**: `http://example.com/resource` or `https://example.com/resource`
+//!
 use crate::description::TakeFromLink;
 use const_format::concatcp;
 use zksync_error_model::link::Link;
 
+/// Errors that can occur during link parsing.
 #[derive(Debug, derive_more::Display, thiserror::Error)]
 pub enum LinkError {
+    /// The provided link string has an invalid or unsupported format.
     #[display("Link `{_0}` has an invalid format.")]
     InvalidLinkFormat(String),
 }
@@ -36,6 +54,8 @@ pub const NETWORK_FORMAT_PREFIXES: [&str; 2] = ["https", "http"];
 /// Separator used in package identifiers.
 pub const PACKAGE_SEPARATOR: &str = "@@";
 
+/// Converts a serialized link from JSON file to the internal link
+/// representation used by the system.
 pub fn parse(link: &TakeFromLink) -> Result<Link, LinkError> {
     match link {
         TakeFromLink::GithubLink(github_link) => Ok(Link::Github(github_link.clone())),
@@ -57,6 +77,12 @@ pub fn parse(link: &TakeFromLink) -> Result<Link, LinkError> {
     }
 }
 
+/// Parses a link from a string representation.
+///
+/// The function tries multiple parsing approaches:
+/// 1. First, try to parse as JSON (for GitHub links)
+/// 2. If that fails, try to parse as a quoted string
+/// 3. If both fail, return an error
 pub fn parse_str(link: &str) -> Result<Link, LinkError> {
     let take_from_link = serde_json::from_str::<TakeFromLink>(link)
         .or(serde_json::from_str::<TakeFromLink>(&format!("\"{link}\"")))
@@ -72,6 +98,7 @@ mod tests {
         github::{BranchName, CommitHash, GithubLink, ReferenceType},
     };
 
+    /// Creates a sample GitHub link referencing a branch.
     fn sample_github_link_branch() -> GithubLink {
         GithubLink::new_with_branch(
             "zk/repo".to_string(),
@@ -80,6 +107,7 @@ mod tests {
         )
     }
 
+    /// Creates a sample GitHub link referencing a specific commit.
     fn sample_github_link_commit() -> GithubLink {
         GithubLink::new_with_commit(
             "zk/repo".to_string(),

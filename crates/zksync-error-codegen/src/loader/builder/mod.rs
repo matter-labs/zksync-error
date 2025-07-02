@@ -39,8 +39,8 @@ use crate::description::merge::Mergeable as _;
 
 use super::NormalizedDescriptionFragment;
 use super::error::LoadError;
-use super::get_resolution_context;
 use super::load_fragments_multiple_sources;
+use super::resolution::context::ResolutionContext;
 use super::resolution::overrides::Remapping;
 
 fn add_missing<U, S>(map: &mut BTreeMap<String, U>, default: U, keys: impl Iterator<Item = S>)
@@ -463,11 +463,10 @@ fn bind_error_types(model: &mut Model) {
 
 pub fn build_model(
     sources: Vec<Link>,
-    overrides: Remapping,
+    resolution_context: &mut ResolutionContext,
     diagnostic: bool,
 ) -> Result<Model, ModelBuildingError> {
-    let mut resolution_context = get_resolution_context(overrides);
-    let collection = load_fragments_multiple_sources(sources.into_iter(), &mut resolution_context)?;
+    let collection = load_fragments_multiple_sources(sources.into_iter(), resolution_context)?;
 
     let acc = {
         let mut acc = Root::default();
@@ -484,7 +483,7 @@ pub fn build_model(
     };
 
     if diagnostic {
-        eprintln!("\n --- Combined description ---\n{acc}")
+        //    eprintln!("\n --- Combined description ---\n{acc}")
     }
 
     let mut root_model = translate_model(&acc, ModelTranslationContext)?;
@@ -494,7 +493,7 @@ pub fn build_model(
     validate(&root_model)?;
 
     if diagnostic {
-        eprintln!("Model: {root_model:#?}");
+        //eprintln!("Model: {root_model:#?}");
     }
 
     Ok(root_model)

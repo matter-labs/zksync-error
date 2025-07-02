@@ -8,7 +8,7 @@ use zksync_error_model::link::Link;
 use crate::loader::error::LoadError;
 use crate::loader::resolution::{ResolvedLink, resolve};
 
-use super::resolution::{ResolutionContext, ResolutionResult};
+use super::resolution::{ResolutionResult, context::ResolutionContext};
 
 fn from_fs(path: &Path) -> Result<String, LoadError> {
     eprintln!(
@@ -58,8 +58,8 @@ pub fn load_text(link: &Link, context: &mut ResolutionContext) -> Result<LoadRes
     let text = match resolved {
         ResolvedLink::LocalPath(path) => from_fs(&path)?,
         ResolvedLink::Url(url) => from_network(&url)?,
-        ResolvedLink::Immediate(immediate) => immediate,
         ResolvedLink::EmbeddedPath(path_buf) => from_embedded(&path_buf)?,
+        ResolvedLink::GithubLink(github_link) => from_network(&github_link.to_url())?,
     };
 
     Ok(LoadResult { text, actual })

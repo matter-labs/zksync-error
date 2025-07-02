@@ -53,7 +53,30 @@ pub struct FullyQualifiedType {
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum TakeFromLink {
+    /// A GitHub repository link with structured reference information.
+    ///
+    /// This variant handles GitHub links that specify a repository, file path,
+    /// and reference (branch, tag, or commit). It provides type-safe access
+    /// to GitHub-specific functionality like branch resolution and caching.
+    ///
+    /// # Example
+    ///
+    /// ```json
+    ///   {
+    ///     "repo": "zksync/zksync-era",
+    ///     "path": "errors/state-keeper.json",
+    ///     "branch": "main"
+    ///   },
+    /// ```
     GithubLink(GithubLink),
+
+    /// An ordinary string-based link.
+    ///
+    /// This variant handles all other types of links including:
+    /// - File paths: `"path/to/file.json"`
+    /// - File URLs: `"file://path/to/file.json"`
+    /// - HTTP/HTTPS URLs: `"https://example.com/file.json"`
+    /// - Embedded resources: `"zksync-error://resource/path"`
     OrdinaryLink(String),
 }
 #[derive(Clone, Debug, Eq, PartialEq, Default, Serialize, Deserialize)]
