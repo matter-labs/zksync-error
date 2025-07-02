@@ -18,13 +18,8 @@ pub struct GithubLink {
 #[derive(Debug, Clone, Deserialize, Serialize, Eq, PartialEq, Ord, PartialOrd)]
 #[serde(untagged)]
 pub enum ReferenceType {
-    Branch {
-        #[serde(default = "default_branch")]
-        branch: BranchName,
-    },
-    Commit {
-        commit: CommitHash,
-    },
+    Branch { branch: BranchName },
+    Commit { commit: CommitHash },
 }
 
 impl Default for ReferenceType {
@@ -40,6 +35,10 @@ fn default_branch() -> BranchName {
 }
 
 impl GithubLink {
+    pub fn loose_eq(&self, other: &Self) -> bool {
+        self.repo == other.repo && self.path == other.path
+    }
+
     pub fn new_with_branch(repo: String, path: String, branch: BranchName) -> Self {
         Self {
             repo,
