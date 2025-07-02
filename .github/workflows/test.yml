@@ -42,7 +42,11 @@ jobs:
       run: cargo fmt --all -- --check
       
     - name: Run clippy lints
+<<<<<<< HEAD
       run: cargo clippy --all-targets --all-features -- -D warnings -A clippy::large_enum_variant -A clippy::result_large_err -A clippy::doc_overindented_list_items -A clippy::doc_lazy_continuation -A clippy::uninlined_format_args -A dead_code -A clippy::nonminimal_bool
+=======
+      run: cargo clippy --all-targets --all-features -- -D warnings -A clippy::large_enum_variant -A clippy::result_large_err -A clippy::doc_overindented_list_items -A clippy::doc_lazy_continuation -A clippy::uninlined_format_args -A dead_code -A clippy::nonminimal_bool -A  clippy::collapsible-if
+>>>>>>> 6d73613 (add tests to CI)
       
     - name: Run tests
       run: cargo test --verbose --all-features
