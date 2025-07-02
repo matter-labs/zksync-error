@@ -29,7 +29,7 @@ jobs:
           mdbook-version: '0.4.40'
 
       - run: |
-          cargo run -- --source zksync-error://zksync-root.json --backend doc-mdbook --verbose --output errors-mdbook
+          cargo run -- --source zksync-error://zksync-root.json --backend doc-mdbook --verbose --output errors-mdbook --mode no-lock
           cd errors-mdbook
           mdbook build
 
