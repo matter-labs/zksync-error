@@ -32,7 +32,7 @@ fn test_load_dependent_component_with_overrides() {
             assert_eq!(fragments.len(), 1);
             assert_eq!(fragments[0].root.domains.len(), 1);
         }
-        Err(e) => panic!("Expected success with overrides but got error: {}", e),
+        Err(e) => panic!("Expected success with overrides but got error: {e}"),
     }
 }
 
@@ -65,9 +65,6 @@ fn test_load_dependent_component_github_link() {
             assert_eq!(fragments.len(), 1);
             assert_eq!(fragments[0].root.domains.len(), 1);
         }
-        Err(e) => panic!(
-            "Expected success with GitHub link override but got error: {}",
-            e
-        ),
+        Err(e) => panic!("Expected success with GitHub link override but got error: {e}"),
     }
 }

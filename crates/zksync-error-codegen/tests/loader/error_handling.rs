@@ -64,7 +64,7 @@ fn test_load_dependent_component_circular_dependency() {
         }) => {
             // Expected error
         }
-        Err(e) => panic!("Expected circular dependency error but got: {}", e),
+        Err(e) => panic!("Expected circular dependency error but got: {e}"),
     }
 }
 
@@ -84,7 +84,7 @@ fn test_load_dependent_component_invalid_json() {
         Err(LoadError::FileFormatError { origin, inner: _ }) => {
             assert_eq!(origin, link);
         }
-        Err(e) => panic!("Expected file format error but got: {}", e),
+        Err(e) => panic!("Expected file format error but got: {e}"),
     }
 }
 
@@ -114,6 +114,6 @@ fn test_load_dependent_component_invalid_link_format() {
         Err(LoadError::LinkError(_)) => {
             // Expected error
         }
-        Err(e) => panic!("Expected link error but got: {}", e),
+        Err(e) => panic!("Expected link error but got: {e}"),
     }
 }

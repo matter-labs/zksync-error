@@ -84,7 +84,7 @@ pub fn load_dependent_component(
                     visited: dependency,
                 });
             } else {
-                let new_fragment = load_single_fragment(&dependency, &binding, context)?;
+                let new_fragment = load_single_fragment(&dependency, binding, context)?;
                 let addend = load_connected_fragments_aux(new_fragment, visited, context)?;
                 results.extend(addend);
             }
@@ -96,11 +96,7 @@ pub fn load_dependent_component(
 
     let root_fragment = load_single_fragment(&link, &BindingPoint::Root, context)?;
 
-    Ok(load_connected_fragments_aux(
-        root_fragment,
-        &mut BTreeSet::new(),
-        context,
-    )?)
+    load_connected_fragments_aux(root_fragment, &mut BTreeSet::new(), context)
 }
 
 pub fn load_fragments_multiple_sources(

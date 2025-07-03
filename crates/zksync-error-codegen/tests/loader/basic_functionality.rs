@@ -25,7 +25,7 @@ fn test_load_dependent_component_simple_file() {
             // Verify dependencies are voided
             assert!(fragments[0].root.take_from.is_empty());
         }
-        Err(e) => panic!("Expected success but got error: {}", e),
+        Err(e) => panic!("Expected success but got error: {e}"),
     }
 }
 
@@ -42,7 +42,7 @@ fn test_load_dependent_component_empty_dependencies() {
     }"#;
 
     let mut temp_file = NamedTempFile::new().expect("Failed to create temp file");
-    write!(temp_file, "{}", content).expect("Failed to write to temp file");
+    write!(temp_file, "{content}").expect("Failed to write to temp file");
 
     let file_path = temp_file.path().to_string_lossy().to_string();
     let link = Link::FileLink { path: file_path };
@@ -57,10 +57,7 @@ fn test_load_dependent_component_empty_dependencies() {
             assert_eq!(fragments[0].root.domains[0].domain_name, "isolated_domain");
             assert!(fragments[0].root.take_from.is_empty());
         }
-        Err(e) => panic!(
-            "Expected success for empty dependencies but got error: {}",
-            e
-        ),
+        Err(e) => panic!("Expected success for empty dependencies but got error: {e}"),
     }
 }
 
@@ -78,6 +75,6 @@ fn test_load_dependent_component_missing_file() {
         Err(LoadError::IOError { path: _, inner: _ }) => {
             // Expected error
         }
-        Err(e) => panic!("Expected IO error but got: {}", e),
+        Err(e) => panic!("Expected IO error but got: {e}"),
     }
 }

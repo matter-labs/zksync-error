@@ -50,7 +50,7 @@ fn test_load_dependent_component_with_dependencies() {
                 assert!(fragment.root.take_from.is_empty());
             }
         }
-        Err(e) => panic!("Expected success but got error: {}", e),
+        Err(e) => panic!("Expected success but got error: {e}"),
     }
 }
 
@@ -114,7 +114,7 @@ fn test_load_dependent_component_complex_dependency_chain() {
                 assert!(fragment.root.take_from.is_empty());
             }
         }
-        Err(e) => panic!("Expected success with complex chain but got error: {}", e),
+        Err(e) => panic!("Expected success with complex chain but got error: {e}"),
     }
 }
 
@@ -188,6 +188,6 @@ fn test_void_dependencies_functionality() {
                 }
             }
         }
-        Err(e) => panic!("Expected success but got error: {}", e),
+        Err(e) => panic!("Expected success but got error: {e}"),
     }
 }
