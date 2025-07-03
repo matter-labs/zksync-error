@@ -42,7 +42,7 @@ pub fn resolve(
             if let Some(overridden) = overrides.apply(query_link) {
                 Ok(ResolutionResult {
                     actual: overridden.clone(),
-                    resolved: resolve_no_lock(query_link),
+                    resolved: resolve_no_lock(overridden),
                 })
             } else {
                 let actual = query_link.clone();

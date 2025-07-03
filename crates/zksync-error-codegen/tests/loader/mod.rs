@@ -1,4 +1,5 @@
 mod basic_functionality;
+mod build_mode_integration;
 mod build_modes;
 mod common;
 mod dependencies;
