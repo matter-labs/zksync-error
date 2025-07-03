@@ -27,9 +27,7 @@ pub fn resolve(
     context: &mut ResolutionContext,
 ) -> Result<ResolutionResult, ResolutionError> {
     match context.overrides.apply(query_link).cloned() {
-        Some(overridden) => {
-            resolve(&overridden, context)
-        }
+        Some(overridden) => resolve(&overridden, context),
         None => {
             let resolved = match query_link {
                 Link::FileLink { path } => Ok(ResolvedLink::LocalPath(path.into())),
