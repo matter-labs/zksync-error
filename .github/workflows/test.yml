@@ -1,0 +1,82 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+        components: rustfmt, clippy
+        
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+          
+    - name: Check code formatting
+      run: cargo fmt --all -- --check
+      
+    - name: Run clippy lints
+      run: cargo clippy --all-targets --all-features -- -D warnings -A clippy::large_enum_variant -A clippy::result_large_err -A clippy::doc_overindented_list_items -A clippy::doc_lazy_continuation -A clippy::uninlined_format_args -A dead_code -A clippy::nonminimal_bool -A  clippy::collapsible-if
+      
+    - name: Run tests
+      run: cargo test --verbose --all-features
+      
+    - name: Run doc tests
+      run: cargo test --doc --verbose --all-features
+
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+        
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-build-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-build-
+          
+    - name: Build all crates
+      run: cargo build --verbose --all-features
+      
+    - name: Build CLI
+      run: cargo build --verbose -p zksync-error-codegen-cli
+
