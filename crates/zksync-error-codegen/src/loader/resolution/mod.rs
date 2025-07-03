@@ -26,10 +26,8 @@ pub fn resolve(
     query_link: &Link,
     context: &mut ResolutionContext,
 ) -> Result<ResolutionResult, ResolutionError> {
-    match context.overrides.map.get(query_link).cloned() {
+    match context.overrides.apply(query_link).cloned() {
         Some(overridden) => {
-            //TODO: eventually a stack to keep track of the path
-            eprintln!("Overriding {query_link} with {overridden}...");
             resolve(&overridden, context)
         }
         None => {

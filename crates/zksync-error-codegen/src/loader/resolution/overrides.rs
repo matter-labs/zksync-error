@@ -22,3 +22,13 @@ impl TryFrom<&Vec<(String, String)>> for Remapping {
         Ok(Remapping { map })
     }
 }
+impl Remapping {
+    pub fn apply(&self, link: &Link) -> Option<&Link> {
+        if let Some(overridden) = self.map.get(link) {
+            eprintln!("Overriding {link} with {overridden}");
+            Some(overridden)
+        } else {
+            None
+        }
+    }
+}
