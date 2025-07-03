@@ -20,7 +20,6 @@ pub enum ResolvedLink {
     LocalPath(PathBuf),
     EmbeddedPath(PathBuf),
     Url(String),
-    Immediate(String),
 }
 
 pub fn resolve(

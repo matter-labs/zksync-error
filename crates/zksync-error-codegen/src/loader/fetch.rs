@@ -52,7 +52,6 @@ pub fn load_text(link: &Link, context: &ResolutionContext) -> Result<LoadResult,
     let text = match resolved {
         ResolvedLink::LocalPath(path) => from_fs(&path)?,
         ResolvedLink::Url(url) => from_network(&url)?,
-        ResolvedLink::Immediate(immediate) => immediate,
         ResolvedLink::EmbeddedPath(path_buf) => from_embedded(&path_buf)?,
     };
 
