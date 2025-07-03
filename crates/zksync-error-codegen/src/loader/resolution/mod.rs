@@ -1,21 +1,19 @@
+pub mod context;
 pub mod error;
 pub mod overrides;
 
 use std::path::PathBuf;
 
+use context::ResolutionContext;
 use error::ResolutionError;
-use overrides::Remapping;
 use zksync_error_model::link::Link;
-
-#[derive(Clone, Debug)]
-pub struct ResolutionContext {
-    pub overrides: Remapping,
-}
 
 pub struct ResolutionResult {
     pub actual: Link,
     pub resolved: ResolvedLink,
 }
+
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum ResolvedLink {
     LocalPath(PathBuf),
     EmbeddedPath(PathBuf),
@@ -26,25 +24,28 @@ pub fn resolve(
     query_link: &Link,
     context: &mut ResolutionContext,
 ) -> Result<ResolutionResult, ResolutionError> {
-    match context.overrides.apply(query_link).cloned() {
-        Some(overridden) => resolve(&overridden, context),
-        None => {
-            let resolved = match query_link {
-                Link::FileLink { path } => Ok(ResolvedLink::LocalPath(path.into())),
-                Link::URL { url } => Ok(ResolvedLink::Url(url.to_owned())),
-                Link::Bundled { path } => Ok(ResolvedLink::EmbeddedPath(
-                    format!(
-                        "{manifest}/../../descriptions/{path}",
-                        manifest = env!("CARGO_MANIFEST_DIR")
-                    )
-                    .into(),
-                )),
-                Link::Github(github_link) => Ok(ResolvedLink::Url(github_link.to_url())),
-            }?;
+    match context {
+        ResolutionContext::NoLock { overrides } => {
+            let with_override = overrides.apply(query_link).unwrap_or(query_link);
             Ok(ResolutionResult {
-                actual: query_link.clone(),
-                resolved,
+                actual: with_override.clone(),
+                resolved: resolve_no_lock(with_override),
             })
         }
+    }
+}
+
+fn resolve_no_lock(query_link: &Link) -> ResolvedLink {
+    match query_link {
+        Link::FileLink { path } => ResolvedLink::LocalPath(path.into()),
+        Link::URL { url } => ResolvedLink::Url(url.to_owned()),
+        Link::Bundled { path } => ResolvedLink::EmbeddedPath(
+            format!(
+                "{manifest}/../../descriptions/{path}",
+                manifest = env!("CARGO_MANIFEST_DIR")
+            )
+            .into(),
+        ),
+        Link::Github(github_link) => ResolvedLink::Url(github_link.to_url()),
     }
 }

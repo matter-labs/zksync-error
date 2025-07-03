@@ -1,8 +1,8 @@
 use std::collections::BTreeMap;
 
-use zksync_error_codegen::arguments::BackendOutput;
+use zksync_error_codegen::arguments::{BackendOutput, ResolutionMode};
 
-use crate::error::ApplicationError;
+use crate::{arguments::Mode, error::ApplicationError};
 
 use super::Arguments;
 
@@ -17,6 +17,7 @@ impl TryFrom<Arguments> for zksync_error_codegen::arguments::GenerationArguments
             output_directory,
             backend_args,
             remap,
+            mode,
         } = value;
 
         let override_map: BTreeMap<String, String> = {
@@ -30,14 +31,20 @@ impl TryFrom<Arguments> for zksync_error_codegen::arguments::GenerationArguments
             }
         };
 
+        let resolution_mode = match mode {
+            Mode::NoLock => ResolutionMode::NoLock {
+                override_links: override_map.into_iter().collect(),
+            },
+        };
+
         Ok(zksync_error_codegen::arguments::GenerationArguments {
             verbose,
             input_links: sources,
-            override_links: override_map.into_iter().collect(),
+            mode: resolution_mode,
             outputs: vec![BackendOutput {
                 output_path: output_directory.into(),
                 backend: backend.into(),
-                arguments: backend_args.into_iter().collect(),
+                arguments: backend_args,
             }],
         })
     }

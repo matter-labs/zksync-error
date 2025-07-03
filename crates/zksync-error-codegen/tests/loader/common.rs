@@ -1,9 +1,9 @@
 use std::collections::BTreeMap;
-use zksync_error_codegen::loader::resolution::{ResolutionContext, overrides::Remapping};
+use zksync_error_codegen::loader::resolution::{context::ResolutionContext, overrides::Remapping};
 use zksync_error_model::link::Link;
 
 pub fn create_test_context() -> ResolutionContext {
-    ResolutionContext {
+    ResolutionContext::NoLock {
         overrides: Remapping {
             map: BTreeMap::new(),
         },
@@ -11,7 +11,7 @@ pub fn create_test_context() -> ResolutionContext {
 }
 
 pub fn create_test_context_with_overrides(overrides: BTreeMap<Link, Link>) -> ResolutionContext {
-    ResolutionContext {
+    ResolutionContext::NoLock {
         overrides: Remapping { map: overrides },
     }
 }

@@ -3,8 +3,7 @@ use std::collections::BTreeSet;
 use error::LoadError;
 use fetch::LoadResult;
 use fetch::load_text;
-use resolution::ResolutionContext;
-use resolution::overrides::Remapping;
+use resolution::context::ResolutionContext;
 use zksync_error_model::link::Link;
 
 use crate::description::HierarchyFragment;
@@ -35,10 +34,6 @@ impl NormalizedDescriptionFragment {
         self.root = self.root.void_dependencies();
         self
     }
-}
-
-pub fn get_resolution_context(overrides: Remapping) -> ResolutionContext {
-    ResolutionContext { overrides }
 }
 
 fn root_from_text(contents: &str, context: &BindingPoint) -> Result<Root, FileFormatError> {
@@ -96,11 +91,7 @@ pub fn load_dependent_component(
 
     let root_fragment = load_single_fragment(&link, &BindingPoint::Root, context)?;
 
-    Ok(load_connected_fragments_aux(
-        root_fragment,
-        &mut BTreeSet::new(),
-        context,
-    )?)
+    load_connected_fragments_aux(root_fragment, &mut BTreeSet::new(), context)
 }
 
 pub fn load_fragments_multiple_sources(

@@ -1,10 +1,12 @@
 pub mod backend;
 pub mod conversion;
+pub mod mode;
 
 use clap::Error as ClapError;
 use clap::Parser;
 
 pub use backend::Backend;
+pub use mode::Mode;
 
 ///
 /// Generates one of the following:
@@ -48,6 +50,10 @@ pub struct Arguments {
     /// Remap links. Accepts a JSON.
     #[arg(long = "remap")]
     pub remap: Option<String>,
+
+    /// Build mode for dependency resolution
+    #[arg(long = "mode", default_value = "no-lock")]
+    pub mode: Mode,
 }
 
 ///
