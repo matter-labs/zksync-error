@@ -13,6 +13,7 @@ use crate::description::accessors::annotate_origins;
 use crate::description::error::FileFormatError;
 use crate::description::normalization::binding::BindingPoint;
 use crate::description::normalization::produce_root;
+use crate::description::parsers::link;
 
 pub mod builder;
 pub mod error;
@@ -84,7 +85,7 @@ fn fetch_connected_fragments_aux(
     visited.insert(origin.clone());
 
     for raw_link in &fragment.root.take_from {
-        let link = Link::parse(raw_link)?;
+        let link = link::parse(raw_link)?;
         if visited.contains(&link) {
             return Err(LoadError::CircularDependency {
                 trigger: origin.clone(),
@@ -99,7 +100,7 @@ fn fetch_connected_fragments_aux(
         let domain_binding = BindingPoint::for_domain(domain);
 
         for raw_link in &domain.take_from {
-            let link = Link::parse(raw_link)?;
+            let link = link::parse(raw_link)?;
             if visited.contains(&link) {
                 return Err(LoadError::CircularDependency {
                     trigger: origin.clone(),
@@ -113,7 +114,7 @@ fn fetch_connected_fragments_aux(
             let component_binding = BindingPoint::for_component(domain, component);
 
             for raw_link in &component.take_from {
-                let link = Link::parse(raw_link)?;
+                let link = link::parse(raw_link)?;
                 if visited.contains(&link) {
                     return Err(LoadError::CircularDependency {
                         trigger: origin.clone(),

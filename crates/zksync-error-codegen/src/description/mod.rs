@@ -8,6 +8,7 @@ pub mod display;
 pub mod error;
 pub mod merge;
 pub mod normalization;
+pub mod parsers;
 
 use std::collections::BTreeMap;
 
@@ -15,6 +16,7 @@ use error::FileFormatError;
 use serde::Deserialize;
 use serde::Serialize;
 use strum_macros::EnumDiscriminants;
+use zksync_error_model::link::github::GithubLink;
 
 pub type Origins = Vec<String>;
 pub type TypeMappings = BTreeMap<String, FullyQualifiedType>;
@@ -27,7 +29,7 @@ pub struct Root {
     #[serde(default)]
     pub domains: Vec<Domain>,
     #[serde(default)]
-    pub take_from: Vec<String>,
+    pub take_from: Vec<TakeFromLink>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -47,6 +49,12 @@ pub struct FullyQualifiedType {
     pub expression: String,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum TakeFromLink {
+    GithubLink(GithubLink),
+    OrdinaryLink(String),
+}
 #[derive(Clone, Debug, Eq, PartialEq, Default, Serialize, Deserialize)]
 pub struct Domain {
     pub domain_name: String,
@@ -61,7 +69,7 @@ pub struct Domain {
     #[serde(default)]
     pub bindings: BTreeMap<String, String>,
     #[serde(default)]
-    pub take_from: Vec<String>,
+    pub take_from: Vec<TakeFromLink>,
     #[serde(skip_deserializing)]
     pub origins: Origins,
 }
@@ -80,7 +88,7 @@ pub struct Component {
     #[serde(default)]
     pub bindings: BTreeMap<String, String>,
     #[serde(default)]
-    pub take_from: Vec<String>,
+    pub take_from: Vec<TakeFromLink>,
 
     #[serde(default)]
     pub errors: Vec<Error>,

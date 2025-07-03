@@ -33,7 +33,7 @@ fn from_embedded(path: &Path) -> Result<String, LoadError> {
         .get_file(path)
         .map(|f| f.path())
     {
-        from_fs(&path.to_owned())
+        from_fs(path)
     } else {
         fs::read_to_string(path).map_err(|inner| LoadError::IOError {
             path: path.into(),

@@ -1,7 +1,7 @@
+use crate::description::parsers::link::LinkError;
 use crate::loader::builder::error::ModelBuildingError;
 use crate::loader::error::LoadError;
 use zksync_error_model::error::ModelValidationError;
-use zksync_error_model::link::error::LinkError;
 
 #[derive(Debug, thiserror::Error)]
 pub enum ProgramError {
