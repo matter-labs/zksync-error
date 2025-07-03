@@ -15,6 +15,7 @@ use crate::description::normalization::produce_root;
 use crate::description::parsers::link;
 
 pub mod builder;
+pub mod dependency_lock;
 pub mod error;
 pub mod fetch;
 pub mod resolution;

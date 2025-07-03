@@ -59,6 +59,7 @@ pub fn load_text(link: &Link, context: &mut ResolutionContext) -> Result<LoadRes
         ResolvedLink::LocalPath(path) => from_fs(&path)?,
         ResolvedLink::Url(url) => from_network(&url)?,
         ResolvedLink::EmbeddedPath(path_buf) => from_embedded(&path_buf)?,
+        ResolvedLink::GithubLink(github_link) => from_network(&github_link.to_url())?,
     };
 
     Ok(LoadResult { text, actual })

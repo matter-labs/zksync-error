@@ -1,5 +1,6 @@
 use crate::description::parsers::link::LinkError;
 use crate::loader::builder::error::ModelBuildingError;
+use crate::loader::dependency_lock::error::LockError;
 use crate::loader::error::LoadError;
 use zksync_error_model::error::ModelValidationError;
 
@@ -22,4 +23,6 @@ pub enum ProgramError {
     LoadError(#[from] LoadError),
     #[error(transparent)]
     LinkError(#[from] LinkError),
+    #[error(transparent)]
+    LockError(#[from] LockError),
 }
