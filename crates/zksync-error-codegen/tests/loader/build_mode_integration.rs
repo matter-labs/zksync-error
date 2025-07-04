@@ -4,7 +4,6 @@
 //! complex dependency graphs, and real-world usage patterns.
 
 use std::fs;
-use std::path::Path;
 use tempfile::tempdir;
 use zksync_error_codegen::arguments::{
     Backend, BackendOutput, GenerationArguments, ResolutionMode,
@@ -14,113 +13,9 @@ use zksync_error_codegen::loader::dependency_lock::{DependencyEntry, DependencyL
 use zksync_error_codegen::loader::resolution::ResolvedLink;
 use zksync_error_model::link::{
     Link,
-    github::{BranchName, CommitHash, GithubLink},
+    github::{BranchName, GithubLink},
 };
 
-/// Helper to create complex error description with multiple dependencies
-fn create_complex_dependency_json() -> String {
-    r#"{
-        "take_from": [
-            {
-                "repo": "zksync/core-errors",
-                "path": "errors/state.json",
-                "branch": "main"
-            },
-            "file://local/custom-errors.json",
-            {
-                "repo": "zksync/vm-errors", 
-                "path": "errors/execution.json",
-                "commit": "abc123def456"
-            }
-        ],
-        "domains": [
-            {
-                "domain_name": "complex_domain",
-                "domain_code": 200,
-                "take_from": [
-                    {
-                        "repo": "zksync/domain-specific",
-                        "path": "domain-errors.json",
-                        "branch": "develop"
-                    }
-                ],
-                "components": [
-                    {
-                        "component_name": "complex_component",
-                        "component_code": 1,
-                        "take_from": [
-                            "file://component/errors.json"
-                        ],
-                        "errors": [
-                            {
-                                "error_name": "ComplexError",
-                                "error_code": 1,
-                                "description": "A complex error with dependencies"
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }"#
-    .to_string()
-}
-
-/// Helper to create a comprehensive lock file with multiple dependency types
-fn create_comprehensive_lock(temp_dir: &Path) -> DependencyLock {
-    let mut lock = DependencyLock::new();
-
-    // Create resolved content files
-    let state_content = temp_dir.join("state_resolved.json");
-    let vm_content = temp_dir.join("vm_resolved.json");
-    let domain_content = temp_dir.join("domain_resolved.json");
-
-    let simple_error_json = r#"{
-        "domains": [{
-            "domain_name": "resolved_domain",
-            "domain_code": 1,
-            "components": []
-        }]
-    }"#;
-
-    fs::write(&state_content, simple_error_json).expect("Failed to write state content");
-    fs::write(&vm_content, simple_error_json).expect("Failed to write vm content");
-    fs::write(&domain_content, simple_error_json).expect("Failed to write domain content");
-
-    // Add GitHub dependencies with different reference types
-    let entries = vec![
-        DependencyEntry {
-            link: Link::Github(GithubLink::new_with_branch(
-                "zksync/core-errors".to_string(),
-                "errors/state.json".to_string(),
-                BranchName("main".to_string()),
-            )),
-            resolved: ResolvedLink::LocalPath(state_content),
-        },
-        DependencyEntry {
-            link: Link::Github(GithubLink::new_with_commit(
-                "zksync/vm-errors".to_string(),
-                "errors/execution.json".to_string(),
-                CommitHash("abc123def456".to_string()),
-            )),
-            resolved: ResolvedLink::LocalPath(vm_content),
-        },
-        DependencyEntry {
-            link: Link::Github(GithubLink::new_with_branch(
-                "zksync/domain-specific".to_string(),
-                "domain-errors.json".to_string(),
-                BranchName("develop".to_string()),
-            )),
-            resolved: ResolvedLink::LocalPath(domain_content),
-        },
-    ];
-
-    for entry in entries {
-        lock.add_dependency(entry);
-    }
-
-    lock
-}
 
 #[test]
 fn test_normal_to_reproducible_workflow() {

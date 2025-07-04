@@ -23,32 +23,6 @@ fn setup_test_env() -> tempfile::TempDir {
     tempdir().expect("Failed to create temp dir")
 }
 
-/// Helper function to create a sample error description JSON
-fn create_sample_error_json() -> String {
-    r#"{
-        "domains": [
-            {
-                "domain_name": "test_domain",
-                "domain_code": 42,
-                "components": [
-                    {
-                        "component_name": "test_component",
-                        "component_code": 1,
-                        "errors": [
-                            {
-                                "error_name": "TestError",
-                                "error_code": 1,
-                                "description": "A test error for build mode testing"
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }"#
-    .to_string()
-}
-
 /// Helper function to use the common simple JSON from other tests
 fn create_simple_test_json() -> String {
     r#"{
