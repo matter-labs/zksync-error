@@ -41,7 +41,7 @@ impl TryFrom<Arguments> for zksync_error_codegen::arguments::GenerationArguments
                 override_links: override_map.into_iter().collect(),
                 lock_file: lock_file.unwrap_or(DEFAULT_LOCK_FILE_NAME.to_owned()),
             },
-            Mode::Reproducible => ResolutionMode::Reproducible {
+            Mode::Frozen => ResolutionMode::Reproducible {
                 lock_file: lock_file.unwrap_or(DEFAULT_LOCK_FILE_NAME.to_owned()),
             },
         };

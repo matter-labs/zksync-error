@@ -2,5 +2,5 @@
 pub enum Mode {
     NoLock,
     Normal,
-    Reproducible,
+    Frozen,
 }
