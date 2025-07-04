@@ -18,6 +18,7 @@ impl TryFrom<Arguments> for zksync_error_codegen::arguments::GenerationArguments
             backend_args,
             remap,
             mode,
+            lock_file,
         } = value;
 
         let override_map: BTreeMap<String, String> = {
@@ -31,9 +32,17 @@ impl TryFrom<Arguments> for zksync_error_codegen::arguments::GenerationArguments
             }
         };
 
+        const DEFAULT_LOCK_FILE_NAME: &str = "zksync-error.lock";
         let resolution_mode = match mode {
             Mode::NoLock => ResolutionMode::NoLock {
                 override_links: override_map.into_iter().collect(),
+            },
+            Mode::Normal => ResolutionMode::Normal {
+                override_links: override_map.into_iter().collect(),
+                lock_file: lock_file.unwrap_or(DEFAULT_LOCK_FILE_NAME.to_owned()),
+            },
+            Mode::Frozen => ResolutionMode::Reproducible {
+                lock_file: lock_file.unwrap_or(DEFAULT_LOCK_FILE_NAME.to_owned()),
             },
         };
 

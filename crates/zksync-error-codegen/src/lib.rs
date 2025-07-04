@@ -90,5 +90,12 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
         }
     }
 
+    if let ResolutionContext::LockOrPopulate { lock, .. } = context {
+        if let arguments::ResolutionMode::Normal { lock_file, .. } = mode {
+            lock.save_to_file(lock_file)?
+        } else {
+            panic!("Internal error")
+        }
+    }
     Ok(())
 }

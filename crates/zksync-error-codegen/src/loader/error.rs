@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use super::resolution::error::ResolutionError;
+use super::{dependency_lock::error::LockError, resolution::error::ResolutionError};
 use crate::description::{error::FileFormatError, parsers::link::LinkError};
 use zksync_error_model::link::Link;
 
@@ -23,6 +23,9 @@ pub enum LoadError {
 
     #[error(transparent)]
     LinkError(#[from] LinkError),
+
+    #[error(transparent)]
+    LockError(#[from] LockError),
 
     #[error(transparent)]
     ResolutionError(#[from] ResolutionError),

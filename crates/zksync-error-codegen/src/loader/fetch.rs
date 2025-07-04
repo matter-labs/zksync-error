@@ -51,15 +51,25 @@ fn from_embedded(path: &Path) -> Result<String, LoadError> {
 pub struct LoadResult {
     pub text: String,
     pub actual: Link,
+    pub overridden: bool,
 }
 
 pub fn load_text(link: &Link, context: &mut ResolutionContext) -> Result<LoadResult, LoadError> {
-    let ResolutionResult { actual, resolved } = resolve(link, context)?;
+    let ResolutionResult {
+        actual,
+        resolved,
+        overridden,
+    } = resolve(link, context)?;
     let text = match resolved {
         ResolvedLink::LocalPath(path) => from_fs(&path)?,
         ResolvedLink::Url(url) => from_network(&url)?,
         ResolvedLink::EmbeddedPath(path_buf) => from_embedded(&path_buf)?,
+        ResolvedLink::GithubLink(github_link) => from_network(&github_link.to_url())?,
     };
 
-    Ok(LoadResult { text, actual })
+    Ok(LoadResult {
+        text,
+        actual,
+        overridden,
+    })
 }

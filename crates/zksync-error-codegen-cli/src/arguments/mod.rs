@@ -52,8 +52,12 @@ pub struct Arguments {
     pub remap: Option<String>,
 
     /// Build mode for dependency resolution
-    #[arg(long = "mode", default_value = "no-lock")]
+    #[arg(long = "mode", default_value = "normal")]
     pub mode: Mode,
+
+    /// Lock file path for dependency resolution
+    #[arg(long = "lock-file")]
+    pub lock_file: Option<String>,
 }
 
 ///

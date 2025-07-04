@@ -34,6 +34,26 @@ pub enum ResolutionMode {
         /// Link override mappings for dependency resolution
         override_links: Vec<(String, String)>,
     },
+
+    /// Normal mode with lock file management.
+    ///
+    /// This is the default mode that creates and updates lock files
+    /// as needed while also supporting link overrides.
+    Normal {
+        /// Link override mappings for dependency resolution
+        override_links: Vec<(String, String)>,
+        /// Path to the lock file to use
+        lock_file: String,
+    },
+
+    /// Reproducible mode using only existing lock files.
+    ///
+    /// All Github links must be resolved from the existing lock file; overrides
+    /// are disabled.
+    Reproducible {
+        /// Path to the lock file to use for reproducible resolution
+        lock_file: String,
+    },
 }
 /// Complete set of arguments for code generation.
 ///
