@@ -31,10 +31,10 @@ Note that the line number/column may be reported incorrectly.
         expected: domain::PartialIdentifier,
         domains: Vec<Domain>,
     },
-    #[error("Domain name or code in {} does not match with {expected}", Into::<domain::PartialIdentifier>::into(domain))]
+    #[error("Domain name or code in {} does not match with {expected}", Into::<domain::PartialIdentifier>::into(&**domain))]
     WrongDomain {
         expected: domain::PartialIdentifier,
-        domain: Domain,
+        domain: Box<Domain>,
     },
 
     #[error("No components matching identifier {expected}")]
@@ -51,9 +51,9 @@ Note that the line number/column may be reported incorrectly.
         components: Vec<Component>,
     },
 
-    #[error("Component name or code in {} does not match with {expected}", Into::<component::PartialIdentifier>::into(component))]
+    #[error("Component name or code in {} does not match with {expected}", Into::<component::PartialIdentifier>::into(&**component))]
     WrongComponent {
         expected: component::PartialIdentifier,
-        component: Component,
+        component: Box<Component>,
     },
 }

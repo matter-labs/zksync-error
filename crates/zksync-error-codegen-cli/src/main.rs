@@ -9,7 +9,7 @@ use error::ApplicationError;
 use zksync_error_codegen::load_and_generate;
 
 fn main_inner(arguments: Arguments) -> Result<(), ApplicationError> {
-    Ok(load_and_generate(arguments.try_into()?)?)
+    Ok(load_and_generate(arguments.try_into()?).map_err(Box::new)?)
 }
 
 fn main() {

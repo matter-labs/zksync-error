@@ -49,8 +49,8 @@ fn ensure_unique_domains(model: &Model) -> Result<(), ModelValidationError> {
         }))
     {
         Err(ModelValidationError::NonUniqueDomains(
-            d1.meta.as_ref().clone(),
-            d2.meta.as_ref().clone(),
+            Box::new(d1.meta.as_ref().clone()),
+            Box::new(d2.meta.as_ref().clone()),
         ))
     } else {
         Ok(())
@@ -67,9 +67,9 @@ fn ensure_unique_components(domain: &DomainDescription) -> Result<(), ModelValid
             }))
     {
         Err(ModelValidationError::NonUniqueComponents(
-            c1.meta.as_ref().clone(),
-            c2.meta.as_ref().clone(),
-            domain.meta.as_ref().clone(),
+            Box::new(c1.meta.as_ref().clone()),
+            Box::new(c2.meta.as_ref().clone()),
+            Box::new(domain.meta.as_ref().clone()),
         ))
     } else {
         Ok(())
@@ -81,10 +81,10 @@ fn ensure_unique_errors(component: &ComponentDescription) -> Result<(), ModelVal
         .or(find_duplicate_by(component.errors.iter(), |e| e.code))
     {
         Err(ModelValidationError::NonUniqueErrors(
-            error1.clone(),
-            error2.clone(),
-            component.meta.as_ref().clone(),
-            component.meta.domain.as_ref().clone(),
+            Box::new(error1.clone()),
+            Box::new(error2.clone()),
+            Box::new(component.meta.as_ref().clone()),
+            Box::new(component.meta.domain.as_ref().clone()),
         ))
     } else {
         Ok(())

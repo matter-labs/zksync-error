@@ -67,7 +67,10 @@ fn load_single_fragment(
                 overridden,
             })
         }
-        Err(inner) => Err(LoadError::FileFormatError { origin, inner }),
+        Err(inner) => Err(LoadError::FileFormatError {
+            origin,
+            inner: Box::new(inner),
+        }),
     }
 }
 
@@ -110,8 +113,8 @@ pub fn load_dependent_component(
             let dependency = link::parse(dependency)?;
             if !visited.insert(dependency.clone()) {
                 return Err(LoadError::CircularDependency {
-                    trigger: origin.clone(),
-                    visited: dependency,
+                    trigger: Box::new(origin.clone()),
+                    visited: Box::new(dependency),
                 });
             } else {
                 let new_fragment_result = load_single_fragment(&dependency, binding, new_context)?;

@@ -5,5 +5,5 @@ pub enum ApplicationError {
     #[error("Invalid argument `{argument}`: {reason}")]
     InvalidArgument { argument: String, reason: String },
     #[error(transparent)]
-    ProgramError(#[from] ProgramError),
+    ProgramError(#[from] Box<ProgramError>),
 }

@@ -196,7 +196,10 @@ impl Mergeable for super::Error {
                 comment: Default::default(),
             })
         } else {
-            Err(MergeError::ConflictingErrorDescriptions(self, other))
+            Err(MergeError::ConflictingErrorDescriptions(
+                Box::new(self),
+                Box::new(other),
+            ))
         }
     }
 }
