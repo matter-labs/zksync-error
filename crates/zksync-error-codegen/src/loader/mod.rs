@@ -1,7 +1,6 @@
 use std::collections::BTreeSet;
 
 use error::LoadError;
-use fetch::LoadResult;
 use fetch::load_text;
 use resolution::context::ResolutionContext;
 use zksync_error_model::link::Link;
@@ -42,17 +41,31 @@ fn root_from_text(contents: &str, context: &BindingPoint) -> Result<Root, FileFo
     produce_root(&fragment, context)
 }
 
+pub struct LoadFragmentResult {
+    pub fragment: NormalizedDescriptionFragment,
+    pub actual: Link,
+    pub overridden: bool,
+}
+
 fn load_single_fragment(
     link: &Link,
     binding: &BindingPoint,
     context: &mut ResolutionContext,
-) -> Result<NormalizedDescriptionFragment, LoadError> {
+) -> Result<LoadFragmentResult, LoadError> {
     let origin = link.clone();
-    let LoadResult { text, actual } = load_text(link, context)?;
+    let fetch::LoadResult {
+        text,
+        actual,
+        overridden,
+    } = load_text(link, context)?;
     match root_from_text(&text, binding) {
         Ok(mut root) => {
             annotate_origins(&mut root, &actual.to_string());
-            Ok(NormalizedDescriptionFragment { origin, root })
+            Ok(LoadFragmentResult {
+                fragment: NormalizedDescriptionFragment { origin, root },
+                actual,
+                overridden,
+            })
         }
         Err(inner) => Err(LoadError::FileFormatError { origin, inner }),
     }
@@ -63,13 +76,34 @@ pub fn load_dependent_component(
     context: &mut ResolutionContext,
 ) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
     fn load_connected_fragments_aux(
-        fragment: NormalizedDescriptionFragment,
+        fragment: LoadFragmentResult,
         visited: &mut BTreeSet<Link>,
         context: &mut ResolutionContext,
-    ) -> Result<Vec<NormalizedDescriptionFragment>, LoadError> {
+    ) -> Result<Vec<LoadFragmentResult>, LoadError> {
         let mut results = vec![];
-        let NormalizedDescriptionFragment { origin, root } = &fragment;
+        let LoadFragmentResult {
+            fragment: NormalizedDescriptionFragment { origin, root },
+            overridden,
+            ..
+        } = &fragment;
 
+        let new_context = {
+            if *overridden {
+                match context {
+                    ResolutionContext::NoLock { .. } => context,
+                    ResolutionContext::LockOnly { .. } => panic!(
+                        "Internal error: overrides are supposed to be disabled in lock-only mode."
+                    ),
+                    ResolutionContext::LockOrPopulate { overrides, .. } => {
+                        &mut ResolutionContext::NoLock {
+                            overrides: overrides.clone(),
+                        }
+                    }
+                }
+            } else {
+                context
+            }
+        };
         visited.insert(origin.clone());
 
         for (dependency, binding) in &root.dependencies() {
@@ -80,19 +114,24 @@ pub fn load_dependent_component(
                     visited: dependency,
                 });
             } else {
-                let new_fragment = load_single_fragment(&dependency, binding, context)?;
-                let addend = load_connected_fragments_aux(new_fragment, visited, context)?;
+                let new_fragment_result = load_single_fragment(&dependency, binding, new_context)?;
+                let addend =
+                    load_connected_fragments_aux(new_fragment_result, visited, new_context)?;
                 results.extend(addend);
             }
         }
 
-        results.push(fragment.void_dependencies());
+        results.push(fragment);
         Ok(results)
     }
 
     let root_fragment = load_single_fragment(&link, &BindingPoint::Root, context)?;
-
-    load_connected_fragments_aux(root_fragment, &mut BTreeSet::new(), context)
+    load_connected_fragments_aux(root_fragment, &mut BTreeSet::new(), context).map(|fragments| {
+        fragments
+            .into_iter()
+            .map(|f| f.fragment.void_dependencies())
+            .collect()
+    })
 }
 
 pub fn load_fragments_multiple_sources(

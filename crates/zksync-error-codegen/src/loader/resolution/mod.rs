@@ -16,6 +16,7 @@ use super::dependency_lock::{DependencyEntry, DependencyLock};
 pub struct ResolutionResult {
     pub actual: Link,
     pub resolved: ResolvedLink,
+    pub overridden: bool,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
@@ -33,30 +34,40 @@ pub fn resolve(
     match context {
         ResolutionContext::NoLock { overrides } => {
             let with_override = overrides.apply(query_link).unwrap_or(query_link);
+            let overridden = with_override != query_link;
             Ok(ResolutionResult {
                 actual: with_override.clone(),
                 resolved: resolve_no_lock(with_override),
+                overridden,
             })
         }
         ResolutionContext::LockOrPopulate { lock, overrides } => {
-            if let Some(overridden) = overrides.apply(query_link) {
+            if let Some(overridden_link) = overrides.apply(query_link) {
+                let overridden = overridden_link != query_link;
                 Ok(ResolutionResult {
-                    actual: overridden.clone(),
-                    resolved: resolve_no_lock(overridden),
+                    actual: overridden_link.clone(),
+                    resolved: resolve_no_lock(overridden_link),
+                    overridden,
                 })
             } else {
                 let actual = query_link.clone();
+                let overridden = false;
                 if DependencyLock::should_lock(query_link) {
                     let resolved = resolve_with_lock(query_link, lock)?;
                     lock.add_dependency(DependencyEntry {
                         link: actual.clone(),
                         resolved: resolved.clone(),
                     });
-                    Ok(ResolutionResult { actual, resolved })
+                    Ok(ResolutionResult {
+                        actual,
+                        resolved,
+                        overridden,
+                    })
                 } else {
                     Ok(ResolutionResult {
                         actual: query_link.clone(),
                         resolved: resolve_no_lock(query_link),
+                        overridden,
                     })
                 }
             }
@@ -69,7 +80,11 @@ pub fn resolve(
                 resolve_no_lock(query_link)
             };
 
-            Ok(ResolutionResult { actual, resolved })
+            Ok(ResolutionResult {
+                actual,
+                resolved,
+                overridden: false,
+            })
         }
     }
 }
