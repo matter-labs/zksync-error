@@ -11,7 +11,7 @@ use backend::IBackendConfig as _;
 use description::parsers::link;
 use error::ProgramError;
 use loader::builder::build_model;
-use loader::resolution::overrides::Remapping;
+use loader::resolution::context::ResolutionContext;
 use zksync_error_model::inner::Model;
 use zksync_error_model::link::Link;
 
@@ -19,21 +19,6 @@ use crate::backend::Backend as CodegenBackend;
 use crate::backend::file::File;
 use crate::backend::mdbook::MDBookBackend;
 use crate::backend::rust::RustBackend;
-
-pub fn default_load_and_generate(input_links: Vec<&str>) {
-    if let Err(e) = load_and_generate(GenerationArguments {
-        verbose: true,
-        outputs: vec![arguments::BackendOutput {
-            output_path: "../zksync_error".into(),
-            backend: Backend::Rust,
-            arguments: vec![],
-        }],
-        input_links: input_links.into_iter().map(Into::into).collect(),
-        override_links: vec![],
-    }) {
-        eprintln!("{e:#?}")
-    };
-}
 
 fn generate<Backend>(
     backend_args: impl Iterator<Item = (String, String)>,
@@ -61,16 +46,17 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
         verbose,
         outputs,
         input_links,
-        override_links,
+        mode,
     } = arguments;
+
+    let mut context: ResolutionContext = (&mode).try_into()?;
 
     let model = {
         let input_links: Result<Vec<Link>, _> = input_links
             .iter()
             .map(|repr| link::parse_str(repr))
             .collect();
-        let overrides = Remapping::try_from(&override_links)?;
-        build_model(input_links?, overrides, verbose)?
+        build_model(input_links?, &mut context, verbose)?
     };
 
     for arguments::BackendOutput {
@@ -103,5 +89,6 @@ pub fn load_and_generate(arguments: GenerationArguments) -> Result<(), ProgramEr
             eprintln!("Writing successful.");
         }
     }
+
     Ok(())
 }

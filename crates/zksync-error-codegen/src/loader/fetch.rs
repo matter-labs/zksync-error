@@ -8,7 +8,7 @@ use zksync_error_model::link::Link;
 use crate::loader::error::LoadError;
 use crate::loader::resolution::{ResolvedLink, resolve};
 
-use super::resolution::{ResolutionContext, ResolutionResult};
+use super::resolution::{ResolutionResult, context::ResolutionContext};
 
 fn from_fs(path: &Path) -> Result<String, LoadError> {
     eprintln!(
