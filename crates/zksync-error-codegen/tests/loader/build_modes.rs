@@ -142,7 +142,7 @@ fn test_no_lock_mode_basic() {
 
     // Should succeed without creating any lock files
     let result = load_and_generate(args);
-    assert!(result.is_ok(), "NoLock mode should succeed: {:?}", result);
+    assert!(result.is_ok(), "NoLock mode should succeed: {result:?}");
 
     // Verify no lock files were created
     let lock_files: Vec<_> = fs::read_dir(&temp_dir)
@@ -197,8 +197,7 @@ fn test_no_lock_mode_with_overrides() {
     let result = load_and_generate(args);
     assert!(
         result.is_ok(),
-        "NoLock mode should succeed without overrides: {:?}",
-        result
+        "NoLock mode should succeed without overrides: {result:?}"
     );
 
     // Verify output was generated
@@ -231,7 +230,7 @@ fn test_normal_mode_creates_lock_file() {
     };
 
     let result = load_and_generate(args);
-    assert!(result.is_ok(), "Normal mode should succeed: {:?}", result);
+    assert!(result.is_ok(), "Normal mode should succeed: {result:?}");
 
     // In normal mode, lock file should be created even if empty
     assert!(
@@ -277,7 +276,7 @@ fn test_normal_mode_updates_existing_lock_file() {
     };
 
     let result = load_and_generate(args);
-    assert!(result.is_ok(), "Normal mode should succeed: {:?}", result);
+    assert!(result.is_ok(), "Normal mode should succeed: {result:?}");
 
     // Lock file should still exist and be valid
     assert!(lock_file.exists(), "Lock file should exist after update");
@@ -288,13 +287,12 @@ fn test_normal_mode_updates_existing_lock_file() {
 
     // The lock should maintain the existing entry (since our input doesn't have GitHub deps)
     assert!(
-        !updated_lock
+        updated_lock
             .get_dependency(&Link::Github(GithubLink::new_with_branch(
                 "test-org/test-repo".to_string(),
                 "errors/common.json".to_string(),
                 BranchName("main".to_string()),
-            )))
-            .is_none(),
+            ))).is_some(),
         "Existing dependency should be preserved"
     );
 }
@@ -331,8 +329,7 @@ fn test_reproducible_mode_uses_existing_lock() {
     let result = load_and_generate(args);
     assert!(
         result.is_ok(),
-        "Reproducible mode should succeed with valid lock: {:?}",
-        result
+        "Reproducible mode should succeed with valid lock: {result:?}"
     );
 
     // Verify output was generated
@@ -450,7 +447,7 @@ fn test_mode_with_multiple_outputs() {
     };
 
     let result = load_and_generate(args);
-    assert!(result.is_ok(), "Multiple outputs should work: {:?}", result);
+    assert!(result.is_ok(), "Multiple outputs should work: {result:?}");
 
     // Verify both outputs were generated
     assert!(
@@ -600,8 +597,7 @@ fn test_concurrent_lock_file_access() {
     for (thread_id, success) in results.iter() {
         assert!(
             *success,
-            "Thread {} should successfully read lock file",
-            thread_id
+            "Thread {thread_id} should successfully read lock file"
         );
     }
 }

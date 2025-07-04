@@ -12,7 +12,7 @@ pub enum ResolutionContext {
     /// - Overrides are applied
     /// - Links are resolved using the lockfile
     /// - Links absent from lockfile are resolved in `NoLock` mode and added to
-    /// the lockfile
+    ///   the lockfile
     LockOrPopulate {
         overrides: Remapping,
         lock: DependencyLock,

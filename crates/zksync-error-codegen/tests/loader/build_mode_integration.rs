@@ -167,7 +167,7 @@ fn test_normal_to_reproducible_workflow() {
     };
 
     let result = load_and_generate(normal_args);
-    assert!(result.is_ok(), "Normal mode should succeed: {:?}", result);
+    assert!(result.is_ok(), "Normal mode should succeed: {result:?}");
     assert!(lock_file.exists(), "Lock file should be created");
 
     // Step 2: Run in Reproducible mode using the same lock file
@@ -187,8 +187,7 @@ fn test_normal_to_reproducible_workflow() {
     let result = load_and_generate(reproducible_args);
     assert!(
         result.is_ok(),
-        "Reproducible mode should succeed with existing lock: {:?}",
-        result
+        "Reproducible mode should succeed with existing lock: {result:?}"
     );
 
     // Verify outputs are consistent
@@ -225,8 +224,7 @@ fn test_lock_file_backwards_compatibility() {
     let result = DependencyLock::load_from_file(lock_file.to_string_lossy().as_ref());
     assert!(
         result.is_ok(),
-        "Should be able to load manually created lock file: {:?}",
-        result
+        "Should be able to load manually created lock file: {result:?}"
     );
 
     let lock = result.unwrap();
@@ -368,15 +366,13 @@ fn test_lock_file_with_special_characters() {
     let result = lock.save_to_file(special_lock.to_string_lossy().as_ref());
     assert!(
         result.is_ok(),
-        "Should be able to save lock with special characters: {:?}",
-        result
+        "Should be able to save lock with special characters: {result:?}"
     );
 
     let reloaded = DependencyLock::load_from_file(special_lock.to_string_lossy().as_ref());
     assert!(
         reloaded.is_ok(),
-        "Should be able to load lock with special characters: {:?}",
-        reloaded
+        "Should be able to load lock with special characters: {reloaded:?}"
     );
 
     let reloaded_lock = reloaded.unwrap();
@@ -403,7 +399,7 @@ fn test_build_mode_performance_with_large_lock() {
     let mut lock = DependencyLock::new();
 
     for i in 0..100 {
-        let content_file = temp_dir.path().join(format!("content_{}.json", i));
+        let content_file = temp_dir.path().join(format!("content_{i}.json"));
         fs::write(
             &content_file,
             r#"{
@@ -425,8 +421,8 @@ fn test_build_mode_performance_with_large_lock() {
 
         let entry = DependencyEntry {
             link: Link::Github(GithubLink::new_with_branch(
-                format!("org/repo-{}", i),
-                format!("path/file-{}.json", i),
+                format!("org/repo-{i}"),
+                format!("path/file-{i}.json"),
                 BranchName("main".to_string()),
             )),
             resolved: ResolvedLink::LocalPath(content_file),
@@ -442,8 +438,7 @@ fn test_build_mode_performance_with_large_lock() {
 
     assert!(
         result.is_ok(),
-        "Should be able to save large lock file: {:?}",
-        result
+        "Should be able to save large lock file: {result:?}"
     );
     assert!(
         save_duration.as_millis() < 1000,
@@ -457,8 +452,7 @@ fn test_build_mode_performance_with_large_lock() {
 
     assert!(
         reloaded.is_ok(),
-        "Should be able to load large lock file: {:?}",
-        reloaded
+        "Should be able to load large lock file: {reloaded:?}"
     );
     assert!(
         load_duration.as_millis() < 1000,
@@ -526,8 +520,7 @@ fn test_mode_switching_preserves_outputs() {
     });
     assert!(
         normal_result.is_ok(),
-        "Normal mode should succeed: {:?}",
-        normal_result
+        "Normal mode should succeed: {normal_result:?}"
     );
 
     let normal_output = fs::read_to_string(output_dir.join("src").join("lib.rs"))
