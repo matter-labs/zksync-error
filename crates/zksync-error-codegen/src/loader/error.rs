@@ -12,8 +12,8 @@ pub enum LoadError {
         inner: std::io::Error,
     },
 
-    #[error(transparent)]
-    NetworkError(#[from] reqwest::Error),
+    #[error("Network error for {url}: {inner}")]
+    NetworkError { url: String, inner: reqwest::Error },
 
     #[error("Error loading errors from {origin}: {inner}")]
     FileFormatError {

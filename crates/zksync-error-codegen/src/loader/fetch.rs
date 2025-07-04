@@ -21,10 +21,16 @@ fn from_fs(path: &Path) -> Result<String, LoadError> {
     })
 }
 
-fn from_network(url: &str) -> Result<String, reqwest::Error> {
+fn from_network(url: &str) -> Result<String, LoadError> {
     eprintln!("Fetching file from network: {url}");
-    let response = reqwest::blocking::get(url)?;
-    let content = response.text()?;
+    let response = reqwest::blocking::get(url).map_err(|inner| LoadError::NetworkError {
+        url: url.to_string(),
+        inner,
+    })?;
+    let content = response.text().map_err(|inner| LoadError::NetworkError {
+        url: url.to_string(),
+        inner,
+    })?;
     Ok(content)
 }
 
@@ -47,12 +53,11 @@ pub struct LoadResult {
     pub actual: Link,
 }
 
-pub fn load_text(link: &Link, context: &ResolutionContext) -> Result<LoadResult, LoadError> {
+pub fn load_text(link: &Link, context: &mut ResolutionContext) -> Result<LoadResult, LoadError> {
     let ResolutionResult { actual, resolved } = resolve(link, context)?;
     let text = match resolved {
         ResolvedLink::LocalPath(path) => from_fs(&path)?,
         ResolvedLink::Url(url) => from_network(&url)?,
-        ResolvedLink::Immediate(immediate) => immediate,
         ResolvedLink::EmbeddedPath(path_buf) => from_embedded(&path_buf)?,
     };
 

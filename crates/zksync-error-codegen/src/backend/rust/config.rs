@@ -2,16 +2,9 @@ use crate::backend::IBackendConfig;
 use crate::backend::arguments::ArgumentError;
 use crate::backend::arguments::parse_bool;
 
+#[derive(Default)]
 pub struct Config {
     pub generate_cargo_toml: bool,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            generate_cargo_toml: false,
-        }
-    }
 }
 
 impl IBackendConfig for Config {

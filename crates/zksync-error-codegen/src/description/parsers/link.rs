@@ -10,8 +10,8 @@
 //! - **GitHub links**: JSON objects with repo, path, and reference information
 //! - **File links**: `file://path/to/file` or bare paths
 //! - **Embedded links**: `zksync-error://resource/path`. Gives access to files
-//!    that are placed in the directory `/description` in the root of this
-//!    repository.
+//!   that are placed in the directory `/description` in the root of this
+//!   repository.
 //! - **HTTP/HTTPS URLs**: `http://example.com/resource` or `https://example.com/resource`
 //!
 use crate::description::TakeFromLink;

@@ -1,7 +1,5 @@
-pub mod binding;
 pub mod normalizable;
 
-use binding::BindingPoint;
 use normalizable::Normalizable as _;
 use zksync_error_model::inner::component;
 use zksync_error_model::inner::domain;
@@ -10,6 +8,7 @@ use crate::description::Root;
 
 use super::HierarchyFragment;
 use super::HierarchyFragmentKind;
+use super::binding::BindingPoint;
 use super::error::FileFormatError;
 
 ///
