@@ -15,5 +15,5 @@ pub enum MergeError {
     #[error("Conflicting descriptions for component `{0:?}`")]
     ConflictingComponentDefinitions(Box<Component>, Box<Component>),
     #[error("Conflicting error descriptions for errors `{0}` and `{1}`")]
-    ConflictingErrorDescriptions(Error, Error),
+    ConflictingErrorDescriptions(Box<Error>, Box<Error>),
 }

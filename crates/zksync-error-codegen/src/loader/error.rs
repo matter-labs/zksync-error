@@ -18,7 +18,7 @@ pub enum LoadError {
     #[error("Error loading errors from {origin}: {inner}")]
     FileFormatError {
         origin: Link,
-        inner: FileFormatError,
+        inner: Box<FileFormatError>,
     },
 
     #[error(transparent)]
@@ -36,7 +36,10 @@ pub enum LoadError {
     #[error(
         "Circular dependency detected: file {trigger} attempted to reference {visited} which was already visited."
     )]
-    CircularDependency { trigger: Link, visited: Link },
+    CircularDependency {
+        trigger: Box<Link>,
+        visited: Box<Link>,
+    },
 
     #[error("Failed to import a file {address}: {inner}")]
     TakeFrom {
