@@ -1128,7 +1128,7 @@ This typically happens during transaction creation or gas estimation when the re
 <p><a href="domains/AnvilZKsync/GasEstimation/TransactionAlwaysHalts.html"><code>[anvil_zksync-gas_estim-20] TransactionAlwaysHalts</code></a></p>
 <ul>
 <li>
-<p>Message: <code>[anvil_zksync-gas_estim-20] Gas estimation is impossible because the transaction can not be executed with maximum gas, it reverts and returns unspent gas: {inner}</code></p>
+<p>Message: <code>[anvil_zksync-gas_estim-20] Gas estimation is impossible: execution reverted when the transaction is executed with maximum gas. Unspent gas is burned.  {inner}</code></p>
 </li>
 <li>
 <p>Fields:</p>
@@ -1142,7 +1142,7 @@ This typically happens during transaction creation or gas estimation when the re
 <p><a href="domains/AnvilZKsync/GasEstimation/TransactionAlwaysReverts.html"><code>[anvil_zksync-gas_estim-21] TransactionAlwaysReverts</code></a></p>
 <ul>
 <li>
-<p>Message: <code>[anvil_zksync-gas_estim-21] Gas estimation is impossible because the transaction can not be executed with maximum gas, it reverts and burns all gas: {inner}</code></p>
+<p>Message: <code>[anvil_zksync-gas_estim-21] Gas estimation is impossible: execution reverted when the transaction is executed with maximum gas. Unspent gas is returned.  {inner}</code></p>
 </li>
 <li>
 <p>Fields:</p>
@@ -1326,7 +1326,7 @@ Typically they depend on specific gas values, for example, they revert if <code>
 <li><strong>Domain</strong>: AnvilZKsync</li>
 <li><strong>Component</strong>: GasEstimation</li>
 <li><strong>Error Code</strong>: 20</li>
-<li><strong>Message</strong>: <code>[anvil_zksync-gas_estim-20] Gas estimation is impossible because the transaction can not be executed with maximum gas, it reverts and returns unspent gas: {inner}</code></li>
+<li><strong>Message</strong>: <code>[anvil_zksync-gas_estim-20] Gas estimation is impossible: execution reverted when the transaction is executed with maximum gas. Unspent gas is burned.  {inner}</code></li>
 </ul>
 <h2 id="fields-17"><a class="header" href="#fields-17">Fields</a></h2>
 <ul>
@@ -1362,7 +1362,7 @@ Usually, this error indicates either an unconditional revert or excessive gas co
 <li><strong>Domain</strong>: AnvilZKsync</li>
 <li><strong>Component</strong>: GasEstimation</li>
 <li><strong>Error Code</strong>: 21</li>
-<li><strong>Message</strong>: <code>[anvil_zksync-gas_estim-21] Gas estimation is impossible because the transaction can not be executed with maximum gas, it reverts and burns all gas: {inner}</code></li>
+<li><strong>Message</strong>: <code>[anvil_zksync-gas_estim-21] Gas estimation is impossible: execution reverted when the transaction is executed with maximum gas. Unspent gas is returned.  {inner}</code></li>
 </ul>
 <h2 id="fields-18"><a class="header" href="#fields-18">Fields</a></h2>
 <ul>
