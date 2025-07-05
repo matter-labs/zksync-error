@@ -100,7 +100,7 @@ impl RustBackend {
             impl CustomErrorMessageWriter for ZksyncError {
                 #impl_custom_error_message_writer
             }
-            #[cfg(feature = "std")]
+
             pub trait NamedError {
                 fn get_error_name(&self) -> &'static str;
             }

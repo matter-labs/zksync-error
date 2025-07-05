@@ -92,12 +92,28 @@ impl RustBackend {
                     fn get_identifier_repr(&self)-> String;
                 }
 
-            #[cfg(feature = "std")]
-                impl Identifying for Identifier {
-                    fn get_identifier_repr(&self) -> String {
-                        format!("[{}-{}]", self.kind.get_identifier_repr(), self.code)
-                    }
+                pub trait IdentifyingStatic {
+                    fn get_identifier_repr_static(&self)-> &'static str;
                 }
+
+                pub trait IdentifyingWriter {
+                    fn write_identifier_repr<W: core::fmt::Write>(&self, writer:&mut W)-> core::fmt::Result;
+                }
+
+            #[cfg(feature = "std")]
+            impl<T> Identifying for T
+                where T: IdentifyingWriter {
+                fn get_identifier_repr(&self) -> String {
+                    let mut s = String::new();
+                    <Self as IdentifyingWriter>::write_identifier_repr(self, &mut s);
+                    s
+                }
+            }
+            impl IdentifyingWriter for Identifier {
+                fn write_identifier_repr<W: core::fmt::Write>(&self, writer :&mut W) -> core::fmt::Result {
+                    write!(writer, "[{}-{}]", self.kind.get_identifier_repr_static(), self.code)
+                }
+            }
         };
 
         let impl_identifying_for_kind = {
@@ -122,12 +138,11 @@ impl RustBackend {
             });
 
             quote! {
-            #[cfg(feature = "std")]
-                impl Identifying for Kind {
-                    fn get_identifier_repr(&self) -> String {
+                impl IdentifyingStatic for Kind {
+                    fn get_identifier_repr_static(&self) -> &'static str {
                         match self {
                             #( #match_tokens , )*
-                        }.into()
+                        }
                     }
                 }
             }

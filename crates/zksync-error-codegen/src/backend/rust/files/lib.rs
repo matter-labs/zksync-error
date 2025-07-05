@@ -19,12 +19,15 @@ impl RustBackend {
             pub use error::IError;
             pub use error::IUnifiedError;
             pub use error::ICustomError;
+            #[cfg(feature="std")]
             pub use error::CustomErrorMessage;
+            pub use error::CustomErrorMessageWriter;
             pub use error::NamedError;
 
             pub(crate) mod identifier;
             pub use identifier::StructuredErrorCode;
             pub use identifier::Identifier;
+            #[cfg(feature = "std")]
             pub use identifier::Identifying;
             pub(crate) mod kind;
             pub use kind::Kind;
