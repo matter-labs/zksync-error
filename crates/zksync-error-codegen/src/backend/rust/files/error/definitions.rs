@@ -205,6 +205,10 @@ impl RustBackend {
             use strum_macros::FromRepr;
             use crate::error::domains::*;
 
+            #[cfg(all(feature="std", feature="box_wrapped_errors"))]
+            pub type Wrapped<E> = Box<E>;
+            #[cfg(not(feature="std"))]
+            pub type Wrapped<E> = E;
 
             #( #definitions )*
         };
