@@ -29,6 +29,7 @@ use_serde = ["dep:serde"]
 runtime_documentation = ["dep:serde", "dep:serde_json"]
 serialized_errors = ["dep:serde", "dep:serde_json"]
 packed_errors = ["use_serde"]
+box_wrapped_errors = []
 
 [dependencies]
 lazy_static = {{ version = "1.5.0", default-features = false, optional = true }}

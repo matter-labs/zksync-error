@@ -418,7 +418,7 @@ fn bind_error_types(model: &mut Model) {
         match language {
             "rust" => Some((
                 language.to_owned(),
-                format!("Box<{binding}>").as_str().into(),
+                format!("Wrapped<{binding}>").as_str().into(),
             )),
             _ => None,
         }
