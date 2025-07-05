@@ -1,7 +1,12 @@
 {
     "take_from": [
         "zksync-error://types/common.json",
-        "zksync-error://types/zksync-specific.json"
+        "zksync-error://types/zksync-specific.json",
+        {
+            "repo": "matter-labs/anvil-zksync",
+            "branch" : "main",
+            "path" : "etc/errors/anvil.json"
+        }
     ],
     "types": [],
     "domains": [
@@ -138,23 +143,6 @@
                     "errors" : []
                 }
             ]
-        },
-        {
-            "domain_name": "AnvilZKsync",
-            "domain_code": 5,
-            "identifier_encoding": "anvil_zksync",
-            "description": "Errors originating in Anvil for ZKsync.",
-            "bindings": {
-                "rust": "AnvilZksync"
-            },
-            "take_from" : [
-                {
-                    "repo": "matter-labs/anvil-zksync",
-                    "branch" : "main",
-                    "path" : "etc/errors/anvil.json"
-                }
-            ],
-            "components" : []
         },
         {
             "domain_name": "Hardhat",
