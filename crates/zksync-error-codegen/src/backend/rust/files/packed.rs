@@ -34,8 +34,8 @@ impl RustBackend {
                     self.identifier.clone()
                 }
 
-                fn get_message(&self) -> String {
-                    self.message.clone()
+                fn write_message<W:core::fmt::Write>(&self, writer:&mut W) -> core::fmt::Result {
+                    write!(writer, self.message)
                 }
 
                 fn get_data(&self) -> T {
