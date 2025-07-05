@@ -103,10 +103,11 @@ impl RustBackend {
 
                 let messages = component.errors.iter().map(|error| { format!("{} {}", error.get_identifier(), error.message) } );
                 quote! {
-                    impl CustomErrorMessage for #component_name {
-                        fn get_message(&self) -> String {
+
+                    impl CustomErrorMessageWriter for #component_name {
+                        fn write_message<W: core::fmt::Write>(&self, writer: &mut W) -> core::fmt::Result {
                             match self {
-                                #( #branch_patterns => { format! ( #messages ) } , )*
+                                #( #branch_patterns => { write! ( writer,  #messages ) } , )*
                             }
                         }
                     }
@@ -117,12 +118,12 @@ impl RustBackend {
 
                 #component_doc
                 #[repr(u32)]
-                #[derive(AsRefStr, Clone, Debug, Eq, EnumDiscriminants, PartialEq)]
+                #[derive(IntoStaticStr, Clone, Debug, Eq, EnumDiscriminants, PartialEq)]
                 #[cfg_attr(feature = "use_serde", derive(serde::Serialize))]
                 #[cfg_attr(feature = "use_serde", derive(serde::Deserialize))]
                 #[strum_discriminants(name(#component_code))]
                 #[strum_discriminants(vis(pub))]
-                #[strum_discriminants(derive(AsRefStr, FromRepr))]
+                #[strum_discriminants(derive(IntoStaticStr, FromRepr))]
                 #[non_exhaustive]
                 pub enum #component_name {
 
@@ -132,13 +133,13 @@ impl RustBackend {
                 impl core::error::Error for #component_name {}
 
                 impl NamedError for #component_name {
-                    fn get_error_name(&self) -> String {
-                        self.as_ref().to_owned()
+                    fn get_error_name(&self) -> &'static str {
+                        self.into()
                     }
                 }
                 impl NamedError for #component_code {
-                    fn get_error_name(&self) -> String {
-                        self.as_ref().to_owned()
+                    fn get_error_name(&self) -> &'static str {
+                        self.into()
                     }
                 }
 
@@ -149,7 +150,7 @@ impl RustBackend {
                 }
                 impl fmt::Display for #component_name {
                     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                        f.write_str(&self.get_message())
+                        self.write_message(f)
                     }
                 }
                 #[cfg(feature="runtime_documentation")]
@@ -189,19 +190,21 @@ impl RustBackend {
             #![allow(non_camel_case_types)]
 
             use core::fmt;
-            #[cfg(not(feature = "std"))]
-            use alloc::{vec::Vec,borrow::ToOwned,string::String,format,boxed::Box};
 
             #[cfg(feature="runtime_documentation")]
             use crate::documentation::Documented;
+
+            #[cfg(feature="std")]
             use crate::error::CustomErrorMessage;
+            use crate::error::CustomErrorMessageWriter;
             use crate::error::NamedError;
             use crate::error::ICustomError as _;
             use crate::error::IError as _;
-            use strum_macros::AsRefStr;
+            use strum_macros::IntoStaticStr;
             use strum_macros::EnumDiscriminants;
             use strum_macros::FromRepr;
             use crate::error::domains::*;
+
 
             #( #definitions )*
         };

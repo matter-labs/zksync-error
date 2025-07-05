@@ -127,7 +127,7 @@ impl RustBackend {
                 quote! {
 
                     #[repr(u32)]
-                    #[derive(AsRefStr, Clone, Debug, EnumDiscriminants, Eq, PartialEq)]
+                    #[derive(IntoStaticStr, Clone, Debug, EnumDiscriminants, Eq, PartialEq)]
                     #[strum_discriminants(derive(FromRepr))]
                     #[cfg_attr(feature = "use_serde", derive(serde::Serialize))]
                     #[cfg_attr(feature = "use_serde", derive(serde::Deserialize))]
@@ -139,8 +139,8 @@ impl RustBackend {
                     }
 
                     impl #domain {
-                        pub fn get_name(&self) -> &str {
-                            self.as_ref()
+                        pub fn get_name(&self) -> &'static str {
+                            self.into()
                         }
                     }
                     #(
@@ -199,14 +199,12 @@ impl RustBackend {
 
             #![allow(non_camel_case_types)]
 
-            #[cfg(not(feature = "std"))]
-            use alloc::string::String;
             use core::fmt;
 
             use crate::error::ICustomError;
             use crate::error::IUnifiedError;
             use crate::kind::Kind;
-            use strum_macros::AsRefStr;
+            use strum_macros::IntoStaticStr;
             use strum_macros::EnumDiscriminants;
             use strum_macros::FromRepr;
             #(
@@ -215,7 +213,7 @@ impl RustBackend {
             )*
 
             #[repr(u32)]
-            #[derive(AsRefStr, Clone, Debug, EnumDiscriminants, Eq, PartialEq)]
+            #[derive(IntoStaticStr, Clone, Debug, EnumDiscriminants, Eq, PartialEq)]
             #[cfg_attr(feature = "use_serde", derive(serde::Serialize, serde::Deserialize))]
             pub enum ZksyncError {
                 #( #all_domains( #all_domains ),)*

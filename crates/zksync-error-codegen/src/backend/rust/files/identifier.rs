@@ -14,8 +14,6 @@ impl RustBackend {
 
             #(use crate::error::domains:: #domain_codes ;)*
 
-            #[cfg(not(feature = "std"))]
-            use alloc::{string::String, format};
 
             use crate::error::NamedError;
             use crate::kind::DomainCode;
@@ -89,10 +87,12 @@ impl RustBackend {
         };
 
         let trait_identifying = quote! {
+            #[cfg(feature = "std")]
                 pub trait Identifying {
                     fn get_identifier_repr(&self)-> String;
                 }
 
+            #[cfg(feature = "std")]
                 impl Identifying for Identifier {
                     fn get_identifier_repr(&self) -> String {
                         format!("[{}-{}]", self.kind.get_identifier_repr(), self.code)
@@ -122,6 +122,7 @@ impl RustBackend {
             });
 
             quote! {
+            #[cfg(feature = "std")]
                 impl Identifying for Kind {
                     fn get_identifier_repr(&self) -> String {
                         match self {
@@ -152,8 +153,9 @@ impl RustBackend {
                 });
 
             quote! {
+            #[cfg(feature = "std")]
                 impl NamedError for Identifier {
-                    fn get_error_name(&self) -> String {
+                    fn get_error_name(&self) -> &'static str {
                         match self.kind {
                             #( #match_tokens ),*
                         }
@@ -162,7 +164,7 @@ impl RustBackend {
             }
         };
         let impl_documented = quote! {
-                #[cfg(feature="runtime_documentation")]
+                #[cfg(all(feature="runtime_documentation", feature="std"))]
                 impl crate::documentation::Documented for Identifier {
                     type Documentation = &'static zksync_error_description::ErrorDocumentation;
                     fn get_documentation(&self) -> Result<Option<Self::Documentation>, crate::documentation::DocumentationError> {

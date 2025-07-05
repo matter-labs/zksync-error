@@ -13,12 +13,6 @@ impl RustBackend {
         let imports = quote! {
             #![cfg_attr(not(feature = "std"), no_std)]
 
-            #[cfg(not(feature = "std"))]
-            extern crate alloc;
-
-            #[cfg(not(feature = "std"))]
-            use alloc::format;
-
             #[cfg(feature="runtime_documentation")]
             pub mod documentation;
             pub(crate) mod error;
@@ -101,22 +95,32 @@ impl RustBackend {
                             pub use crate::error::definitions:: #enum_name :: #errors ;
                         )*
 
-                        #[cfg(not(feature = "std"))]
-                        use alloc::format;
 
+                        #[cfg(feature = "std")]
                         #[macro_export]
                         macro_rules! #macro_name {
                             ($($arg:tt)*) => {
                                 zksync_error::#outer_module::#inner_module:: #alias_error::GenericError { message: format!($($arg)*) }
                             };
                         }
+
+                        #[cfg(not(feature = "std"))]
+                        #[macro_export]
+                        macro_rules! #macro_name {
+                            ($arg:expr) => {
+                                zksync_error::#outer_module::#inner_module::#alias_error::GenericError { message: $arg }
+                            };
+                        }
+
                         pub use crate:: #macro_name as generic_error;
 
+                        #[cfg(feature = "std")]
                         pub fn to_generic<T: core::fmt::Display>(err: T) -> #alias_error {
                             GenericError {
                                 message: format!("{}", err),
                             }
                         }
+                        #[cfg(feature = "std")]
                         pub fn to_domain<T: core::fmt::Display>(err: T) -> super::#domain_error_ident {
                             super::#domain_error_ident::#enum_name( GenericError {
                                 message: format!("{}", err),
