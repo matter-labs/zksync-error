@@ -78,7 +78,7 @@ impl RustBackend {
             let component_doc = component_doc(component);
             let from_anyhow =
                     quote! {
-                        #[cfg(feature = "use_anyhow")]
+                        #[cfg(all(feature = "use_anyhow", feature = "std", feature = "to_generic"))]
                         impl From<anyhow::Error> for #component_name {
                             fn from(value: anyhow::Error) -> Self {
                                 let message = format!("{value:#?}");

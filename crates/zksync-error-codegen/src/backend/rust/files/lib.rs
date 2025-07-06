@@ -117,16 +117,16 @@ impl RustBackend {
 
                         pub use crate:: #macro_name as generic_error;
 
-                        #[cfg(feature = "std")]
+                        #[cfg(all(feature = "std", feature="to_generic"))]
                         pub fn to_generic<T: core::fmt::Display>(err: T) -> #alias_error {
                             GenericError {
-                                message: format!("{}", err),
+                                message: format!("{err}"),
                             }
                         }
-                        #[cfg(feature = "std")]
+                        #[cfg(all(feature = "std", feature="to_generic"))]
                         pub fn to_domain<T: core::fmt::Display>(err: T) -> super::#domain_error_ident {
                             super::#domain_error_ident::#enum_name( GenericError {
-                                message: format!("{}", err),
+                                message: format!("{err}"),
                             })
                         }
                     }

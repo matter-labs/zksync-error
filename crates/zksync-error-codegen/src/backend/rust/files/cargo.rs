@@ -22,13 +22,15 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["std", "use_anyhow", "use_serde"]
+default = ["std"]
 std = [ "serde/std", "lazy_static/spin_no_std", "anyhow?/std", "strum/std"]
 use_anyhow = ["dep:anyhow"]
 use_serde = ["dep:serde"]
 runtime_documentation = ["dep:serde", "dep:serde_json"]
 serialized_errors = ["dep:serde", "dep:serde_json"]
 packed_errors = ["use_serde"]
+box_wrapped_errors = []
+to_generic = []
 
 [dependencies]
 lazy_static = {{ version = "1.5.0", default-features = false, optional = true }}
