@@ -14,8 +14,6 @@ impl RustBackend {
 
             #(use crate::error::domains:: #domain_codes ;)*
 
-            #[cfg(not(feature = "std"))]
-            use alloc::{string::String, format};
 
             use crate::error::NamedError;
             use crate::kind::DomainCode;
@@ -89,15 +87,33 @@ impl RustBackend {
         };
 
         let trait_identifying = quote! {
+            #[cfg(feature = "std")]
                 pub trait Identifying {
                     fn get_identifier_repr(&self)-> String;
                 }
 
-                impl Identifying for Identifier {
-                    fn get_identifier_repr(&self) -> String {
-                        format!("[{}-{}]", self.kind.get_identifier_repr(), self.code)
-                    }
+                pub trait IdentifyingStatic {
+                    fn get_identifier_repr_static(&self)-> &'static str;
                 }
+
+                pub trait IdentifyingWriter {
+                    fn write_identifier_repr<W: core::fmt::Write>(&self, writer:&mut W)-> core::fmt::Result;
+                }
+
+            #[cfg(feature = "std")]
+            impl<T> Identifying for T
+                where T: IdentifyingWriter {
+                fn get_identifier_repr(&self) -> String {
+                    let mut s = String::new();
+                    <Self as IdentifyingWriter>::write_identifier_repr(self, &mut s);
+                    s
+                }
+            }
+            impl IdentifyingWriter for Identifier {
+                fn write_identifier_repr<W: core::fmt::Write>(&self, writer :&mut W) -> core::fmt::Result {
+                    write!(writer, "[{}-{}]", self.kind.get_identifier_repr_static(), self.code)
+                }
+            }
         };
 
         let impl_identifying_for_kind = {
@@ -122,11 +138,11 @@ impl RustBackend {
             });
 
             quote! {
-                impl Identifying for Kind {
-                    fn get_identifier_repr(&self) -> String {
+                impl IdentifyingStatic for Kind {
+                    fn get_identifier_repr_static(&self) -> &'static str {
                         match self {
                             #( #match_tokens , )*
-                        }.into()
+                        }
                     }
                 }
             }
@@ -152,8 +168,9 @@ impl RustBackend {
                 });
 
             quote! {
+            #[cfg(feature = "std")]
                 impl NamedError for Identifier {
-                    fn get_error_name(&self) -> String {
+                    fn get_error_name(&self) -> &'static str {
                         match self.kind {
                             #( #match_tokens ),*
                         }
@@ -162,7 +179,7 @@ impl RustBackend {
             }
         };
         let impl_documented = quote! {
-                #[cfg(feature="runtime_documentation")]
+                #[cfg(all(feature="runtime_documentation", feature="std"))]
                 impl crate::documentation::Documented for Identifier {
                     type Documentation = &'static zksync_error_description::ErrorDocumentation;
                     fn get_documentation(&self) -> Result<Option<Self::Documentation>, crate::documentation::DocumentationError> {
