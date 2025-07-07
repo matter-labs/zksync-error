@@ -266,7 +266,8 @@ fn test_normal_mode_updates_existing_lock_file() {
                 "test-org/test-repo".to_string(),
                 "errors/common.json".to_string(),
                 BranchName("main".to_string()),
-            ))).is_some(),
+            )))
+            .is_some(),
         "Existing dependency should be preserved"
     );
 }

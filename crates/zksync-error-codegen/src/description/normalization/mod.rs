@@ -45,7 +45,7 @@ pub fn produce_root(
             if &Into::<domain::PartialIdentifier>::into(domain) == domain_binding {
                 Ok(domain.normalize(&()))
             } else {
-                let domain = domain.clone();
+                let domain = Box::new(domain.clone());
                 Err(FileFormatError::WrongDomain {
                     expected: domain_binding.clone(),
                     domain,
@@ -71,7 +71,7 @@ pub fn produce_root(
             if &Into::<component::PartialIdentifier>::into(component) == component_binding {
                 Ok(component.normalize(domain_binding))
             } else {
-                let component = component.clone();
+                let component = Box::new(component.clone());
                 Err(FileFormatError::WrongComponent {
                     expected: component_binding.clone(),
                     component,

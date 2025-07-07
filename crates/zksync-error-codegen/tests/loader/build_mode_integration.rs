@@ -16,7 +16,6 @@ use zksync_error_model::link::{
     github::{BranchName, GithubLink},
 };
 
-
 #[test]
 fn test_normal_to_reproducible_workflow() {
     let temp_dir = tempdir().expect("Failed to create temp dir");

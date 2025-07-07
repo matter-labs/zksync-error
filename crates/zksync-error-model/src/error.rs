@@ -19,7 +19,7 @@ Domains:
 {1:#?}
  "
     )]
-    NonUniqueDomains(DomainMetadata, DomainMetadata),
+    NonUniqueDomains(Box<DomainMetadata>, Box<DomainMetadata>),
     #[error(
         "At least two components are assigned the same code, name, or identifier.
 Components:
@@ -30,7 +30,11 @@ Parent domain:
 {2:#?}
  "
     )]
-    NonUniqueComponents(ComponentMetadata, ComponentMetadata, DomainMetadata),
+    NonUniqueComponents(
+        Box<ComponentMetadata>,
+        Box<ComponentMetadata>,
+        Box<DomainMetadata>,
+    ),
     #[error(
         "At least two errors of a single component are assigned the same name of code.
 Errors:
@@ -45,9 +49,9 @@ Parent domain:
  "
     )]
     NonUniqueErrors(
-        ErrorDescription,
-        ErrorDescription,
-        ComponentMetadata,
-        DomainMetadata,
+        Box<ErrorDescription>,
+        Box<ErrorDescription>,
+        Box<ComponentMetadata>,
+        Box<DomainMetadata>,
     ),
 }
